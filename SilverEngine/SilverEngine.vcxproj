@@ -11,12 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Silver\Log.h" />
     <ClInclude Include="src\Silver.h" />
     <ClInclude Include="src\Silver\Application.h" />
     <ClInclude Include="src\Silver\Core.h" />
     <ClInclude Include="src\Silver\EntryPoint.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Silver\Log.cpp" />
     <ClCompile Include="src\Silver\Application.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -66,7 +68,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>SV_PLATFORM_WINDOWS;SV_BUILD_DLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)SilverEngine\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SilverEngine\vendor\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -81,7 +83,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>SV_PLATFORM_WINDOWS;SV_BUILD_DLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)SilverEngine\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SilverEngine\vendor\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

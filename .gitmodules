@@ -1,0 +1,3 @@
+[submodule "SilverEngine/vendor/spdlog"]
+	path = SilverEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog

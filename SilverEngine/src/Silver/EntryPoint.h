@@ -6,7 +6,6 @@ extern Silver::Application* Silver::CreateApplication();
 
 void main(int argc, char** argv)
 {
-	printf("Startup\n");
 	auto app = Silver::CreateApplication();
 	app->Run();
 	delete app;

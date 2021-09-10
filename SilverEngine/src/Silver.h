@@ -2,8 +2,8 @@
 
 // For use by applications
 
-#include <stdio.h>
 #include "Silver/Application.h"
+#include "Silver/Log.h"
 
 // ---EntryPoint---
 #include "Silver/EntryPoint.h"
