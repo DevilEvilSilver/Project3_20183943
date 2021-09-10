@@ -1,13 +1,22 @@
 #include <conio.h>
+#include <Silver.h>
 
-namespace Silver {
-
-	__declspec(dllimport) void Print();
-
-}
-
-void main()
+class GameApp : public Silver::Application
 {
-	Silver::Print();
-	_getch();
+public:
+	GameApp()
+	{
+
+	}
+
+	~GameApp()
+	{
+
+	}
+
+};
+
+Silver::Application* Silver::CreateApplication()
+{
+	return new GameApp;
 }
