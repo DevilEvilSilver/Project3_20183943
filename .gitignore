@@ -4,3 +4,12 @@ bin-int/
 
 # Files
 *.user
+*.filters
+*.vcxproj
+*.sln
+*.pdb
+*.lib
+*.ilk
+*.exp
+bin/Debug-x86_64/Game/Game.exe
+bin/Debug-x86_64/Silver/Silver.dll
