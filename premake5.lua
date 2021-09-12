@@ -18,6 +18,9 @@ project "Silver"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "pch.h"
+	pchsource "Silver/src/pch.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",
