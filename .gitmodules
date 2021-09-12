@@ -1,3 +1,6 @@
 [submodule "Silver/vendor/spdlog"]
 	path = Silver/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Silver/vendor/GLFW"]
+	path = Silver/vendor/GLFW
+	url = https://github.com/DevilEvilSilver/glfw

@@ -8,7 +8,7 @@ namespace Silver {
 
 	Application::Application()
 	{
-
+		m_Window = std::unique_ptr<Window>(Window::Create());
 	}
 
 	Application::~Application()
@@ -21,7 +21,10 @@ namespace Silver {
 		WindowResizeEvent e(1280, 720);
 		SV_TRACE(e.GetName());
 
-		while (true);
+		while (m_Running)
+		{
+			m_Window->Update();
+		}
 	}
 
 }

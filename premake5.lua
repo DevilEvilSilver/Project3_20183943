@@ -10,6 +10,12 @@ workspace "Project3"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["spdlog"] = "Silver/vendor/spdlog/include"
+IncludeDir["GLFW"] = "Silver/vendor/GLFW/include"
+
+include "Silver/vendor/GLFW"
+
 project "Silver"
 	location "Silver"
 	kind "SharedLib"
@@ -30,7 +36,14 @@ project "Silver"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links
+	{
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -77,8 +90,9 @@ project "Game"
 
 	includedirs
 	{
-		"Silver/vendor/spdlog/include",
-		"Silver/src"
+		"Silver/src",
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.GLFW}"
 	}
 
 	links
