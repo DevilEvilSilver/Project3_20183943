@@ -21,6 +21,13 @@ namespace Silver {
 		MouseButtonPressedEvent(int mousecode)
 			: MouseButtonEvent(mousecode) {}
 
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "MouseButtonPressedEvent: " << m_MouseCode;
+			return ss.str();
+		}
+
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
@@ -29,6 +36,13 @@ namespace Silver {
 	public:
 		MouseButtonReleasedEvent(int mousecode)
 			: MouseButtonEvent(mousecode) {}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "MouseButtonReleasedEvent: " << m_MouseCode;
+			return ss.str();
+		}
 
 		EVENT_CLASS_TYPE(MouseButtonReleased)
 	};
@@ -42,6 +56,13 @@ namespace Silver {
 
 		float GetX() const { return m_X; }
 		float GetY() const { return m_Y; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "MouseMovedEvent: " << m_X << ", " << m_Y;
+			return ss.str();
+		}
 
 		EVENT_CLASS_TYPE(MouseMoved)
 		
@@ -58,6 +79,12 @@ namespace Silver {
 		float GetXOffset() const { return m_XOffset; }
 		float GetYOffset() const { return m_YOffset; }
 
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "MouseScrolledEvent: " << m_XOffset << ", " << m_YOffset;
+			return ss.str();
+		}
 
 		EVENT_CLASS_TYPE(MouseScrolled)
 

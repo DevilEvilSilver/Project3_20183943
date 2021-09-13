@@ -9,7 +9,6 @@ namespace Silver {
 		WindowCloseEvent() = default;
 
 		EVENT_CLASS_TYPE(WindowClose)
-
 	};
 
 	class WindowResizeEvent : public Event
@@ -20,6 +19,13 @@ namespace Silver {
 
 		unsigned int GetWidth() const { return m_Width; }
 		unsigned int GetHeight() const { return m_Height; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
+			return ss.str();
+		}
 
 		EVENT_CLASS_TYPE(WindowResize)
 

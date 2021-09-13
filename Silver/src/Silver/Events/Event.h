@@ -1,4 +1,5 @@
 #pragma once
+#include "pch.h"
 
 namespace Silver {
 
@@ -19,6 +20,7 @@ namespace Silver {
 
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
+		virtual std::string ToString() const { return GetName(); }
 	};
 
 	class EventDispatcher
@@ -41,6 +43,11 @@ namespace Silver {
 	private:
 		Event& m_Event;
 	};
+
+	inline std::ostream& operator<<(std::ostream& os, const Event& e)
+	{
+		return os << e.ToString();
+	}
 
 }
 

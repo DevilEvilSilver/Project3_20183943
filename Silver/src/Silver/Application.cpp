@@ -19,7 +19,7 @@ namespace Silver {
 	void Application::Run()
 	{
 		WindowResizeEvent e(1280, 720);
-		SV_TRACE(e.GetName());
+		SV_TRACE(e);
 
 		while (m_Running)
 		{
