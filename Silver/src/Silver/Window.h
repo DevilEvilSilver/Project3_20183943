@@ -27,7 +27,7 @@ namespace Silver {
 		Window(const WindowProps& props);
 		virtual ~Window();
 
-		void Update();
+		void OnUpdate();
 
 		unsigned int GetWidth() const { return m_Data.Width; }
 		unsigned int GetHeight() const { return m_Data.Height; }
