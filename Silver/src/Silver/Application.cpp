@@ -2,7 +2,6 @@
 #include "Application.h"
 
 #include "Silver/Log.h"
-#include "Silver/Events/ApplicationEvent.h"
 
 namespace Silver {
 
@@ -21,6 +20,9 @@ namespace Silver {
 
 	void Application::OnEvent(Event& e)
 	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+
 		SV_CORE_INFO("{0}", e);
 	}
 
@@ -33,6 +35,12 @@ namespace Silver {
 
 			m_Window->OnUpdate();
 		}
+	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
 	}
 
 }
