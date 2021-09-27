@@ -6,6 +6,8 @@
 #include "Silver/Events/MouseEvent.h"
 #include "Silver/Events/ApplicationEvent.h"
 
+#include <glad/glad.h>
+
 namespace Silver {
 
 	static bool s_GLFWInitialized = false;
@@ -49,6 +51,10 @@ namespace Silver {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		{
+			SV_CORE_ERROR("Failed to init Glad!");
+		}
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 

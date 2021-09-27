@@ -13,8 +13,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["spdlog"] = "Silver/vendor/spdlog/include"
 IncludeDir["GLFW"] = "Silver/vendor/GLFW/include"
+IncludeDir["Glad"] = "Silver/vendor/Glad/include"
 
 include "Silver/vendor/GLFW"
+include "Silver/vendor/Glad"
 
 project "Silver"
 	location "Silver"
@@ -37,12 +39,14 @@ project "Silver"
 	{
 		"%{prj.name}/src",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links
 	{
 		"GLFW",
+		"Glad",
 		"opengl32.lib"
 	}
 
@@ -54,7 +58,8 @@ project "Silver"
 		defines
 		{
 			"SV_PLATFORM_WINDOWS",
-			"SV_BUILD_DLL"
+			"SV_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
@@ -95,7 +100,7 @@ project "Game"
 	{
 		"Silver/src",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
 	}
 
 	links

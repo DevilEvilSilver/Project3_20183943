@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Application.h"
-
 #include "Silver/Log.h"
+
+#include <glad/glad.h>
 
 namespace Silver {
 
@@ -22,8 +23,6 @@ namespace Silver {
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
-
-		SV_CORE_TRACE("{0}", event);
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
