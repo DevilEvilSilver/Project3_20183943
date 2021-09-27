@@ -20,11 +20,11 @@ namespace Silver {
 	public:
 		virtual ~Event() = default;
 
-		bool handled = false;
-
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual std::string ToString() const { return GetName(); }
+
+		bool m_Handled = false;
 	};
 
 	class EventDispatcher
@@ -38,7 +38,7 @@ namespace Silver {
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.handled != func(static_cast<T&>(m_Event));
+				m_Event.m_Handled != func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

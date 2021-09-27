@@ -64,14 +64,17 @@ project "Silver"
 
 	filter "configurations:Debug"
 		defines "SV_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "SV_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "SV_DIST"
+		buildoptions "/MD"
 		optimize "On"
 
 project "Game"
@@ -112,12 +115,15 @@ project "Game"
 
 	filter "configurations:Debug"
 		defines "SV_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "SV_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "SV_DIST"
+		buildoptions "/MD"
 		optimize "On"

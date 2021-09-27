@@ -18,12 +18,29 @@ namespace Silver {
 
 	}
 
-	void Application::OnEvent(Event& e)
+	void Application::OnEvent(Event& event)
 	{
-		EventDispatcher dispatcher(e);
+		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
 
-		SV_CORE_INFO("{0}", e);
+		SV_CORE_TRACE("{0}", event);
+
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
+		{
+			if (event.m_Handled)
+				break;
+			(*it)->OnEvent(event);
+		}
+	}
+
+	void Application::PushLayer(Layer * layer)
+	{
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer * layer)
+	{
+		m_LayerStack.PushOverlay(layer);
 	}
 
 	void Application::Run()
@@ -32,6 +49,9 @@ namespace Silver {
 		{
 			glClearColor(0, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate();
 
 			m_Window->OnUpdate();
 		}
