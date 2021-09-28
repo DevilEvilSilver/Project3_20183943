@@ -26,6 +26,7 @@ public:
 	Game()
 	{
 		PushLayer(new TestLayer());
+		PushOverlay(new Silver::ImGuiLayer());
 	}
 
 	~Game()

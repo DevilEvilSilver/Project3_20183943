@@ -11,3 +11,5 @@
 #endif
 
 #define BIT(x) (1 << x)
+
+#define SAFE_DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;

@@ -6,7 +6,7 @@
 #include "Silver/Events/MouseEvent.h"
 #include "Silver/Events/ApplicationEvent.h"
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 namespace Silver {
 

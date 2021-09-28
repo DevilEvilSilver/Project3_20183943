@@ -4,3 +4,6 @@
 [submodule "Silver/vendor/GLFW"]
 	path = Silver/vendor/GLFW
 	url = https://github.com/DevilEvilSilver/glfw
+[submodule "Silver/vendor/ImGui"]
+	path = Silver/vendor/ImGui
+	url = https://github.com/DevilEvilSilver/imgui
