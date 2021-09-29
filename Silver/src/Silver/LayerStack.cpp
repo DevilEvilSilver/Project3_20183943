@@ -5,7 +5,6 @@ namespace Silver {
 
 	LayerStack::LayerStack()
 	{
-		m_LayerIterator = m_Layers.begin();
 	}
 
 	LayerStack::~LayerStack()
@@ -19,7 +18,8 @@ namespace Silver {
 
 	void LayerStack::PushLayer(Layer * layer)
 	{
-		m_LayerIterator = m_Layers.emplace(m_LayerIterator, layer);
+		m_Layers.emplace(m_Layers.begin() + m_LayerIndex, layer);
+		m_LayerIndex++;
 		layer->OnAttach();
 	}
 
@@ -36,7 +36,7 @@ namespace Silver {
 		{
 			layer->OnDetach();
 			m_Layers.erase(it);
-			m_LayerIterator--;
+			m_LayerIndex--;
 		}
 	}
 
