@@ -11,12 +11,13 @@ public:
 
 	void OnUpdate() override
 	{
-		//SV_INFO("Test Layer Update");
+		if (Silver::Input::IsKeyPressed(KEY_A))
+			SV_INFO("bruh .....");
 	}
 
 	void OnEvent(Silver::Event& event) override
 	{
-		SV_TRACE("{0}", event);
+		//SV_TRACE("{0}", event);
 	}
 };
 
