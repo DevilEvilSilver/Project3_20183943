@@ -7,3 +7,6 @@
 [submodule "Silver/vendor/ImGui"]
 	path = Silver/vendor/ImGui
 	url = https://github.com/DevilEvilSilver/imgui
+[submodule "Silver/vendor/glm"]
+	path = Silver/vendor/glm
+	url = https://github.com/DevilEvilSilver/glm

@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "Silver/Events/Event.h"
 
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace Silver {
 
