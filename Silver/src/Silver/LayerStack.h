@@ -6,7 +6,7 @@
 
 namespace Silver {
 
-	class SILVER_API LayerStack
+	class LayerStack
 	{
 	public:
 		LayerStack();

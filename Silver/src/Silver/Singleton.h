@@ -4,7 +4,7 @@
 namespace Silver {
 
 	template <class T>
-	class SILVER_API Singleton
+	class Singleton
 	{
 	protected:
 		Singleton() {}

@@ -8,7 +8,7 @@
 
 namespace Silver {
 
-	class SILVER_API Application
+	class Application
 	{
 	public:
 		Application();
