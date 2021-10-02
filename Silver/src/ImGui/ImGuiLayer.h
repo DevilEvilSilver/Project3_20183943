@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Silver/Layer.h"
-#include "Silver/Events/MouseEvent.h"
-#include "Silver/Events/KeyEvent.h"
-#include "Silver/Events/ApplicationEvent.h"
+#include "Events/MouseEvent.h"
+#include "Events/KeyEvent.h"
+#include "Events/ApplicationEvent.h"
 
 namespace Silver {
 

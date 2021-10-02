@@ -1,10 +1,10 @@
 #pragma once
 #include "Core.h"
 #include "Singleton.h"
-#include "Silver/Events/ApplicationEvent.h"
+#include "Events/ApplicationEvent.h"
 #include "Window.h"
 #include "Silver/LayerStack.h"
-#include "Silver/ImGui/ImGuiLayer.h"
+#include "ImGui/ImGuiLayer.h"
 
 namespace Silver {
 

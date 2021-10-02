@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "Silver/Events/Event.h"
+#include "Events/Event.h"
 
 struct GLFWwindow;
 

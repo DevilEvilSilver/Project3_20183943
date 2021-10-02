@@ -2,9 +2,9 @@
 #include "Window.h"
 #include "Silver.h"
 
-#include "Silver/Events/KeyEvent.h"
-#include "Silver/Events/MouseEvent.h"
-#include "Silver/Events/ApplicationEvent.h"
+#include "Events/KeyEvent.h"
+#include "Events/MouseEvent.h"
+#include "Events/ApplicationEvent.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"

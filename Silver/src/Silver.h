@@ -10,7 +10,7 @@
 #include "Silver/KeyCode.h"
 #include "Silver/MouseButtonCode.h"
 
-#include "Silver/ImGui/ImGuiLayer.h"
+#include "ImGui/ImGuiLayer.h"
 
 // Template
 #include "Silver/Singleton.h"
