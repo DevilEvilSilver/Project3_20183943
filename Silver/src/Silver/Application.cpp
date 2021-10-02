@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Application.h"
 #include "Core.h"
-#include "Silver/Log.h"
 
 #include "glad/glad.h"
 

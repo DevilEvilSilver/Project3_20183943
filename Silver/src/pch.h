@@ -13,6 +13,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Silver/Log.h"
+
 #ifdef SV_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

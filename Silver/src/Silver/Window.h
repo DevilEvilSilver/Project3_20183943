@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Events/Event.h"
+#include "Renderer/RendererContext.h"
 
 struct GLFWwindow;
 
@@ -46,6 +47,7 @@ namespace Silver {
 		virtual void Shutdown();
 
 		GLFWwindow* m_Window;
+		RendererContext* m_Context;
 
 		struct WindowData
 		{
