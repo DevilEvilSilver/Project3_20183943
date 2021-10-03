@@ -116,16 +116,20 @@ namespace Silver {
 		glDetachShader(program, vertexShader);
 		glDetachShader(program, fragmentShader);
 	}
+
 	Shader::~Shader()
 	{
 		glDeleteProgram(m_RendererID);
 	}
+
 	void Shader::Bind()
 	{
 		glUseProgram(m_RendererID);
 	}
+
 	void Shader::Unbind()
 	{
 		glUseProgram(0);
 	}
+
 }
