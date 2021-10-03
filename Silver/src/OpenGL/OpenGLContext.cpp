@@ -20,6 +20,11 @@ namespace Silver {
 		{
 			SV_CORE_ERROR("Failed to init Glad!");
 		}
+
+		SV_CORE_INFO("OpenGL info:");
+		SV_CORE_INFO("	Vendor: {0}", glGetString(GL_VENDOR));
+		SV_CORE_INFO("	Renderer: {0}", glGetString(GL_RENDERER));
+		SV_CORE_INFO("	Version: {0}", glGetString(GL_VERSION));
 	}
 
 	void OpenGLContext::SwapBuffers()

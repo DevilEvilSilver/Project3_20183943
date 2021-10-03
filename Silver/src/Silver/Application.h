@@ -33,6 +33,9 @@ namespace Silver {
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
+		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+
+	private:
 		// SINGLETON 
 		static Application* s_Instance; // !!! Haven't delete anywhere
 	};
