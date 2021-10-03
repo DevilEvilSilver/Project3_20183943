@@ -21,7 +21,7 @@ namespace Silver {
 
 	Application::~Application()
 	{
-		SAFE_DELETE(m_ImGuiLayer);
+
 	}
 
 	void Application::OnEvent(Event& event)

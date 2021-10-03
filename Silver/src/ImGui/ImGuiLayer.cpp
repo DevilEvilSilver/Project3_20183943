@@ -60,7 +60,7 @@ namespace Silver {
 	{
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
-		ImGui::NewFrame();
+		ImGui::DestroyContext();
 	}
 
 	void ImGuiLayer::OnImGuiRender()
