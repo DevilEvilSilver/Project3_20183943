@@ -6,6 +6,29 @@
 
 namespace Silver {
 
+	//tmp
+	static unsigned int DataTypeToOpenGLType(DataType type)
+	{
+		switch (type)
+		{
+		case DataType::Float:	return GL_FLOAT;
+		case DataType::Float2:	return GL_FLOAT;
+		case DataType::Float3:	return GL_FLOAT;
+		case DataType::Float4:	return GL_FLOAT;
+		case DataType::Mat3:	return GL_FLOAT;
+		case DataType::Mat4:	return GL_FLOAT;
+		case DataType::Int:		return GL_INT;
+		case DataType::Int2:	return GL_INT;
+		case DataType::Int3:	return GL_INT;
+		case DataType::Int4:	return GL_INT;
+		case DataType::Bool:	return GL_BOOL;
+		}
+
+		SV_CORE_ERROR("Unknown DataType: Can't convert DataType to OpenGLType!");
+		return 0;
+	}
+
+
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
@@ -22,34 +45,55 @@ namespace Silver {
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
-		float vertices[3 * 3] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f,
+		float vertices[3 * 7] = {
+			-0.5f, -0.5f, 0.0f, 0.2f, 0.1f, 0.9f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.4f, 0.7f, 0.2f, 1.0f,
+			0.0f, 0.5f, 0.0f, 0.8f, 0.1f, 0.2f, 1.0f
 		};
-
 		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		{
+			VertexLayout layout = {
+				{ DataType::Float3, "a_Position"},
+				{ DataType::Float4, "a_Color"}
+			};
+			m_VertexBuffer->SetLayout(layout);
+		}	
 
+		unsigned int index = 0;
+		const auto& layout = m_VertexBuffer->GetLayout();
+		for (const auto& attrib : layout)
+		{
+			glEnableVertexAttribArray(index);
+			glVertexAttribPointer(
+				index, 
+				attrib.GetComponentCount(), 
+				DataTypeToOpenGLType(attrib.type),
+				attrib.normalized ? GL_TRUE : GL_FALSE,
+				layout.GetStride(),
+				(const void*)attrib.offset);
+			index++;
+		}
 
 		unsigned int indices[1 * 3] = {
 			0, 1, 2
 		};
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, std::size(indices)));
+		m_IndexBuffer.reset(IndexBuffer::Create(indices, (unsigned int)std::size(indices)));
 		
 		std::string vertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec4 a_Color;
 			
 			out vec3 v_Position;
+			out vec4 v_Color;
 
 			void main()
 			{
 				gl_Position = vec4(a_Position, 1.0);
 				v_Position = a_Position;
+				v_Color = a_Color;
 			}
 
 		)";
@@ -60,10 +104,12 @@ namespace Silver {
 			layout(location = 0) out vec4 color;
 			
 			in vec3 v_Position;
+			in vec4 v_Color;
 
 			void main()
 			{
 				color = vec4(v_Position * 0.5 + 0.5, 1.0);
+				color = v_Color;
 			}
 
 		)";
