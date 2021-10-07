@@ -5,29 +5,6 @@
 
 namespace Silver {
 
-	//tmp
-	static unsigned int DataTypeToOpenGLType(DataType type)
-	{
-		switch (type)
-		{
-		case DataType::Float:	return GL_FLOAT;
-		case DataType::Float2:	return GL_FLOAT;
-		case DataType::Float3:	return GL_FLOAT;
-		case DataType::Float4:	return GL_FLOAT;
-		case DataType::Mat3:	return GL_FLOAT;
-		case DataType::Mat4:	return GL_FLOAT;
-		case DataType::Int:		return GL_INT;
-		case DataType::Int2:	return GL_INT;
-		case DataType::Int3:	return GL_INT;
-		case DataType::Int4:	return GL_INT;
-		case DataType::Bool:	return GL_BOOL;
-		}
-
-		SV_CORE_ERROR("Unknown DataType: Can't convert DataType to OpenGLType!");
-		return 0;
-	}
-
-
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
@@ -40,80 +17,124 @@ namespace Silver {
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
-		// tmp triangle
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-
-		float vertices[3 * 7] = {
-			-0.5f, -0.5f, 0.0f, 0.2f, 0.1f, 0.9f, 1.0f,
-			0.5f, -0.5f, 0.0f, 0.4f, 0.7f, 0.2f, 1.0f,
-			0.0f, 0.5f, 0.0f, 0.8f, 0.1f, 0.2f, 1.0f
-		};
-		m_VertexBuffer.reset(new VertexBuffer(vertices, sizeof(vertices)));
-
+		// Init Triangle
 		{
-			VertexLayout layout = {
+			m_TriangleVA.reset(new VertexArray());
+
+			float vertices[3 * 7] = {
+				-0.5f, -0.5f, 0.0f, 0.2f, 0.1f, 0.9f, 1.0f,
+				0.5f, -0.5f, 0.0f, 0.4f, 0.7f, 0.2f, 1.0f,
+				0.0f, 0.5f, 0.0f, 0.8f, 0.1f, 0.2f, 1.0f
+			};
+			std::shared_ptr<VertexBuffer> triangleVB;
+			triangleVB.reset(new VertexBuffer(vertices, sizeof(vertices)));
+			triangleVB->SetLayout({
 				{ DataType::Float3, "a_Position"},
 				{ DataType::Float4, "a_Color"}
-			};
-			m_VertexBuffer->SetLayout(layout);
-		}	
+			});
+			m_TriangleVA->AddVertexBuffer(triangleVB);
 
-		unsigned int index = 0;
-		const auto& layout = m_VertexBuffer->GetLayout();
-		for (const auto& attrib : layout)
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(
-				index, 
-				attrib.GetComponentCount(), 
-				DataTypeToOpenGLType(attrib.type),
-				attrib.normalized ? GL_TRUE : GL_FALSE,
-				layout.GetStride(),
-				(const void*)attrib.offset);
-			index++;
+			unsigned int indices[1 * 3] = { 0, 1, 2 };
+			std::shared_ptr<IndexBuffer> triangleIB;
+			triangleIB.reset(new IndexBuffer(indices, sizeof(indices)));
+			m_TriangleVA->SetIndexBuffer(triangleIB);
+
+			std::string vertexSrc = R"(
+				#version 330 core
+
+				layout(location = 0) in vec3 a_Position;
+				layout(location = 1) in vec4 a_Color;
+			
+				out vec3 v_Position;
+				out vec4 v_Color;
+
+				void main()
+				{
+					gl_Position = vec4(a_Position, 1.0);
+					v_Position = a_Position;
+					v_Color = a_Color;
+				}
+
+			)";
+
+			std::string fragmentSrc = R"(
+				#version 330 core
+
+				layout(location = 0) out vec4 color;
+			
+				in vec3 v_Position;
+				in vec4 v_Color;
+
+				void main()
+				{
+					color = vec4(v_Position * 0.5 + 0.5, 1.0);
+					color = v_Color;
+				}
+
+			)";
+
+			m_TriangleShader.reset(new Shader(vertexSrc, fragmentSrc));
 		}
-
-		unsigned int indices[1 * 3] = {
-			0, 1, 2
-		};
-		m_IndexBuffer.reset(new IndexBuffer(indices, (unsigned int)std::size(indices)));
 		
-		std::string vertexSrc = R"(
-			#version 330 core
+		// Init Square
+		{
+			m_SquareVA.reset(new VertexArray());
 
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
+			float vertices[3 * 4] = {
+				-0.7f, -0.7f, 0.0f,
+				0.7f, -0.7f, 0.0f,
+				0.7f, 0.7f, 0.0f,
+				-0.7f, 0.7f, 0.0f
+
+			};
+			std::shared_ptr<VertexBuffer> squareVB;
+			squareVB.reset(new VertexBuffer(vertices, sizeof(vertices)));
+			squareVB->SetLayout({
+				{ DataType::Float3, "a_Position"}
+				});
+			m_SquareVA->AddVertexBuffer(squareVB);
+
+			unsigned int indices[2 * 3] = {
+				0, 1, 2,
+				0, 2, 3
+			};
+			std::shared_ptr<IndexBuffer> squareIB;
+			squareIB.reset(new IndexBuffer(indices, (unsigned int)std::size(indices)));
+			m_SquareVA->SetIndexBuffer(squareIB);
+
+			std::string vertexSrc2 = R"(
+				#version 330 core
+
+				layout(location = 0) in vec3 a_Position;
 			
-			out vec3 v_Position;
-			out vec4 v_Color;
+				out vec3 v_Position;
+				out vec4 v_Color;
 
-			void main()
-			{
-				gl_Position = vec4(a_Position, 1.0);
-				v_Position = a_Position;
-				v_Color = a_Color;
-			}
+				void main()
+				{
+					gl_Position = vec4(a_Position, 1.0);
+					v_Position = a_Position;
+				}
 
-		)";
+			)";
 
-		std::string fragmentSrc = R"(
-			#version 330 core
+			std::string fragmentSrc2 = R"(
+				#version 330 core
 
-			layout(location = 0) out vec4 color;
+				layout(location = 0) out vec4 color;
 			
-			in vec3 v_Position;
-			in vec4 v_Color;
+				in vec3 v_Position;
+				in vec4 v_Color;
 
-			void main()
-			{
-				color = vec4(v_Position * 0.5 + 0.5, 1.0);
-				color = v_Color;
-			}
+				void main()
+				{
+					color = vec4(v_Position * 0.5 + 0.5, 1.0);
+				}
 
-		)";
+			)";
 
-		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+			m_SquareShader.reset(new Shader(vertexSrc2, fragmentSrc2));
+		}
 	}
 
 	Application::~Application()
@@ -151,10 +172,15 @@ namespace Silver {
 			glClearColor(0.2f, 0.2f, 0.2f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			// tmp square
+			m_SquareShader->Bind();
+			m_SquareVA->Bind();
+			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+
 			// tmp triangle
-			m_Shader->Bind();
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_TriangleShader->Bind();
+			m_TriangleVA->Bind();
+			glDrawElements(GL_TRIANGLES, m_TriangleVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
