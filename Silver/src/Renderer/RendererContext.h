@@ -1,14 +1,20 @@
 #pragma once
 
+struct GLFWwindow;
+
 namespace Silver {
 
 	class RendererContext
 	{
 	public:
-		virtual ~RendererContext() = default;
-		
-		virtual void Init() = 0;
-		virtual void SwapBuffers() = 0;
+		RendererContext(GLFWwindow* window);
+		~RendererContext() = default;
+
+		void Init();
+		void SwapBuffers();
+
+	private:
+		GLFWwindow* m_WindowHandle;
 	};
 
 }

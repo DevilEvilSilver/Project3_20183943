@@ -1,6 +1,4 @@
 #pragma once
-#include "Core.h"
-#include "Singleton.h"
 #include "Events/ApplicationEvent.h"
 #include "Window.h"
 #include "Silver/LayerStack.h"

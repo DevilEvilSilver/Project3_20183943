@@ -68,6 +68,7 @@ namespace Silver {
 		}
 	};
 
+	// VERTEX LAYOUT ----------------------------------------------------------
 	class VertexLayout 
 	{
 	public:
@@ -105,31 +106,40 @@ namespace Silver {
 		unsigned int m_Stride = 0;
 	};
 
+	// VERTEX BUFFER ----------------------------------------------------------
 	class VertexBuffer
 	{
 	public:
-		virtual ~VertexBuffer() = default;
+		VertexBuffer(float* vertices, unsigned int size);
+		virtual ~VertexBuffer();
 
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
+		void Bind() const;
+		void Unbind() const;
 
-		virtual void SetLayout(const VertexLayout& layout) = 0;
-		virtual const VertexLayout& GetLayout() const = 0;
+		void SetLayout(const VertexLayout& layout) { m_Layout = layout; }
 
-		static VertexBuffer* Create(float* vertices, unsigned int size);
+		const VertexLayout& GetLayout() const { return m_Layout; }
+
+	private:
+		uint32_t m_RendererID;
+		VertexLayout m_Layout;
 	};
 
+	// INDEX BUFFER ----------------------------------------------------------
 	class IndexBuffer
 	{
 	public:
-		virtual ~IndexBuffer() = default;
+		IndexBuffer(unsigned int * indices, unsigned int count);
+		virtual ~IndexBuffer();
 
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
+		void Bind() const;
+		void Unbind() const;
 
-		virtual unsigned int GetCount() const = 0;
+		unsigned int GetCount() const { return m_Count; }
 
-		static IndexBuffer* Create(unsigned int * indices, unsigned int count);
+	private:
+		uint32_t m_RendererID;
+		unsigned int m_Count;
 	};
 
 }

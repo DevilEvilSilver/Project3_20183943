@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "ImGuiLayer.h"
-#include "Silver/Core.h"
 #include "Silver/Application.h"
 
 #include "imgui.h"

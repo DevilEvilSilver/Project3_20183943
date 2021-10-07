@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Silver/Core.h"
 #include "Events/Event.h"
 
 namespace Silver {

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Application.h"
-#include "Core.h"
 
 #include <glad/glad.h>
 
@@ -36,7 +35,7 @@ namespace Silver {
 		s_Instance = this;
 
 		m_Window = std::unique_ptr<Window>(Window::Create());
-		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+		m_Window->SetEventCallback(BIND_FN(Application::OnEvent));
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
@@ -50,7 +49,7 @@ namespace Silver {
 			0.5f, -0.5f, 0.0f, 0.4f, 0.7f, 0.2f, 1.0f,
 			0.0f, 0.5f, 0.0f, 0.8f, 0.1f, 0.2f, 1.0f
 		};
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+		m_VertexBuffer.reset(new VertexBuffer(vertices, sizeof(vertices)));
 
 		{
 			VertexLayout layout = {
@@ -78,7 +77,7 @@ namespace Silver {
 		unsigned int indices[1 * 3] = {
 			0, 1, 2
 		};
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, (unsigned int)std::size(indices)));
+		m_IndexBuffer.reset(new IndexBuffer(indices, (unsigned int)std::size(indices)));
 		
 		std::string vertexSrc = R"(
 			#version 330 core
@@ -125,7 +124,7 @@ namespace Silver {
 	void Application::OnEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_FN(Application::OnWindowClose));
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{

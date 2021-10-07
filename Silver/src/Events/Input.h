@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Silver/Core.h"
-
 namespace Silver {
 
 	class Input

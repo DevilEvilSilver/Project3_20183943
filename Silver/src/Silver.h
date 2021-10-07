@@ -1,16 +1,15 @@
 #pragma once
 
 // For use by applications
-
-#include "Silver/Core.h"
 #include "Silver/Application.h"
-#include "Silver/Log.h"
 #include "Silver/Layer.h"
-#include "Silver/Input.h"
-#include "Silver/KeyCode.h"
-#include "Silver/MouseButtonCode.h"
+
+#include "Events/Input.h"
+#include "Events/KeyCode.h"
+#include "Events/MouseButtonCode.h"
 
 #include "ImGui/ImGuiLayer.h"
 
-// Template
-#include "Silver/Singleton.h"
+#include "Utils/Utils.h"
+#include "Utils/Log.h"
+#include "Utils/Singleton.h"

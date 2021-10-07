@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "Events/Event.h"
 #include "Renderer/RendererContext.h"
 
