@@ -5,8 +5,7 @@
 #include "Silver/Layer.h"
 
 #include "Events/Input.h"
-#include "Events/KeyCode.h"
-#include "Events/MouseButtonCode.h"
+#include "Events/EventCode.h"
 
 #include "ImGui/ImGuiLayer.h"
 
