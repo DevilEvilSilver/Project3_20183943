@@ -6,6 +6,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
+#include "Renderer/Camera/OrthographicCamera.h"
 
 namespace Silver {
 
@@ -39,6 +40,8 @@ namespace Silver {
 		std::shared_ptr<VertexArray> m_SquareVA;
 		std::shared_ptr<Shader> m_TriangleShader;
 		std::shared_ptr<Shader> m_SquareShader;
+
+		OrthographicCamera m_Camera;
 	
 	private:
 		// SINGLETON 

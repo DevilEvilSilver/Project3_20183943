@@ -8,6 +8,7 @@ namespace Silver {
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
+		: m_Camera(-3.2f, 3.2f, -1.8f, 1.8f)
 	{
 		s_Instance = this;
 
@@ -45,12 +46,14 @@ namespace Silver {
 				layout(location = 0) in vec3 a_Position;
 				layout(location = 1) in vec4 a_Color;
 			
+				uniform	mat4 u_ViewProjection;	
+
 				out vec3 v_Position;
 				out vec4 v_Color;
 
 				void main()
 				{
-					gl_Position = vec4(a_Position, 1.0);
+					gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
 					v_Position = a_Position;
 					v_Color = a_Color;
 				}
@@ -106,13 +109,15 @@ namespace Silver {
 				#version 330 core
 
 				layout(location = 0) in vec3 a_Position;
+
+				uniform	mat4 u_ViewProjection;
 			
 				out vec3 v_Position;
 				out vec4 v_Color;
 
 				void main()
 				{
-					gl_Position = vec4(a_Position, 1.0);
+					gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
 					v_Position = a_Position;
 				}
 
@@ -172,13 +177,10 @@ namespace Silver {
 			RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 			RenderCommand::Clear();
 
-			Renderer::BeginScene();
+			Renderer::BeginScene(m_Camera);
 
-			m_SquareShader->Bind();
-			Renderer::Submit(m_SquareVA);
-
-			m_TriangleShader->Bind();
-			Renderer::Submit(m_TriangleVA);
+			Renderer::Submit(m_SquareShader, m_SquareVA);
+			Renderer::Submit(m_TriangleShader, m_TriangleVA);
 
 			Renderer::EndScene();
 
