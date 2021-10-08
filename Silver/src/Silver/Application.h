@@ -34,14 +34,6 @@ namespace Silver {
 		ImGuiLayer* m_ImGuiLayer; //destroyed in m_LayerStack
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-
-		// tmp
-		std::shared_ptr<VertexArray> m_TriangleVA;
-		std::shared_ptr<VertexArray> m_SquareVA;
-		std::shared_ptr<Shader> m_TriangleShader;
-		std::shared_ptr<Shader> m_SquareShader;
-
-		OrthographicCamera m_Camera;
 	
 	private:
 		// SINGLETON 
