@@ -1,19 +1,19 @@
 #include "pch.h"
-#include "RendererContext.h"
+#include "Context.h"
 
 #include <glad/glad.h>
 #include "GLFW/glfw3.h"
 
 namespace Silver {
 
-	RendererContext::RendererContext(GLFWwindow * window)
+	Context::Context(GLFWwindow * window)
 		: m_WindowHandle(window)
 	{
 		if (!window)
 			SV_CORE_ERROR("window handle is null!");
 	}
 
-	void RendererContext::Init()
+	void Context::Init()
 	{
 		glfwMakeContextCurrent(m_WindowHandle);
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -27,7 +27,7 @@ namespace Silver {
 		SV_CORE_INFO("	Version: {0}", glGetString(GL_VERSION));
 	}
 
-	void RendererContext::SwapBuffers()
+	void Context::SwapBuffers()
 	{
 		glfwSwapBuffers(m_WindowHandle);
 	}

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Application.h"
-
-#include <glad/glad.h>
+#include "Renderer/Renderer.h"
+#include "Renderer/RenderCommand.h"
 
 namespace Silver {
 
@@ -169,18 +169,18 @@ namespace Silver {
 	{
 		while (m_Running)
 		{
-			glClearColor(0.2f, 0.2f, 0.2f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
+			RenderCommand::Clear();
 
-			// tmp square
+			Renderer::BeginScene();
+
 			m_SquareShader->Bind();
-			m_SquareVA->Bind();
-			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_SquareVA);
 
-			// tmp triangle
 			m_TriangleShader->Bind();
-			m_TriangleVA->Bind();
-			glDrawElements(GL_TRIANGLES, m_TriangleVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_TriangleVA);
+
+			Renderer::EndScene();
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();

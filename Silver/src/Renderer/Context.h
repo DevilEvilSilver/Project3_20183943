@@ -4,11 +4,11 @@ struct GLFWwindow;
 
 namespace Silver {
 
-	class RendererContext
+	class Context
 	{
 	public:
-		RendererContext(GLFWwindow* window);
-		~RendererContext() = default;
+		Context(GLFWwindow* window);
+		~Context() = default;
 
 		void Init();
 		void SwapBuffers();
