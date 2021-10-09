@@ -19,4 +19,5 @@
 
 #include "Utils/Utils.h"
 #include "Utils/Log.h"
+#include "Utils/Timer.h"
 #include "Utils/Singleton.h"

@@ -1,12 +1,13 @@
 #include <Silver.h>
 
 #include "imgui.h"
+#include <glm/gtx/transform.hpp>
 
 class TestLayer : public Silver::Layer
 {
 public:
 	TestLayer()
-		:Layer("TestLayer"), m_Camera(-3.2f, 3.2f, -1.8f, 1.8f), m_CameraPosition(0.0f)
+		:Layer("TestLayer"), m_Camera(-3.2f, 3.2f, -1.8f, 1.8f), m_CameraPosition(0.0f), m_SquarePosition(0.0f)
 	{
 		// Init Triangle
 		{
@@ -37,13 +38,14 @@ public:
 				layout(location = 1) in vec4 a_Color;
 			
 				uniform	mat4 u_ViewProjection;	
+				uniform	mat4 u_World;
 
 				out vec3 v_Position;
 				out vec4 v_Color;
 
 				void main()
 				{
-					gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+					gl_Position = u_ViewProjection * u_World * vec4(a_Position, 1.0);
 					v_Position = a_Position;
 					v_Color = a_Color;
 				}
@@ -101,13 +103,14 @@ public:
 				layout(location = 0) in vec3 a_Position;
 
 				uniform	mat4 u_ViewProjection;
-			
+				uniform	mat4 u_World;
+
 				out vec3 v_Position;
 				out vec4 v_Color;
 
 				void main()
 				{
-					gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+					gl_Position = u_ViewProjection * u_World * vec4(a_Position, 1.0);
 					v_Position = a_Position;
 				}
 
@@ -146,24 +149,29 @@ public:
 			m_CameraPosition.y += m_CameraMoveSpeed * deltaTime;
 
 		if (Silver::Input::IsKeyPressed(KEY_A))
-			m_CameraYRotation += m_CameraRotationSpeed * deltaTime;
+			m_CameraZRotation += m_CameraRotationSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_D))
-			m_CameraYRotation -= m_CameraRotationSpeed * deltaTime;
-		if (Silver::Input::IsKeyPressed(KEY_W))
-			m_CameraXRotation += m_CameraRotationSpeed * deltaTime;
-		else if (Silver::Input::IsKeyPressed(KEY_S))
-			m_CameraXRotation -= m_CameraRotationSpeed * deltaTime;
+			m_CameraZRotation -= m_CameraRotationSpeed * deltaTime;
+
+		if (Silver::Input::IsKeyPressed(KEY_J))
+			m_SquarePosition.x -= m_SquareSpeed * deltaTime;
+		else if (Silver::Input::IsKeyPressed(KEY_L))
+			m_SquarePosition.x += m_SquareSpeed * deltaTime;
+		if (Silver::Input::IsKeyPressed(KEY_I))
+			m_SquarePosition.y += m_SquareSpeed * deltaTime;
+		else if (Silver::Input::IsKeyPressed(KEY_K))
+			m_SquarePosition.y -= m_SquareSpeed * deltaTime;
 
 		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetXRotation(m_CameraXRotation);
-		m_Camera.SetYRotation(m_CameraYRotation);
+		m_Camera.SetZRotation(m_CameraZRotation);
+		glm::mat4 m_SquareWorldMatrix = glm::translate(glm::mat4(1.0f), m_SquarePosition);
 
 		Silver::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		Silver::RenderCommand::Clear();
 
 		Silver::Renderer::BeginScene(m_Camera);
 
-		Silver::Renderer::Submit(m_SquareShader, m_SquareVA);
+		Silver::Renderer::Submit(m_SquareShader, m_SquareVA, m_SquareWorldMatrix);
 		Silver::Renderer::Submit(m_TriangleShader, m_TriangleVA);
 
 		Silver::Renderer::EndScene();
@@ -191,9 +199,11 @@ private:
 	Silver::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
 	float m_CameraMoveSpeed = 2.0f;
-	float m_CameraXRotation = 0.0f;
-	float m_CameraYRotation = 0.0f;
+	float m_CameraZRotation = 0.0f;
 	float m_CameraRotationSpeed = 90.0f;
+
+	glm::vec3 m_SquarePosition;
+	float m_SquareSpeed = 2.0f;
 };
 
 class Game : public Silver::Application

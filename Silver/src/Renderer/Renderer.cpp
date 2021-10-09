@@ -15,10 +15,11 @@ namespace Silver {
 	{
 	}
 
-	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4 & worldMatrix)
 	{
 		shader->Bind();
 		shader->SubmitUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SubmitUniformMat4("u_World", worldMatrix);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
