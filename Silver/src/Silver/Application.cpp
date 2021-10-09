@@ -50,8 +50,10 @@ namespace Silver {
 	{
 		while (m_Running)
 		{
+			m_Timer.UpdateTimestep();
+
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(m_Timer.GetTimestep());
 
 			// Temporary here, need its own render func/thread
 			m_ImGuiLayer->Begin();

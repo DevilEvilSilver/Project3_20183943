@@ -1,5 +1,6 @@
 # Dirs
 .vs/
+bin/
 bin-int/
 
 # Files
@@ -11,8 +12,4 @@ bin-int/
 *.lib
 *.ilk
 *.exp
-bin/Debug-x86_64/Game/Game.exe
-bin/Debug-x86_64/Silver/Silver.dll
-bin/Debug-x86_64/Game/Silver.dll
 Game/imgui.ini
-bin/Debug-x86_64/Game/imgui.ini

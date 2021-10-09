@@ -132,24 +132,31 @@ public:
 		}
 	}
 
-	void OnUpdate() override
+	void OnUpdate(float deltaTime) override
 	{
+		SV_TRACE("Delta Time: {0} ({1} ms)", deltaTime, deltaTime * 1000.f);
+
 		if (Silver::Input::IsKeyPressed(KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMoveSpeed;
+			m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMoveSpeed;
+			m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
 		if (Silver::Input::IsKeyPressed(KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMoveSpeed;
+			m_CameraPosition.y -= m_CameraMoveSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_UP))
-			m_CameraPosition.y += m_CameraMoveSpeed;
+			m_CameraPosition.y += m_CameraMoveSpeed * deltaTime;
 
 		if (Silver::Input::IsKeyPressed(KEY_A))
-			m_CameraRotation += m_CameraRotationSpeed;
+			m_CameraYRotation += m_CameraRotationSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_D))
-			m_CameraRotation -= m_CameraRotationSpeed;
+			m_CameraYRotation -= m_CameraRotationSpeed * deltaTime;
+		if (Silver::Input::IsKeyPressed(KEY_W))
+			m_CameraXRotation += m_CameraRotationSpeed * deltaTime;
+		else if (Silver::Input::IsKeyPressed(KEY_S))
+			m_CameraXRotation -= m_CameraRotationSpeed * deltaTime;
 
 		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetZRotation(m_CameraRotation);
+		m_Camera.SetXRotation(m_CameraXRotation);
+		m_Camera.SetYRotation(m_CameraYRotation);
 
 		Silver::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		Silver::RenderCommand::Clear();
@@ -164,7 +171,9 @@ public:
 
 	void OnImGuiRender() override
 	{
-
+		//ImGui::Begin("FPS");
+		//ImGui::Text("");
+		//ImGui::End();
 	}
 
 	void OnEvent(Silver::Event& event) override
@@ -181,9 +190,10 @@ private:
 
 	Silver::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
-	float m_CameraMoveSpeed = 0.1f;
-	float m_CameraRotation = 0.0f;
-	float m_CameraRotationSpeed = 10.0f;
+	float m_CameraMoveSpeed = 2.0f;
+	float m_CameraXRotation = 0.0f;
+	float m_CameraYRotation = 0.0f;
+	float m_CameraRotationSpeed = 90.0f;
 };
 
 class Game : public Silver::Application

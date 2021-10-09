@@ -7,6 +7,7 @@
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Camera/OrthographicCamera.h"
+#include"Utils/Timer.h"
 
 namespace Silver {
 
@@ -34,6 +35,7 @@ namespace Silver {
 		ImGuiLayer* m_ImGuiLayer; //destroyed in m_LayerStack
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		Timer m_Timer;
 	
 	private:
 		// SINGLETON 
