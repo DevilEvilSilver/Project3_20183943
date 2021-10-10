@@ -2,12 +2,13 @@
 
 #include "imgui.h"
 #include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class TestLayer : public Silver::Layer
 {
 public:
 	TestLayer()
-		:Layer("TestLayer"), m_Camera(-3.2f, 3.2f, -1.8f, 1.8f), m_CameraPosition(0.0f), m_SquarePosition(0.0f)
+		:Layer("TestLayer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_TrianglePosition(0.0f), m_SquareColor(0.0f)
 	{
 		// Init Triangle
 		{
@@ -121,12 +122,14 @@ public:
 
 				layout(location = 0) out vec4 color;
 			
+				uniform vec3 u_Color;
+
 				in vec3 v_Position;
 				in vec4 v_Color;
 
 				void main()
 				{
-					color = vec4(v_Position * 0.5 + 0.5, 1.0);
+					color = vec4(u_Color, 1.0);
 				}
 
 			)";
@@ -154,34 +157,47 @@ public:
 			m_CameraZRotation -= m_CameraRotationSpeed * deltaTime;
 
 		if (Silver::Input::IsKeyPressed(KEY_J))
-			m_SquarePosition.x -= m_SquareSpeed * deltaTime;
+			m_TrianglePosition.x -= m_TriangleSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_L))
-			m_SquarePosition.x += m_SquareSpeed * deltaTime;
+			m_TrianglePosition.x += m_TriangleSpeed * deltaTime;
 		if (Silver::Input::IsKeyPressed(KEY_I))
-			m_SquarePosition.y += m_SquareSpeed * deltaTime;
+			m_TrianglePosition.y += m_TriangleSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_K))
-			m_SquarePosition.y -= m_SquareSpeed * deltaTime;
+			m_TrianglePosition.y -= m_TriangleSpeed * deltaTime;
 
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetZRotation(m_CameraZRotation);
-		glm::mat4 m_SquareWorldMatrix = glm::translate(glm::mat4(1.0f), m_SquarePosition);
+		glm::mat4 triangleWorldMatrix = glm::translate(glm::mat4(1.0f), m_TrianglePosition);
+		glm::mat4 tileScale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
 		Silver::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		Silver::RenderCommand::Clear();
 
 		Silver::Renderer::BeginScene(m_Camera);
 
-		Silver::Renderer::Submit(m_SquareShader, m_SquareVA, m_SquareWorldMatrix);
-		Silver::Renderer::Submit(m_TriangleShader, m_TriangleVA);
+		m_SquareShader->Bind();
+		m_SquareShader->SubmitUniformFloat3("u_Color", m_SquareColor);
+
+		for (unsigned int x = 0; x < 20; x++)
+		{
+			for (unsigned int y = 0; y < 20; y++)
+			{
+				glm::vec3 pos(x * 0.15f, y * 0.15f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * tileScale;
+				Silver::Renderer::Submit(m_SquareShader, m_SquareVA, transform);
+			}
+		}
+
+		Silver::Renderer::Submit(m_TriangleShader, m_TriangleVA, triangleWorldMatrix);
 
 		Silver::Renderer::EndScene();
 	}
 
 	void OnImGuiRender() override
 	{
-		//ImGui::Begin("FPS");
-		//ImGui::Text("");
-		//ImGui::End();
+		ImGui::Begin("Setting");
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::End();
 	}
 
 	void OnEvent(Silver::Event& event) override
@@ -202,8 +218,9 @@ private:
 	float m_CameraZRotation = 0.0f;
 	float m_CameraRotationSpeed = 90.0f;
 
-	glm::vec3 m_SquarePosition;
-	float m_SquareSpeed = 2.0f;
+	glm::vec3 m_SquareColor;
+	glm::vec3 m_TrianglePosition;
+	float m_TriangleSpeed = 2.0f;
 };
 
 class Game : public Silver::Application
