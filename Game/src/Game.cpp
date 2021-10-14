@@ -8,7 +8,7 @@ class TestLayer : public Silver::Layer
 {
 public:
 	TestLayer()
-		:Layer("TestLayer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_TrianglePosition(0.0f), m_SquareColor(0.0f)
+		:Layer("TestLayer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_TrianglePosition(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
 	{
 		// Init Triangle
 		{
@@ -76,17 +76,18 @@ public:
 		{
 			m_SquareVA.reset(new Silver::VertexArray());
 
-			float vertices[3 * 4] = {
-				-0.7f, -0.7f, 0.0f,
-				0.7f, -0.7f, 0.0f,
-				0.7f, 0.7f, 0.0f,
-				-0.7f, 0.7f, 0.0f
+			float vertices[5 * 4] = {
+				-0.7f, -0.7f, 0.0f, 0.0f, 0.0f,
+				0.7f, -0.7f, 0.0f, 1.0f, 0.0f,
+				0.7f, 0.7f, 0.0f, 1.0f, 1.0f,
+				-0.7f, 0.7f, 0.0f, 0.0f, 1.0f
 
 			};
 			std::shared_ptr<Silver::VertexBuffer> squareVB;
 			squareVB.reset(new Silver::VertexBuffer(vertices, sizeof(vertices)));
 			squareVB->SetLayout({
-				{ Silver::DataType::Float3, "a_Position"}
+				{ Silver::DataType::Float3, "a_Position"},
+				{ Silver::DataType::Float2, "a_TexCoord"}
 				});
 			m_SquareVA->AddVertexBuffer(squareVB);
 
@@ -135,6 +136,47 @@ public:
 			)";
 
 			m_SquareShader.reset(new Silver::Shader(vertexSrc2, fragmentSrc2));
+
+			std::string textureVertexSrc = R"(
+				#version 330 core
+
+				layout(location = 0) in vec3 a_Position;
+				layout(location = 1) in vec2 a_TexCoord;
+
+				uniform	mat4 u_ViewProjection;
+				uniform	mat4 u_World;
+
+				out vec2 v_TexCoord;
+
+				void main()
+				{
+					gl_Position = u_ViewProjection * u_World * vec4(a_Position, 1.0);
+					v_TexCoord = a_TexCoord;
+				}
+
+			)";
+
+			std::string textureFragmentSrc = R"(
+				#version 330 core
+
+				layout(location = 0) out vec4 color;
+
+				in vec2 v_TexCoord;
+
+				uniform sampler2D u_Texture;
+
+				void main()
+				{
+					color = texture(u_Texture, v_TexCoord);
+				}
+
+			)";
+
+			m_TextureShader.reset(new Silver::Shader(textureVertexSrc, textureFragmentSrc));
+
+			m_Texture.reset(new Silver::Texture2D("../Assets/char.tga"));
+			m_TextureShader->Bind();
+			m_TextureShader->SubmitUniformInt("u_Texture", 0);
 		}
 	}
 
@@ -188,7 +230,10 @@ public:
 			}
 		}
 
-		Silver::Renderer::Submit(m_TriangleShader, m_TriangleVA, triangleWorldMatrix);
+		m_Texture->Bind();
+		Silver::Renderer::Submit(m_TextureShader, m_SquareVA, triangleWorldMatrix);
+		
+		//Silver::Renderer::Submit(m_TriangleShader, m_TriangleVA, triangleWorldMatrix);
 
 		Silver::Renderer::EndScene();
 	}
@@ -210,7 +255,8 @@ private:
 	std::shared_ptr<Silver::VertexArray> m_TriangleVA;
 	std::shared_ptr<Silver::VertexArray> m_SquareVA;
 	std::shared_ptr<Silver::Shader> m_TriangleShader;
-	std::shared_ptr<Silver::Shader> m_SquareShader;
+	std::shared_ptr<Silver::Shader> m_SquareShader, m_TextureShader;
+	std::shared_ptr<Silver::Texture2D> m_Texture;
 
 	Silver::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;

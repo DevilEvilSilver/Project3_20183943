@@ -10,6 +10,7 @@
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
+#include "Renderer/Texture.h"
 #include "Renderer/Camera/OrthographicCamera.h"
 
 #include "Events/Input.h"

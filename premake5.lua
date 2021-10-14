@@ -16,6 +16,7 @@ IncludeDir["GLFW"] = "Silver/vendor/GLFW/include"
 IncludeDir["Glad"] = "Silver/vendor/Glad/include"
 IncludeDir["ImGui"] = "Silver/vendor/ImGui"
 IncludeDir["glm"] = "Silver/vendor/glm"
+IncludeDir["stb_image"] = "Silver/vendor/stb_image"
 
 include "Silver/vendor/GLFW"
 include "Silver/vendor/Glad"
@@ -38,6 +39,8 @@ project "Silver"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
@@ -54,7 +57,8 @@ project "Silver"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links
