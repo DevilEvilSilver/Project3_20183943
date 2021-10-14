@@ -2,9 +2,17 @@
 #include "Renderer.h"
 #include "RenderCommand.h"
 
+#include <glad/glad.h>
+
 namespace Silver {
 
 	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData();
+
+	void Renderer::Init()
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 
 	void Renderer::BeginScene(const OrthographicCamera& camera)
 	{
