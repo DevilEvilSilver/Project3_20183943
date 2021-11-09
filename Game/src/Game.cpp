@@ -137,44 +137,9 @@ public:
 
 			m_SquareShader.reset(new Silver::Shader(vertexSrc2, fragmentSrc2));
 
-			std::string textureVertexSrc = R"(
-				#version 330 core
+			m_TextureShader.reset(new Silver::Shader("assets/shaders/Texture.glsl"));
 
-				layout(location = 0) in vec3 a_Position;
-				layout(location = 1) in vec2 a_TexCoord;
-
-				uniform	mat4 u_ViewProjection;
-				uniform	mat4 u_World;
-
-				out vec2 v_TexCoord;
-
-				void main()
-				{
-					gl_Position = u_ViewProjection * u_World * vec4(a_Position, 1.0);
-					v_TexCoord = a_TexCoord;
-				}
-
-			)";
-
-			std::string textureFragmentSrc = R"(
-				#version 330 core
-
-				layout(location = 0) out vec4 color;
-
-				in vec2 v_TexCoord;
-
-				uniform sampler2D u_Texture;
-
-				void main()
-				{
-					color = texture(u_Texture, v_TexCoord);
-				}
-
-			)";
-
-			m_TextureShader.reset(new Silver::Shader(textureVertexSrc, textureFragmentSrc));
-
-			m_Texture.reset(new Silver::Texture2D("../Assets/char.tga"));
+			m_Texture.reset(new Silver::Texture2D("assets/textures/char.tga"));
 			m_TextureShader->Bind();
 			m_TextureShader->SubmitUniformInt("u_Texture", 0);
 		}
