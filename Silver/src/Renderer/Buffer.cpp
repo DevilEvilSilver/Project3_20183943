@@ -6,7 +6,7 @@
 namespace Silver {
 
 	// VERTEX BUFFER ----------------------------------------------------------
-	VertexBuffer::VertexBuffer(float * vertices, unsigned int size)
+	VertexBuffer::VertexBuffer(float * vertices, size_t size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
@@ -29,7 +29,7 @@ namespace Silver {
 	}
 
 	// INDEX BUFFER ---------------------------------------------------------
-	IndexBuffer::IndexBuffer(unsigned int * indices, unsigned int count)
+	IndexBuffer::IndexBuffer(unsigned int * indices, size_t count)
 		: m_Count(count)
 	{
 		glCreateBuffers(1, &m_RendererID);

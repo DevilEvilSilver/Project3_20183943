@@ -110,7 +110,7 @@ namespace Silver {
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(float* vertices, unsigned int size);
+		VertexBuffer(float* vertices, size_t size);
 		virtual ~VertexBuffer();
 
 		void Bind() const;
@@ -129,17 +129,17 @@ namespace Silver {
 	class IndexBuffer
 	{
 	public:
-		IndexBuffer(unsigned int * indices, unsigned int count);
+		IndexBuffer(unsigned int * indices, size_t count);
 		virtual ~IndexBuffer();
 
 		void Bind() const;
 		void Unbind() const;
 
-		unsigned int GetCount() const { return m_Count; }
+		unsigned int GetCount() const { return (unsigned int)m_Count; }
 
 	private:
 		uint32_t m_RendererID;
-		unsigned int m_Count;
+		size_t m_Count;
 	};
 
 }

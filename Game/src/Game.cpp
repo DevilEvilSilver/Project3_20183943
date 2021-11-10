@@ -29,7 +29,7 @@ public:
 
 			unsigned int indices[1 * 3] = { 0, 1, 2 };
 			std::shared_ptr<Silver::IndexBuffer> triangleIB;
-			triangleIB = std::make_shared<Silver::IndexBuffer>(indices, sizeof(indices));
+			triangleIB = std::make_shared<Silver::IndexBuffer>(indices, std::size(indices));
 			m_TriangleVA->SetIndexBuffer(triangleIB);
 
 			std::string vertexSrc = R"(
@@ -96,7 +96,7 @@ public:
 				0, 2, 3
 			};
 			std::shared_ptr<Silver::IndexBuffer> squareIB;
-			squareIB = std::make_shared<Silver::IndexBuffer>(indices, (unsigned int)std::size(indices));
+			squareIB = std::make_shared<Silver::IndexBuffer>(indices, std::size(indices));
 			m_SquareVA->SetIndexBuffer(squareIB);
 
 			std::string vertexSrc2 = R"(
