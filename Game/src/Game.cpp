@@ -12,7 +12,7 @@ public:
 	{
 		// Init Triangle
 		{
-			m_TriangleVA.reset(new Silver::VertexArray());
+			m_TriangleVA = std::make_shared<Silver::VertexArray>();
 
 			float vertices[3 * 7] = {
 				-0.5f, -0.5f, 0.0f, 0.2f, 0.1f, 0.9f, 1.0f,
@@ -20,7 +20,7 @@ public:
 				0.0f, 0.5f, 0.0f, 0.8f, 0.1f, 0.2f, 1.0f
 			};
 			std::shared_ptr<Silver::VertexBuffer> triangleVB;
-			triangleVB.reset(new Silver::VertexBuffer(vertices, sizeof(vertices)));
+			triangleVB = std::make_shared<Silver::VertexBuffer>(vertices, sizeof(vertices));
 			triangleVB->SetLayout({
 				{ Silver::DataType::Float3, "a_Position"},
 				{ Silver::DataType::Float4, "a_Color"}
@@ -29,7 +29,7 @@ public:
 
 			unsigned int indices[1 * 3] = { 0, 1, 2 };
 			std::shared_ptr<Silver::IndexBuffer> triangleIB;
-			triangleIB.reset(new Silver::IndexBuffer(indices, sizeof(indices)));
+			triangleIB = std::make_shared<Silver::IndexBuffer>(indices, sizeof(indices));
 			m_TriangleVA->SetIndexBuffer(triangleIB);
 
 			std::string vertexSrc = R"(
@@ -69,12 +69,12 @@ public:
 
 			)";
 
-			m_TriangleShader.reset(new Silver::Shader(vertexSrc, fragmentSrc));
+			m_TriangleShader = std::make_shared<Silver::Shader>("TriangleShader", vertexSrc, fragmentSrc);
 		}
 
 		// Init Square
 		{
-			m_SquareVA.reset(new Silver::VertexArray());
+			m_SquareVA = std::make_shared<Silver::VertexArray>();
 
 			float vertices[5 * 4] = {
 				-0.7f, -0.7f, 0.0f, 0.0f, 0.0f,
@@ -84,7 +84,7 @@ public:
 
 			};
 			std::shared_ptr<Silver::VertexBuffer> squareVB;
-			squareVB.reset(new Silver::VertexBuffer(vertices, sizeof(vertices)));
+			squareVB = std::make_shared<Silver::VertexBuffer>(vertices, sizeof(vertices));
 			squareVB->SetLayout({
 				{ Silver::DataType::Float3, "a_Position"},
 				{ Silver::DataType::Float2, "a_TexCoord"}
@@ -96,7 +96,7 @@ public:
 				0, 2, 3
 			};
 			std::shared_ptr<Silver::IndexBuffer> squareIB;
-			squareIB.reset(new Silver::IndexBuffer(indices, (unsigned int)std::size(indices)));
+			squareIB = std::make_shared<Silver::IndexBuffer>(indices, (unsigned int)std::size(indices));
 			m_SquareVA->SetIndexBuffer(squareIB);
 
 			std::string vertexSrc2 = R"(
@@ -135,13 +135,13 @@ public:
 
 			)";
 
-			m_SquareShader.reset(new Silver::Shader(vertexSrc2, fragmentSrc2));
+			m_SquareShader = std::make_shared<Silver::Shader>("SquareShader", vertexSrc2, fragmentSrc2);
 
-			m_TextureShader.reset(new Silver::Shader("assets/shaders/Texture.glsl"));
+			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
-			m_Texture.reset(new Silver::Texture2D("assets/textures/char.tga"));
-			m_TextureShader->Bind();
-			m_TextureShader->SubmitUniformInt("u_Texture", 0);
+			m_Texture = std::make_shared<Silver::Texture2D>("assets/textures/char.tga");
+			textureShader->Bind();
+			textureShader->SubmitUniformInt("u_Texture", 0);
 		}
 	}
 
@@ -195,8 +195,10 @@ public:
 			}
 		}
 
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
 		m_Texture->Bind();
-		Silver::Renderer::Submit(m_TextureShader, m_SquareVA, triangleWorldMatrix);
+		Silver::Renderer::Submit(textureShader, m_SquareVA, triangleWorldMatrix);
 		
 		//Silver::Renderer::Submit(m_TriangleShader, m_TriangleVA, triangleWorldMatrix);
 
@@ -217,10 +219,11 @@ public:
 
 private:
 	// tmp
+	Silver::ShaderLibrary m_ShaderLibrary;
 	std::shared_ptr<Silver::VertexArray> m_TriangleVA;
 	std::shared_ptr<Silver::VertexArray> m_SquareVA;
 	std::shared_ptr<Silver::Shader> m_TriangleShader;
-	std::shared_ptr<Silver::Shader> m_SquareShader, m_TextureShader;
+	std::shared_ptr<Silver::Shader> m_SquareShader;
 	std::shared_ptr<Silver::Texture2D> m_Texture;
 
 	Silver::OrthographicCamera m_Camera;

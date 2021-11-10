@@ -2,6 +2,7 @@
 #include "Shader.h"
 
 #include <fstream>
+#include <filesystem>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -23,9 +24,14 @@ namespace Silver {
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
+
+		// Extract name from filepath
+		std::filesystem::path path = filepath;
+		m_Name = path.stem().string();
 	}
 
-	Shader::Shader(const std::string & vertexSrc, const std::string & fragmentSrc)
+	Shader::Shader(const std::string & name, const std::string & vertexSrc, const std::string & fragmentSrc)
+		: m_Name(name)
 	{
 		std::unordered_map<GLenum, std::string> shaderSources;
 		shaderSources[GL_VERTEX_SHADER] = vertexSrc;
@@ -212,6 +218,45 @@ namespace Silver {
 	{
 		GLint location = (glGetUniformLocation(m_RendererID, name.c_str()));
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
+	void ShaderLibrary::Add(const std::shared_ptr<Shader>& shader)
+	{
+		auto& name = shader->GetName();
+		Add(name, shader);
+	}
+
+	void ShaderLibrary::Add(const std::string & name, const std::shared_ptr<Shader>& shader)
+	{
+		if (IsExist(name))
+			SV_CORE_ERROR("Shader {0} already exist in ShaderLibrary !!!", name);
+		m_Shaders[name] = shader;
+	}
+
+	std::shared_ptr<Shader> ShaderLibrary::Load(const std::string & filepath)
+	{
+		auto shader = std::make_shared<Shader>(filepath);
+		Add(shader);
+		return shader;
+	}
+
+	std::shared_ptr<Shader> ShaderLibrary::Load(const std::string & name, const std::string & filepath)
+	{
+		auto shader = std::make_shared<Shader>(filepath);
+		Add(name, shader);
+		return shader;
+	}
+
+	std::shared_ptr<Shader> ShaderLibrary::Get(const std::string & name)
+	{
+		if (!IsExist(name))
+			SV_CORE_ERROR("Shader {0} does not exist in ShaderLibrary !!!", name);
+		return m_Shaders[name];
+	}
+
+	bool ShaderLibrary::IsExist(const std::string & name) const
+	{
+		return m_Shaders.find(name) != m_Shaders.end();
 	}
 
 }
