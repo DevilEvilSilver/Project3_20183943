@@ -41,7 +41,7 @@ namespace Silver {
 	std::string Shader::ReadFile(const std::string& filepath)
 	{
 		std::string result;
-		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
@@ -88,7 +88,10 @@ namespace Silver {
 	void Shader::Compile(std::unordered_map<GLenum, std::string> shaderSources)
 	{
 		GLuint program = glCreateProgram();
-		std::vector<GLenum> glShaderIDs(shaderSources.size());
+		if (shaderSources.size() > 2)
+			SV_CORE_ERROR("Engine only support upto 2 shaders");
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDIndex = 0;
 		for (auto&& [key,value] : shaderSources)
 		{
 			GLenum type = key;
@@ -122,7 +125,7 @@ namespace Silver {
 			}
 
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
 		}
 
 		m_RendererID = program;
