@@ -6,8 +6,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
-#include "Renderer/Camera/OrthographicCamera.h"
-#include"Utils/Timer.h"
+#include "Utils/Timer.h"
 
 namespace Silver {
 

@@ -14,7 +14,7 @@ namespace Silver {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	void Renderer::BeginScene(const OrthographicCamera& camera)
+	void Renderer::BeginScene(const Camera& camera)
 	{
 		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}

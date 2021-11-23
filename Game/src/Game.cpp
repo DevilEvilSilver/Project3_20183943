@@ -8,7 +8,7 @@ class TestLayer : public Silver::Layer
 {
 public:
 	TestLayer()
-		:Layer("TestLayer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_TrianglePosition(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
+		:Layer("TestLayer"), m_Camera(45.0f, 16.0f/9, 0.1f, 100.0f), m_CameraPosition(0.0f, 0.0f, 3.0f), m_TrianglePosition(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
 	{
 		// Init Triangle
 		{
@@ -226,7 +226,7 @@ private:
 	std::shared_ptr<Silver::Shader> m_SquareShader;
 	std::shared_ptr<Silver::Texture2D> m_Texture;
 
-	Silver::OrthographicCamera m_Camera;
+	Silver::PerspectiveCamera m_Camera;
 	glm::vec3 m_CameraPosition;
 	float m_CameraMoveSpeed = 2.0f;
 	float m_CameraZRotation = 0.0f;

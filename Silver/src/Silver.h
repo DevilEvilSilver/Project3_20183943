@@ -11,7 +11,7 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
-#include "Renderer/Camera/OrthographicCamera.h"
+#include "Renderer/Camera/Camera.h"
 
 #include "Events/Input.h"
 #include "Events/EventCode.h"

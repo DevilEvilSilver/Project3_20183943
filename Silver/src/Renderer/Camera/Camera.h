@@ -36,4 +36,16 @@ namespace Silver {
 		float m_ZRotation = 0.0f;
 	};
 
+	class OrthographicCamera : public Camera
+	{
+	public:
+		OrthographicCamera(float left, float right, float bottom, float top);
+	};
+
+	class PerspectiveCamera : public Camera
+	{
+	public:
+		PerspectiveCamera(float fov, float aspect, float zNear, float zFar);
+	};
+
 }
