@@ -147,7 +147,7 @@ public:
 
 	void OnUpdate(float deltaTime) override
 	{
-		SV_TRACE("Delta Time: {0} ({1} ms)", deltaTime, deltaTime * 1000.f);
+		//SV_TRACE("Delta Time: {0} ({1} ms)", deltaTime, deltaTime * 1000.f);
 
 		if (Silver::Input::IsKeyPressed(KEY_LEFT))
 			m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;
