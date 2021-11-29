@@ -1,8 +1,16 @@
 #pragma once
 
-// For use by applications
+// Core -----------------------
 #include "Silver/Application.h"
 #include "Silver/Layer.h"
+#include "Events/Input.h"
+#include "Events/EventCode.h"
+
+// Utils ----------------------
+#include "Utils/Utils.h"
+#include "Utils/Log.h"
+#include "Utils/Timer.h"
+#include "Utils/Singleton.h"
 
 // Renderer -------------------
 #include "Renderer/Renderer.h"
@@ -13,12 +21,10 @@
 #include "Renderer/Texture.h"
 #include "Renderer/Camera/Camera.h"
 
-#include "Events/Input.h"
-#include "Events/EventCode.h"
+// Data ------------------------
+#include "DataManager/Resources/ResourceManager.h"
+#include "DataManager/Resources/Model.h"
 
+// Debug -----------------------
 #include "ImGui/ImGuiLayer.h"
 
-#include "Utils/Utils.h"
-#include "Utils/Log.h"
-#include "Utils/Timer.h"
-#include "Utils/Singleton.h"

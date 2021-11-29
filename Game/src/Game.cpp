@@ -8,74 +8,10 @@ class TestLayer : public Silver::Layer
 {
 public:
 	TestLayer()
-		:Layer("TestLayer"), m_Camera(45.0f, 16.0f/9, 0.1f, 100.0f), m_CameraPosition(0.0f, 0.0f, 3.0f), m_TrianglePosition(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
+		:Layer("TestLayer"), m_Camera(45.0f, 16.0f/9, 0.1f, 100.0f), m_CameraPosition(0.0f, 0.0f, 3.0f), m_Position(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
 	{
-		// Init Triangle
-		{
-			m_TriangleVA = std::make_shared<Silver::VertexArray>();
-
-			float vertices[3 * 7] = {
-				-0.5f, -0.5f, 0.0f, 0.2f, 0.1f, 0.9f, 1.0f,
-				0.5f, -0.5f, 0.0f, 0.4f, 0.7f, 0.2f, 1.0f,
-				0.0f, 0.5f, 0.0f, 0.8f, 0.1f, 0.2f, 1.0f
-			};
-			std::shared_ptr<Silver::VertexBuffer> triangleVB;
-			triangleVB = std::make_shared<Silver::VertexBuffer>(vertices, sizeof(vertices));
-			triangleVB->SetLayout({
-				{ Silver::DataType::Float3, "a_Position"},
-				{ Silver::DataType::Float4, "a_Color"}
-				});
-			m_TriangleVA->AddVertexBuffer(triangleVB);
-
-			unsigned int indices[1 * 3] = { 0, 1, 2 };
-			std::shared_ptr<Silver::IndexBuffer> triangleIB;
-			triangleIB = std::make_shared<Silver::IndexBuffer>(indices, std::size(indices));
-			m_TriangleVA->SetIndexBuffer(triangleIB);
-
-			std::string vertexSrc = R"(
-				#version 330 core
-
-				layout(location = 0) in vec3 a_Position;
-				layout(location = 1) in vec4 a_Color;
-			
-				uniform	mat4 u_ViewProjection;	
-				uniform	mat4 u_World;
-
-				out vec3 v_Position;
-				out vec4 v_Color;
-
-				void main()
-				{
-					gl_Position = u_ViewProjection * u_World * vec4(a_Position, 1.0);
-					v_Position = a_Position;
-					v_Color = a_Color;
-				}
-
-			)";
-
-			std::string fragmentSrc = R"(
-				#version 330 core
-
-				layout(location = 0) out vec4 color;
-			
-				in vec3 v_Position;
-				in vec4 v_Color;
-
-				void main()
-				{
-					color = vec4(v_Position * 0.5 + 0.5, 1.0);
-					color = v_Color;
-				}
-
-			)";
-
-			m_TriangleShader = std::make_shared<Silver::Shader>("TriangleShader", vertexSrc, fragmentSrc);
-		}
-
 		// Init Square
 		{
-			m_SquareVA = std::make_shared<Silver::VertexArray>();
-
 			float vertices[5 * 4] = {
 				-0.7f, -0.7f, 0.0f, 0.0f, 0.0f,
 				0.7f, -0.7f, 0.0f, 1.0f, 0.0f,
@@ -89,7 +25,6 @@ public:
 				{ Silver::DataType::Float3, "a_Position"},
 				{ Silver::DataType::Float2, "a_TexCoord"}
 				});
-			m_SquareVA->AddVertexBuffer(squareVB);
 
 			unsigned int indices[2 * 3] = {
 				0, 1, 2,
@@ -97,7 +32,7 @@ public:
 			};
 			std::shared_ptr<Silver::IndexBuffer> squareIB;
 			squareIB = std::make_shared<Silver::IndexBuffer>(indices, std::size(indices));
-			m_SquareVA->SetIndexBuffer(squareIB);
+			m_SquareMesh = std::make_shared<Silver::Mesh>(squareVB, squareIB);
 
 			std::string vertexSrc2 = R"(
 				#version 330 core
@@ -164,17 +99,17 @@ public:
 			m_CameraZRotation -= m_CameraRotationSpeed * deltaTime;
 
 		if (Silver::Input::IsKeyPressed(KEY_J))
-			m_TrianglePosition.x -= m_TriangleSpeed * deltaTime;
+			m_Position.x -= m_Speed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_L))
-			m_TrianglePosition.x += m_TriangleSpeed * deltaTime;
+			m_Position.x += m_Speed * deltaTime;
 		if (Silver::Input::IsKeyPressed(KEY_I))
-			m_TrianglePosition.y += m_TriangleSpeed * deltaTime;
+			m_Position.y += m_Speed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_K))
-			m_TrianglePosition.y -= m_TriangleSpeed * deltaTime;
+			m_Position.y -= m_Speed * deltaTime;
 
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetZRotation(m_CameraZRotation);
-		glm::mat4 triangleWorldMatrix = glm::translate(glm::mat4(1.0f), m_TrianglePosition);
+		glm::mat4 triangleWorldMatrix = glm::translate(glm::mat4(1.0f), m_Position);
 		glm::mat4 tileScale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
 		Silver::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
@@ -191,16 +126,14 @@ public:
 			{
 				glm::vec3 pos(x * 0.15f, y * 0.15f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * tileScale;
-				Silver::Renderer::Submit(m_SquareShader, m_SquareVA, transform);
+				Silver::Renderer::Submit(m_SquareShader, m_SquareMesh->GetVertexArray(), transform);
 			}
 		}
 
 		auto textureShader = m_ShaderLibrary.Get("Texture");
 
 		m_Texture->Bind();
-		Silver::Renderer::Submit(textureShader, m_SquareVA, triangleWorldMatrix);
-		
-		//Silver::Renderer::Submit(m_TriangleShader, m_TriangleVA, triangleWorldMatrix);
+		Silver::Renderer::Submit(textureShader, m_SquareMesh->GetVertexArray(), triangleWorldMatrix);
 
 		Silver::Renderer::EndScene();
 	}
@@ -220,9 +153,7 @@ public:
 private:
 	// tmp
 	Silver::ShaderLibrary m_ShaderLibrary;
-	std::shared_ptr<Silver::VertexArray> m_TriangleVA;
-	std::shared_ptr<Silver::VertexArray> m_SquareVA;
-	std::shared_ptr<Silver::Shader> m_TriangleShader;
+	std::shared_ptr<Silver::Mesh> m_SquareMesh;
 	std::shared_ptr<Silver::Shader> m_SquareShader;
 	std::shared_ptr<Silver::Texture2D> m_Texture;
 
@@ -233,8 +164,8 @@ private:
 	float m_CameraRotationSpeed = 90.0f;
 
 	glm::vec3 m_SquareColor;
-	glm::vec3 m_TrianglePosition;
-	float m_TriangleSpeed = 2.0f;
+	glm::vec3 m_Position;
+	float m_Speed = 2.0f;
 };
 
 class Game : public Silver::Application
