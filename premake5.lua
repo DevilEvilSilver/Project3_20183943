@@ -1,5 +1,6 @@
 workspace "Project3"
 	architecture "x64"
+	startproject "Game"
 	
 	configurations
 	{
@@ -15,12 +16,14 @@ IncludeDir["spdlog"] = "Silver/vendor/spdlog/include"
 IncludeDir["GLFW"] = "Silver/vendor/GLFW/include"
 IncludeDir["Glad"] = "Silver/vendor/Glad/include"
 IncludeDir["ImGui"] = "Silver/vendor/ImGui"
+IncludeDir["assimp"] = "Silver/vendor/assimp/include"
 IncludeDir["glm"] = "Silver/vendor/glm"
 IncludeDir["stb_image"] = "Silver/vendor/stb_image"
 
 include "Silver/vendor/GLFW"
 include "Silver/vendor/Glad"
 include "Silver/vendor/ImGui"
+include "Silver/vendor/assimp"
 
 project "Silver"
 	location "Silver"
@@ -57,6 +60,7 @@ project "Silver"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.assimp}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}"
 	}
@@ -66,6 +70,7 @@ project "Silver"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"assimp",
 		"opengl32.lib"
 	}
 
