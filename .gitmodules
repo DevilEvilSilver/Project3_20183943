@@ -10,6 +10,3 @@
 [submodule "Silver/vendor/glm"]
 	path = Silver/vendor/glm
 	url = https://github.com/DevilEvilSilver/glm
-[submodule "Silver/vendor/assimp"]
-	path = Silver/vendor/assimp
-	url = https://github.com/DevilEvilSilver/assimp
