@@ -6,7 +6,7 @@
 namespace Silver {
 
 	// VERTEX BUFFER ----------------------------------------------------------
-	VertexBuffer::VertexBuffer(float * vertices, size_t size)
+	VertexBuffer::VertexBuffer(const void * vertices, size_t size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);

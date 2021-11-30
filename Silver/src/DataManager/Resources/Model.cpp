@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Model.h"
 
+#include <filesystem>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -8,11 +9,11 @@
 namespace Silver {
 
 	Mesh::Mesh(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer)
-		:m_VertexBuffer(vertexBuffer), m_IndexBuffer(indexBuffer)
+		//:m_VertexBuffer(vertexBuffer), m_IndexBuffer(indexBuffer)
 	{
 		m_VertexArray = std::make_shared<VertexArray>();
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+		m_VertexArray->AddVertexBuffer(vertexBuffer);
+		m_VertexArray->SetIndexBuffer(indexBuffer);
 	}
 
 	Mesh::~Mesh()
@@ -30,8 +31,16 @@ namespace Silver {
 			SV_CORE_ERROR("Assimp error: {0}", import.GetErrorString());
 			return;
 		}
-		std::string m_Directory = filepath.substr(0, filepath.find_last_of('/'));
+		// Extract name & directory from filepath
+		m_Directory = filepath.substr(0, filepath.find_last_of('/'));
+		std::filesystem::path path = filepath;
+		m_Name = path.stem().string();
 		processNode(scene->mRootNode, scene);
+	}
+
+	Model::Model(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes)
+		: m_Name(name), m_Directory(""), m_Meshes(meshes)
+	{
 	}
 
 	void Model::processNode(aiNode* node, const aiScene* scene)
@@ -51,42 +60,45 @@ namespace Silver {
 
 	std::shared_ptr<Mesh> Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	{
-		std::shared_ptr<Silver::VertexBuffer> vertexBuffer;
-		std::shared_ptr<Silver::IndexBuffer> indexBuffer;
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		std::shared_ptr<IndexBuffer> indexBuffer;
 		//vector<Texture> textures;
 		
 		// process vertex positions, normals and texture coordinates
 		float* vertices = new float[mesh->mNumVertices * 8];
-		unsigned int count = 0;
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
-			vertices[count++] = mesh->mVertices[i].x;
-			vertices[count++] = mesh->mVertices[i].y;
-			vertices[count++] = mesh->mVertices[i].z;
-			vertices[count++] = mesh->mNormals[i].x;
-			vertices[count++] = mesh->mNormals[i].y;
-			vertices[count++] = mesh->mNormals[i].z;
+			vertices[i * 8] = mesh->mVertices[i].x;
+			vertices[i * 8 + 1] = mesh->mVertices[i].y;
+			vertices[i * 8 + 2] = mesh->mVertices[i].z;
+			vertices[i * 8 + 3] = mesh->mNormals[i].x;
+			vertices[i * 8 + 4] = mesh->mNormals[i].y;
+			vertices[i * 8 + 5] = mesh->mNormals[i].z;
 			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
 			{
-				vertices[count++] = mesh->mTextureCoords[0][i].x;
-				vertices[count++] = mesh->mTextureCoords[0][i].y;
+				vertices[i * 8 + 6] = mesh->mTextureCoords[0][i].x;
+				vertices[i * 8 + 7] = mesh->mTextureCoords[0][i].y;
 			}
 			else
 			{
-				vertices[count++] = 0.0f;
-				vertices[count++] = 0.0f;
+				vertices[i * 8 + 6] = 0.0f;
+				vertices[i * 8 + 7] = 0.0f;
 			}
 		}
 		vertexBuffer = std::make_shared<VertexBuffer>(vertices, sizeof(vertices));
+		vertexBuffer->SetLayout({
+				{ Silver::DataType::Float3, "a_Position"},
+				{ Silver::DataType::Float3, "a_Normal"},
+				{ Silver::DataType::Float2, "a_TexCoord"}
+			});
 
 		// process indices
 		unsigned int* indices = new unsigned int[mesh->mNumFaces * 3];
-		count = 0;
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace face = mesh->mFaces[i];
 			for (unsigned int j = 0; j < face.mNumIndices; j++)
-				indices[count++] = face.mIndices[j];
+				indices[i * 3 + j] = face.mIndices[j];
 		}
 		indexBuffer = std::make_shared<IndexBuffer>(indices, mesh->mNumFaces * 3);
 
@@ -96,6 +108,8 @@ namespace Silver {
 		//	[...]
 		//}
 
+		delete[]vertices;
+		delete[]indices;
 		return std::make_shared<Mesh>(vertexBuffer, indexBuffer);
 	}
 
@@ -112,7 +126,7 @@ namespace Silver {
 	void ModelLibrary::Add(const std::string& name, const std::shared_ptr<Model>& model)
 	{
 		if (IsExist(name))
-			SV_CORE_ERROR("Shader {0} already exist in ShaderLibrary !!!", name);
+			SV_CORE_ERROR("Model {0} already exist in ModelLibrary !!!", name);
 		m_Models[name] = model;
 	}
 
@@ -133,7 +147,7 @@ namespace Silver {
 	std::shared_ptr<Model> ModelLibrary::Get(const std::string& name)
 	{
 		if (!IsExist(name))
-			SV_CORE_ERROR("Shader {0} does not exist in ShaderLibrary !!!", name);
+			SV_CORE_ERROR("Model {0} does not exist in ModelLibrary !!!", name);
 		return m_Models[name];
 	}
 	bool ModelLibrary::IsExist(const std::string& name) const

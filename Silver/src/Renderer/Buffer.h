@@ -110,7 +110,7 @@ namespace Silver {
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(float* vertices, size_t size);
+		VertexBuffer(const void* vertices, size_t size);
 		virtual ~VertexBuffer();
 
 		void Bind() const;

@@ -8,7 +8,7 @@ class TestLayer : public Silver::Layer
 {
 public:
 	TestLayer()
-		:Layer("TestLayer"), m_Camera(45.0f, 16.0f/9, 0.1f, 100.0f), m_CameraPosition(0.0f, 0.0f, 3.0f), m_Position(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
+		:Layer("TestLayer"), m_Camera(45.0f, 16.0f/9, 0.1f, 1000.0f), m_CameraPosition(0.0f, 0.0f, 300.0f), m_Position(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
 	{
 		// Init Square
 		{
@@ -32,7 +32,11 @@ public:
 			};
 			std::shared_ptr<Silver::IndexBuffer> squareIB;
 			squareIB = std::make_shared<Silver::IndexBuffer>(indices, std::size(indices));
-			m_SquareMesh = std::make_shared<Silver::Mesh>(squareVB, squareIB);
+			auto squareMesh = std::make_shared<Silver::Mesh>(squareVB, squareIB);
+			std::vector<std::shared_ptr<Silver::Mesh>> meshes;
+			meshes.push_back(squareMesh);
+			m_SquareModel = std::make_shared<Silver::Model>("squareModel", meshes);
+			m_ModelLibrary.Add(m_SquareModel);
 
 			std::string vertexSrc2 = R"(
 				#version 330 core
@@ -71,12 +75,20 @@ public:
 			)";
 
 			m_SquareShader = std::make_shared<Silver::Shader>("SquareShader", vertexSrc2, fragmentSrc2);
-
+		}
+		// Init char
+		{
 			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 			m_Texture = std::make_shared<Silver::Texture2D>("assets/textures/char.tga");
 			textureShader->Bind();
 			textureShader->SubmitUniformInt("u_Texture", 0);
+		}
+
+		// Init 3D model
+		{
+			m_3DModel = m_ModelLibrary.Load("assets/models/duck.dae");
+			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");
 		}
 	}
 
@@ -89,14 +101,18 @@ public:
 		else if (Silver::Input::IsKeyPressed(KEY_RIGHT))
 			m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
 		if (Silver::Input::IsKeyPressed(KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMoveSpeed * deltaTime;
+			m_CameraPosition.z += m_CameraMoveSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_UP))
-			m_CameraPosition.y += m_CameraMoveSpeed * deltaTime;
+			m_CameraPosition.z -= m_CameraMoveSpeed * deltaTime;
 
+		if (Silver::Input::IsKeyPressed(KEY_W))
+			m_CameraXRotation += m_CameraRotationSpeed * deltaTime;
+		else if (Silver::Input::IsKeyPressed(KEY_S))
+			m_CameraXRotation -= m_CameraRotationSpeed * deltaTime;
 		if (Silver::Input::IsKeyPressed(KEY_A))
-			m_CameraZRotation += m_CameraRotationSpeed * deltaTime;
+			m_CameraYRotation += m_CameraRotationSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_D))
-			m_CameraZRotation -= m_CameraRotationSpeed * deltaTime;
+			m_CameraYRotation -= m_CameraRotationSpeed * deltaTime;
 
 		if (Silver::Input::IsKeyPressed(KEY_J))
 			m_Position.x -= m_Speed * deltaTime;
@@ -108,6 +124,8 @@ public:
 			m_Position.y -= m_Speed * deltaTime;
 
 		m_Camera.SetPosition(m_CameraPosition);
+		m_Camera.SetXRotation(m_CameraXRotation);
+		m_Camera.SetYRotation(m_CameraYRotation);
 		m_Camera.SetZRotation(m_CameraZRotation);
 		glm::mat4 triangleWorldMatrix = glm::translate(glm::mat4(1.0f), m_Position);
 		glm::mat4 tileScale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
@@ -117,23 +135,23 @@ public:
 
 		Silver::Renderer::BeginScene(m_Camera);
 
-		m_SquareShader->Bind();
-		m_SquareShader->SubmitUniformFloat3("u_Color", m_SquareColor);
+		//m_SquareShader->Bind();
+		//m_SquareShader->SubmitUniformFloat3("u_Color", m_SquareColor);
+		//for (unsigned int x = 0; x < 20; x++)
+		//{
+		//	for (unsigned int y = 0; y < 20; y++)
+		//	{
+		//		glm::vec3 pos(x * 0.15f, y * 0.15f, 0.0f);
+		//		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * tileScale;
+		//		Silver::Renderer::Submit(m_SquareShader, m_SquareModel, transform);
+		//	}
+		//}
 
-		for (unsigned int x = 0; x < 20; x++)
-		{
-			for (unsigned int y = 0; y < 20; y++)
-			{
-				glm::vec3 pos(x * 0.15f, y * 0.15f, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * tileScale;
-				Silver::Renderer::Submit(m_SquareShader, m_SquareMesh->GetVertexArray(), transform);
-			}
-		}
+		//auto textureShader = m_ShaderLibrary.Get("Texture");
+		//m_Texture->Bind();
+		//Silver::Renderer::Submit(textureShader, m_SquareModel, triangleWorldMatrix);
 
-		auto textureShader = m_ShaderLibrary.Get("Texture");
-
-		m_Texture->Bind();
-		Silver::Renderer::Submit(textureShader, m_SquareMesh->GetVertexArray(), triangleWorldMatrix);
+		Silver::Renderer::Submit(m_ModelShader, m_3DModel);
 
 		Silver::Renderer::EndScene();
 	}
@@ -153,13 +171,16 @@ public:
 private:
 	// tmp
 	Silver::ShaderLibrary m_ShaderLibrary;
-	std::shared_ptr<Silver::Mesh> m_SquareMesh;
-	std::shared_ptr<Silver::Shader> m_SquareShader;
+	Silver::ModelLibrary m_ModelLibrary;
+	std::shared_ptr<Silver::Model> m_SquareModel, m_3DModel;
+	std::shared_ptr<Silver::Shader> m_SquareShader, m_ModelShader;
 	std::shared_ptr<Silver::Texture2D> m_Texture;
 
 	Silver::PerspectiveCamera m_Camera;
 	glm::vec3 m_CameraPosition;
 	float m_CameraMoveSpeed = 2.0f;
+	float m_CameraXRotation = 0.0f;
+	float m_CameraYRotation = 0.0f;
 	float m_CameraZRotation = 0.0f;
 	float m_CameraRotationSpeed = 90.0f;
 
