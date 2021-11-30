@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Model.h"
 
-#include <vector>
-
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -12,6 +10,7 @@ namespace Silver {
 	Mesh::Mesh(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer)
 		:m_VertexBuffer(vertexBuffer), m_IndexBuffer(indexBuffer)
 	{
+		m_VertexArray = std::make_shared<VertexArray>();
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 	}
@@ -57,38 +56,39 @@ namespace Silver {
 		//vector<Texture> textures;
 		
 		// process vertex positions, normals and texture coordinates
-		std::vector<float> vertices;
+		float* vertices = new float[mesh->mNumVertices * 8];
+		unsigned int count = 0;
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
-			
-			vertices.push_back(mesh->mVertices[i].x); 
-			vertices.push_back(mesh->mVertices[i].y);
-			vertices.push_back(mesh->mVertices[i].z);
-			vertices.push_back(mesh->mNormals[i].x); 
-			vertices.push_back(mesh->mNormals[i].y); 
-			vertices.push_back(mesh->mNormals[i].z);
+			vertices[count++] = mesh->mVertices[i].x;
+			vertices[count++] = mesh->mVertices[i].y;
+			vertices[count++] = mesh->mVertices[i].z;
+			vertices[count++] = mesh->mNormals[i].x;
+			vertices[count++] = mesh->mNormals[i].y;
+			vertices[count++] = mesh->mNormals[i].z;
 			if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
 			{
-				vertices.push_back(mesh->mTextureCoords[0][i].x); 
-				vertices.push_back(mesh->mTextureCoords[0][i].y);
+				vertices[count++] = mesh->mTextureCoords[0][i].x;
+				vertices[count++] = mesh->mTextureCoords[0][i].y;
 			}
 			else
 			{
-				vertices.push_back(0.0f);
-				vertices.push_back(0.0f);
+				vertices[count++] = 0.0f;
+				vertices[count++] = 0.0f;
 			}
 		}
 		vertexBuffer = std::make_shared<VertexBuffer>(vertices, sizeof(vertices));
 
 		// process indices
-		std::vector<unsigned int> indices;
+		unsigned int* indices = new unsigned int[mesh->mNumFaces * 3];
+		count = 0;
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace face = mesh->mFaces[i];
 			for (unsigned int j = 0; j < face.mNumIndices; j++)
-				indices.push_back(face.mIndices[j]);
+				indices[count++] = face.mIndices[j];
 		}
-		indexBuffer = std::make_shared<IndexBuffer>(indices, std::size(indices));
+		indexBuffer = std::make_shared<IndexBuffer>(indices, mesh->mNumFaces * 3);
 
 		//process material
 		//if (mesh->mMaterialIndex >= 0)

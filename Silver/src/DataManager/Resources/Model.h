@@ -6,6 +6,7 @@
 #include <memory>
 #include <unordered_map>
 
+// Temp fix !!!
 struct aiScene;
 struct aiNode;
 struct aiMesh;
