@@ -109,47 +109,5 @@ namespace Silver {
 		//delete[]indices;
 		return std::make_shared<Mesh>(vertexBuffer, indexBuffer);
 	}
-
-	Model::~Model()
-	{
-	}
-
-	void ModelLibrary::Add(const std::shared_ptr<Model>& model)
-	{
-		auto& name = model->GetName();
-		Add(name, model);
-	}
-
-	void ModelLibrary::Add(const std::string& name, const std::shared_ptr<Model>& model)
-	{
-		if (IsExist(name))
-			SV_CORE_ERROR("Model {0} already exist in ModelLibrary !!!", name);
-		m_Models[name] = model;
-	}
-
-	std::shared_ptr<Model> ModelLibrary::Load(const std::string& filepath)
-	{
-		auto model = std::make_shared<Model>(filepath);
-		Add(model);
-		return model;
-	}
-
-	std::shared_ptr<Model> ModelLibrary::Load(const std::string& name, const std::string& filepath)
-	{
-		auto model = std::make_shared<Model>(filepath);
-		Add(name, model);
-		return model;
-	}
-
-	std::shared_ptr<Model> ModelLibrary::Get(const std::string& name)
-	{
-		if (!IsExist(name))
-			SV_CORE_ERROR("Model {0} does not exist in ModelLibrary !!!", name);
-		return m_Models[name];
-	}
-	bool ModelLibrary::IsExist(const std::string& name) const
-	{
-		return m_Models.find(name) != m_Models.end();
-	}
-
+	
 }

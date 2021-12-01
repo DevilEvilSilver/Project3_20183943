@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
+#include "Renderer/Texture.h"
 
 #include <string>
 #include <memory>
@@ -22,8 +23,6 @@ namespace Silver {
 		const std::shared_ptr<VertexArray>& GetVertexArray() { return m_VertexArray; }
 
 	private:
-		//std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		//std::shared_ptr<IndexBuffer> m_IndexBuffer;
 		std::shared_ptr<VertexArray> m_VertexArray;
 	};
 
@@ -32,7 +31,7 @@ namespace Silver {
 	public:
 		Model(const std::string& filepath);
 		Model(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes);
-		~Model();
+		virtual ~Model();
 
 		const std::vector<std::shared_ptr<Mesh>>& GetMeshes() { return m_Meshes; }
 		const std::string& GetName() { return m_Name; }
@@ -47,20 +46,6 @@ namespace Silver {
 		std::vector<std::shared_ptr<Mesh>> m_Meshes;
 	};
 
-	class ModelLibrary
-	{
-	public:
-		void Add(const std::shared_ptr<Model>& model);
-		void Add(const std::string& name, const std::shared_ptr<Model>& model);
-		std::shared_ptr<Model> Load(const std::string& filepath);
-		std::shared_ptr<Model> Load(const std::string& name, const std::string& filepath);
 
-		std::shared_ptr<Model> Get(const std::string& name);
-
-		bool IsExist(const std::string& name) const;
-
-	private:
-		std::unordered_map<std::string, std::shared_ptr<Model>> m_Models;
-	};
 
 }

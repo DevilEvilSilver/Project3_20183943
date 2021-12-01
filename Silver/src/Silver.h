@@ -23,7 +23,7 @@
 
 // Data ------------------------
 #include "DataManager/Resources/ResourceManager.h"
-#include "DataManager/Resources/Model.h"
+#include "DataManager/Resources/Model/Model.h"
 
 // Debug -----------------------
 #include "ImGui/ImGuiLayer.h"
