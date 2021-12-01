@@ -31,7 +31,7 @@ namespace Silver {
 	public:
 		Model(const std::string& filepath);
 		Model(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes);
-		virtual ~Model();
+		virtual ~Model() = default;
 
 		const std::vector<std::shared_ptr<Mesh>>& GetMeshes() { return m_Meshes; }
 		const std::string& GetName() { return m_Name; }

@@ -17,7 +17,7 @@ namespace Silver {
 
 	void RenderCommand::DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, vertexArray->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
 }

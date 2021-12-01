@@ -75,12 +75,13 @@ namespace Silver {
 		m_VertexBufferList.push_back(vertexBuffer);
 	}
 
-	void VertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+	void VertexArray::AddIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 
-		m_IndexBuffer = indexBuffer;
+		m_IndexBufferList.push_back(indexBuffer);
+		m_IndicesCount += indexBuffer->GetCount();
 	}
 
 }

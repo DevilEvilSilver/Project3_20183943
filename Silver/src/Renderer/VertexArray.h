@@ -15,15 +15,17 @@ namespace Silver {
 		void Unbind() const;
 
 		void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer);
-		void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer);
+		void AddIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer);
 
 		const std::vector<std::shared_ptr<VertexBuffer>>& GetVertexBuffer() const { return m_VertexBufferList; }
-		const std::shared_ptr<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
+		const std::vector<std::shared_ptr<IndexBuffer>>& GetIndexBuffer() const { return m_IndexBufferList; }
+		unsigned int GetIndicesCount() { return m_IndicesCount; }
 
 	private:
 		uint32_t m_RendererID;
 		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBufferList;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		std::vector<std::shared_ptr<IndexBuffer>> m_IndexBufferList;
+		unsigned int m_IndicesCount = 0;
 	};
 
 }

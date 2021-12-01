@@ -20,12 +20,10 @@ IncludeDir["assimp"] = "Silver/vendor/assimp/include"
 IncludeDir["glm"] = "Silver/vendor/glm"
 IncludeDir["stb_image"] = "Silver/vendor/stb_image"
 
-LibDir = {}
-LibDir["assimp"] = "Silver/vendor/assimp/build/lib/Debug"
-
 include "Silver/vendor/GLFW"
 include "Silver/vendor/Glad"
 include "Silver/vendor/ImGui"
+include "Silver/vendor/assimp"
 
 project "Silver"
 	location "Silver"
@@ -64,12 +62,7 @@ project "Silver"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.assimp}"
-	}
-
-	libdirs
-	{
-		"%{LibDir.assimp}"
+		"%{IncludeDir.assimp}",
 	}
 
 	links
@@ -77,8 +70,8 @@ project "Silver"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32.lib",
-		"assimp-vc143-mtd.lib"
+		"assimp",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"

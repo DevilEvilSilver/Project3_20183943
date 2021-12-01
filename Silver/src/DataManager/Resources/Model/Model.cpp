@@ -13,7 +13,7 @@ namespace Silver {
 	{
 		m_VertexArray = std::make_shared<VertexArray>();
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
-		m_VertexArray->SetIndexBuffer(indexBuffer);
+		m_VertexArray->AddIndexBuffer(indexBuffer);
 	}
 
 	Mesh::~Mesh()
