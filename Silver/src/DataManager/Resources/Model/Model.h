@@ -2,6 +2,7 @@
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Texture.h"
+#include "Skeleton.h"
 
 #include <string>
 #include <memory>
@@ -31,7 +32,7 @@ namespace Silver {
 	public:
 		Model(const std::string& filepath);
 		Model(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes);
-		virtual ~Model();
+		virtual ~Model() = default;
 
 		const std::vector<std::shared_ptr<Mesh>>& GetMeshes() { return m_Meshes; }
 		const std::string& GetName() { return m_Name; }
@@ -40,12 +41,20 @@ namespace Silver {
 		void processNode(aiNode* node, const aiScene* scene);
 		std::shared_ptr<Mesh> processMesh(aiMesh* mesh, const aiScene* scene);
 
-	private:
+	protected:
 		std::string m_Name;
 		std::string m_Directory;
 		std::vector<std::shared_ptr<Mesh>> m_Meshes;
 	};
 
+	class AnimatedModel : public Model
+	{
+	public:
+		AnimatedModel(const std::string& filepath);
+		~AnimatedModel() = default;
 
+	private:
+		std::shared_ptr<Skeleton> m_Joints;
+	};
 
 }

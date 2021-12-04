@@ -110,4 +110,9 @@ namespace Silver {
 		return std::make_shared<Mesh>(vertexBuffer, indexBuffer);
 	}
 	
+	AnimatedModel::AnimatedModel(const std::string& filepath)
+		: Model(filepath)
+	{
+	}
+
 }
