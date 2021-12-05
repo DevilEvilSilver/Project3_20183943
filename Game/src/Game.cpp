@@ -87,6 +87,7 @@ public:
 
 		// Init 3D model
 		{
+			//m_3DModel = m_ModelLibrary.Load("F:/_Work/_School/Project_3/repository/Game/assets/models/duck.dae");
 			m_3DModel = m_ModelLibrary.Load("assets/models/duck.dae");
 			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");
 		}

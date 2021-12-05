@@ -41,8 +41,8 @@ namespace Silver {
 		shader->SubmitUniformMat4("u_World", worldMatrix);
 
 #ifdef SV_DEBUG
-		if (model->GetMeshes().empty())
-			SV_CORE_ERROR("Empty Model: {0}", model->GetName());
+		//if (model->GetMeshes().empty())
+		//	SV_CORE_ERROR("Empty Model: {0}", model->GetName());
 #endif // DEBUG
 
 		for (auto mesh : model->GetMeshes())

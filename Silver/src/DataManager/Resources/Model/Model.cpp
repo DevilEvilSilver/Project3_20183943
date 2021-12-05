@@ -26,14 +26,24 @@ namespace Silver {
 		m_Name = path.stem().string();
 
 		tinyxml2::XMLDocument doc;
-		if (doc.LoadFile("assets/models/duck.dae"))
-		{
-			SV_CORE_TRACE("Load ok");
-		}
-		else
+		if (doc.LoadFile(filepath.c_str()))
 		{
 			SV_CORE_ERROR("Load failed");
 		}
+		else
+		{
+			tinyxml2::XMLElement* geometry = doc.RootElement()->FirstChildElement("library_geometries")->FirstChildElement("geometry");
+
+			// Iterate through geometry elements 
+			while (geometry != NULL) 
+			{
+				SV_CORE_TRACE("data name : {0}", geometry->Attribute("id"));
+
+				geometry = geometry->NextSiblingElement("geometry");
+			}
+		}
+		
+
 
 		//Assimp::Importer import;
 		//const aiScene* scene = import.ReadFile(filepath, aiProcess_Triangulate |
