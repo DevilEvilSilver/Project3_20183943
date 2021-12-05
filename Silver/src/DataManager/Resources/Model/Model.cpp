@@ -2,6 +2,7 @@
 #include "Model.h"
 
 #include <filesystem>
+#include <tinyxml2.h>
 
 namespace Silver {
 
@@ -19,6 +20,21 @@ namespace Silver {
 
 	Model::Model(const std::string& filepath)
 	{
+		// Extract name & directory from filepath
+		m_Directory = filepath.substr(0, filepath.find_last_of('/'));
+		std::filesystem::path path = filepath;
+		m_Name = path.stem().string();
+
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile("assets/models/duck.dae"))
+		{
+			SV_CORE_TRACE("Load ok");
+		}
+		else
+		{
+			SV_CORE_ERROR("Load failed");
+		}
+
 		//Assimp::Importer import;
 		//const aiScene* scene = import.ReadFile(filepath, aiProcess_Triangulate |
 		//	aiProcess_FlipUVs);
@@ -28,10 +44,8 @@ namespace Silver {
 		//	SV_CORE_ERROR("Assimp error: {0}", import.GetErrorString());
 		//	return;
 		//}
-		// Extract name & directory from filepath
-		m_Directory = filepath.substr(0, filepath.find_last_of('/'));
-		std::filesystem::path path = filepath;
-		m_Name = path.stem().string();
+		
+		
 		//processNode(scene->mRootNode, scene);
 	}
 

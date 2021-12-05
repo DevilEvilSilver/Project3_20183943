@@ -18,7 +18,7 @@ IncludeDir["Glad"] = "Silver/vendor/Glad/include"
 IncludeDir["ImGui"] = "Silver/vendor/ImGui"
 IncludeDir["glm"] = "Silver/vendor/glm"
 IncludeDir["stb_image"] = "Silver/vendor/stb_image"
-IncludeDir["rapidxml"] = "Silver/vendor/rapidxml"
+IncludeDir["tinyxml2"] = "Silver/vendor/tinyxml2"
 
 include "Silver/vendor/GLFW"
 include "Silver/vendor/Glad"
@@ -45,7 +45,8 @@ project "Silver"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
-		"%{prj.name}/vendor/rapidxml/**.hpp"
+		"%{prj.name}/vendor/tinyxml2/tinyxml2.h",
+		"%{prj.name}/vendor/tinyxml2/tinyxml2.cpp"
 	}
 
 	defines
@@ -62,7 +63,7 @@ project "Silver"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.rapidxml}"
+		"%{IncludeDir.tinyxml2}"
 	}
 
 	links
@@ -120,6 +121,7 @@ project "Game"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.tinyxml2}"
 	}
 
 	links

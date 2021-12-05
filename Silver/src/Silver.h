@@ -27,4 +27,3 @@
 
 // Debug -----------------------
 #include "ImGui/ImGuiLayer.h"
-
