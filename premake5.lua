@@ -16,14 +16,13 @@ IncludeDir["spdlog"] = "Silver/vendor/spdlog/include"
 IncludeDir["GLFW"] = "Silver/vendor/GLFW/include"
 IncludeDir["Glad"] = "Silver/vendor/Glad/include"
 IncludeDir["ImGui"] = "Silver/vendor/ImGui"
-IncludeDir["assimp"] = "Silver/vendor/assimp/include"
+IncludeDir["assimp"] = "Silver/vendor/assimp-5.0.1/include"
 IncludeDir["glm"] = "Silver/vendor/glm"
 IncludeDir["stb_image"] = "Silver/vendor/stb_image"
 
 include "Silver/vendor/GLFW"
 include "Silver/vendor/Glad"
 include "Silver/vendor/ImGui"
-include "Silver/vendor/assimp"
 
 project "Silver"
 	location "Silver"
@@ -62,7 +61,12 @@ project "Silver"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.assimp}",
+		"%{IncludeDir.assimp}"
+	}
+
+	libdirs
+	{
+		"Silver/vendor/assimp-5.0.1/Debug"
 	}
 
 	links
@@ -70,7 +74,7 @@ project "Silver"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"assimp",
+		"assimp-vc143-mtd.lib",
 		"opengl32.lib"
 	}
 
