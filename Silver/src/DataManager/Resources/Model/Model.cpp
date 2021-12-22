@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Model.h"
+#include "Utils/ColladaParser/GeometryLoader.h"
 
 #include <filesystem>
-#include <tinyxml2.h>
 
 namespace Silver {
 
@@ -12,6 +12,7 @@ namespace Silver {
 		m_VertexArray = std::make_shared<VertexArray>();
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 		m_VertexArray->SetIndexBuffer(indexBuffer);
+		m_VertexArray->Unbind();
 	}
 
 	Mesh::~Mesh()
@@ -25,23 +26,10 @@ namespace Silver {
 		std::filesystem::path path = filepath;
 		m_Name = path.stem().string();
 
-		tinyxml2::XMLDocument doc;
-		if (doc.LoadFile(filepath.c_str()))
-		{
-			SV_CORE_ERROR("Load failed");
-		}
-		else
-		{
-			tinyxml2::XMLElement* geometry = doc.RootElement()->FirstChildElement("library_geometries")->FirstChildElement("geometry");
+		std::unique_ptr<GeometryLoader> geometryLoader = std::make_unique<GeometryLoader>();
+		m_Meshes.push_back(geometryLoader->ExtractModelData(filepath));
 
-			// Iterate through geometry elements 
-			while (geometry != NULL) 
-			{
-				SV_CORE_TRACE("data name : {0}", geometry->Attribute("id"));
-
-				geometry = geometry->NextSiblingElement("geometry");
-			}
-		}
+		
 		
 
 

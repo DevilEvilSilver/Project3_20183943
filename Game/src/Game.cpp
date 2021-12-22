@@ -8,7 +8,7 @@ class TestLayer : public Silver::Layer
 {
 public:
 	TestLayer()
-		:Layer("TestLayer"), m_Camera(45.0f, 16.0f/9, 0.1f, 1000.0f), m_CameraPosition(0.0f, 0.0f, 300.0f), m_Position(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
+		:Layer("TestLayer"), m_Camera(45.0f, 16.0f/9, 0.1f, 1000.0f), m_CameraPosition(0.0f, 0.0f, 3.0f), m_Position(0.0f), m_SquareColor({ 0.2f, 0.1f, 0.6f })
 	{
 		// Init Square
 		{
@@ -88,7 +88,7 @@ public:
 		// Init 3D model
 		{
 			//m_3DModel = m_ModelLibrary.Load("F:/_Work/_School/Project_3/repository/Game/assets/models/duck.dae");
-			m_3DModel = m_ModelLibrary.Load("assets/models/duck.dae");
+			m_3DModel = m_ModelLibrary.Load("assets/models/testModel.dae");
 			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");
 		}
 	}
@@ -102,9 +102,9 @@ public:
 		else if (Silver::Input::IsKeyPressed(KEY_RIGHT))
 			m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
 		if (Silver::Input::IsKeyPressed(KEY_DOWN))
-			m_CameraPosition.z += m_CameraMoveSpeed * deltaTime;
+			m_CameraPosition.y -= m_CameraMoveSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_UP))
-			m_CameraPosition.z -= m_CameraMoveSpeed * deltaTime;
+			m_CameraPosition.y += m_CameraMoveSpeed * deltaTime;
 
 		if (Silver::Input::IsKeyPressed(KEY_W))
 			m_CameraXRotation += m_CameraRotationSpeed * deltaTime;
@@ -136,23 +136,23 @@ public:
 
 		Silver::Renderer::BeginScene(m_Camera);
 
-		//m_SquareShader->Bind();
-		//m_SquareShader->SubmitUniformFloat3("u_Color", m_SquareColor);
-		//for (unsigned int x = 0; x < 20; x++)
-		//{
-		//	for (unsigned int y = 0; y < 20; y++)
-		//	{
-		//		glm::vec3 pos(x * 0.15f, y * 0.15f, 0.0f);
-		//		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * tileScale;
-		//		Silver::Renderer::Submit(m_SquareShader, m_SquareModel, transform);
-		//	}
-		//}
+		m_SquareShader->Bind();
+		m_SquareShader->SubmitUniformFloat3("u_Color", m_SquareColor);
+		for (unsigned int x = 0; x < 20; x++)
+		{
+			for (unsigned int y = 0; y < 20; y++)
+			{
+				glm::vec3 pos(x * 0.15f, y * 0.15f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * tileScale;
+				Silver::Renderer::Submit(m_SquareShader, m_SquareModel, transform);
+			}
+		}
 
-		//auto textureShader = m_ShaderLibrary.Get("Texture");
-		//m_Texture->Bind();
-		//Silver::Renderer::Submit(textureShader, m_SquareModel, triangleWorldMatrix);
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+		m_Texture->Bind();
+		Silver::Renderer::Submit(textureShader, m_SquareModel, triangleWorldMatrix);
 
-		Silver::Renderer::Submit(m_ModelShader, m_3DModel);
+		Silver::Renderer::Submit(m_ModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
 
 		Silver::Renderer::EndScene();
 	}
