@@ -11,20 +11,24 @@ namespace Silver {
 		m_Indices.clear();
 	}
 
-	std::shared_ptr<Mesh> GeometryLoader::ExtractModelData(const std::string& filepath)
+	void GeometryLoader::ExtractModelData(tinyxml2::XMLElement* node, 
+		const std::vector<std::shared_ptr<VertexSkinData>>& skinData, std::vector<std::shared_ptr<Mesh>>& meshes)
     {
-		tinyxml2::XMLDocument doc;
-		if (doc.LoadFile(filepath.c_str()))
+		tinyxml2::XMLElement* geometry = node->FirstChildElement("geometry");
+		while (geometry != NULL)
 		{
-			SV_CORE_ERROR("Load failed");
+			unsigned int meshesCount = 0; // can delete
+			tinyxml2::XMLElement* mesh = geometry->FirstChildElement("mesh");
+			while (mesh != NULL)
+			{
+				meshes.push_back(ReadRawData(mesh));
+				meshesCount++; // can delete
+				mesh = mesh->NextSiblingElement("mesh");
+			}
+			if (meshesCount > 1)
+				SV_CORE_TRACE("Model load with more than 1 meshes per geometry !!!"); // can delete
+			geometry = geometry->NextSiblingElement("geometry");
 		}
-
-		tinyxml2::XMLElement* mesh = doc.RootElement()
-			->FirstChildElement("library_geometries")
-			->FirstChildElement("geometry")
-			->FirstChildElement("mesh");
-
-		return ReadRawData(mesh);
     }
 
 	std::shared_ptr<Mesh> GeometryLoader::ReadRawData(tinyxml2::XMLElement*& mesh)
@@ -94,7 +98,6 @@ namespace Silver {
 					m_Vertices.push_back(0.0f);
 					m_Vertices.push_back(0.0f);
 				}
-				source = source->NextSiblingElement("source");
 			}
 			// Get vertices normal
 			else if (std::string(source->Attribute("id")) == normalID) {
@@ -114,7 +117,6 @@ namespace Silver {
 					normalData.erase(0, normalData.find(" ") + 1);
 					normals.push_back(glm::vec3(x, y, z));
 				}
-				source = source->NextSiblingElement("source");
 			}
 			// Get vertices texCoords
 			else if (std::string(source->Attribute("id")) == texCoordID) {
@@ -132,11 +134,8 @@ namespace Silver {
 					texCoordData.erase(0, texCoordData.find(" ") + 1);
 					texCoords.push_back(glm::vec2(s, t));
 				}
-				source = source->NextSiblingElement("source");
 			}
-			else {
-				source = source->NextSiblingElement("source");
-			}
+			source = source->NextSiblingElement("source");
 		}
 		
 		AssembleVertices(mesh, normals, texCoords);

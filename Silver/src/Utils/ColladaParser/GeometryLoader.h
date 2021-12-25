@@ -1,5 +1,6 @@
 #pragma once
 #include "DataManager/Resources/Model/Model.h"
+#include "SkinLoader.h"
 
 #include <memory>
 #include <tinyxml2.h>
@@ -11,7 +12,8 @@ namespace Silver {
 	public:
 		GeometryLoader() = default;
 		~GeometryLoader();
-		std::shared_ptr<Mesh> ExtractModelData(const std::string& filepath);
+		void ExtractModelData(tinyxml2::XMLElement* node, 
+			const std::vector<std::shared_ptr<VertexSkinData>>& skinData, std::vector<std::shared_ptr<Mesh>>& meshes);
 
 	private:
 		std::shared_ptr<Mesh> ReadRawData(tinyxml2::XMLElement*& mesh);
