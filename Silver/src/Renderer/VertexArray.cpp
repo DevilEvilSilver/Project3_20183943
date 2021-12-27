@@ -57,19 +57,18 @@ namespace Silver {
 			SV_CORE_ERROR("Vertex layout empty!");
 		}
 
-		unsigned int index = 0;
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& attrib : layout)
 		{
-			glEnableVertexAttribArray(index);
+			glEnableVertexAttribArray(m_LayoutIndex);
 			glVertexAttribPointer(
-				index,
+				m_LayoutIndex,
 				attrib.GetComponentCount(),
 				DataTypeToOpenGLType(attrib.type),
 				attrib.normalized ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
 				(const void*)attrib.offset);
-			index++;
+			m_LayoutIndex++;
 		}
 
 		m_VertexBufferList.push_back(vertexBuffer);

@@ -88,7 +88,7 @@ public:
 		// Init 3D model
 		{
 			//m_3DModel = m_ModelLibrary.Load("F:/_Work/_School/Project_3/repository/Game/assets/models/duck.dae");
-			m_3DModel = m_ModelLibrary.Load("assets/models/BASEmodel.dae");
+			m_3DModel = m_ModelLibrary.LoadAnimated("assets/models/animModel.dae");
 			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");
 		}
 	}
@@ -102,9 +102,9 @@ public:
 		else if (Silver::Input::IsKeyPressed(KEY_RIGHT))
 			m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
 		if (Silver::Input::IsKeyPressed(KEY_DOWN))
-			m_CameraPosition.z += m_CameraMoveSpeed * deltaTime;
+			m_CameraPosition.y -= m_CameraMoveSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_UP))
-			m_CameraPosition.z -= m_CameraMoveSpeed * deltaTime;
+			m_CameraPosition.y += m_CameraMoveSpeed * deltaTime;
 
 		if (Silver::Input::IsKeyPressed(KEY_W))
 			m_CameraXRotation += m_CameraRotationSpeed * deltaTime;
@@ -173,7 +173,8 @@ private:
 	// tmp
 	Silver::ShaderLibrary m_ShaderLibrary;
 	Silver::ModelLibrary m_ModelLibrary;
-	std::shared_ptr<Silver::Model> m_SquareModel, m_3DModel;
+	std::shared_ptr<Silver::Model> m_SquareModel;
+	std::shared_ptr <Silver::AnimatedModel> m_3DModel;
 	std::shared_ptr<Silver::Shader> m_SquareShader, m_ModelShader;
 	std::shared_ptr<Silver::Texture2D> m_Texture;
 

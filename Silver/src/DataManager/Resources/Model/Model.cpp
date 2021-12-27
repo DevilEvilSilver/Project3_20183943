@@ -6,19 +6,6 @@
 
 namespace Silver {
 
-	Mesh::Mesh(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer)
-		//:m_VertexBuffer(vertexBuffer), m_IndexBuffer(indexBuffer)
-	{
-		m_VertexArray = std::make_shared<VertexArray>();
-		m_VertexArray->AddVertexBuffer(vertexBuffer);
-		m_VertexArray->SetIndexBuffer(indexBuffer);
-		m_VertexArray->Unbind();
-	}
-
-	Mesh::~Mesh()
-	{
-	}
-
 	Model::Model(const std::string& filepath)
 	{
 		// Extract name & directory from filepath
@@ -31,7 +18,13 @@ namespace Silver {
 		: m_Name(name), m_Directory("")
 	{
 	}
-	
+
+	StaticModel::StaticModel(const std::string& filepath)
+		: Model(filepath)
+	{
+		//ColladaLoader::LoadStaticModel(filepath, m_Meshes);
+	}
+
 	AnimatedModel::AnimatedModel(const std::string& filepath)
 		: Model(filepath)
 	{

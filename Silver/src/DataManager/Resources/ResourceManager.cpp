@@ -16,16 +16,30 @@ namespace Silver {
 		m_Models[name] = model;
 	}
 
-	std::shared_ptr<Model> ModelLibrary::Load(const std::string& filepath)
+	std::shared_ptr<StaticModel> ModelLibrary::LoadStatic(const std::string& filepath)
 	{
-		auto model = std::make_shared<Model>(filepath);
+		auto model = std::make_shared<StaticModel>(filepath);
 		Add(model);
 		return model;
 	}
 
-	std::shared_ptr<Model> ModelLibrary::Load(const std::string& name, const std::string& filepath)
+	std::shared_ptr<StaticModel> ModelLibrary::LoadStatic(const std::string& name, const std::string& filepath)
 	{
-		auto model = std::make_shared<Model>(filepath);
+		auto model = std::make_shared<StaticModel>(filepath);
+		Add(name, model);
+		return model;
+	}
+
+	std::shared_ptr<AnimatedModel> ModelLibrary::LoadAnimated(const std::string& filepath)
+	{
+		auto model = std::make_shared<AnimatedModel>(filepath);
+		Add(model);
+		return model;
+	}
+
+	std::shared_ptr<AnimatedModel> ModelLibrary::LoadAnimated(const std::string& name, const std::string& filepath)
+	{
+		auto model = std::make_shared<AnimatedModel>(filepath);
 		Add(name, model);
 		return model;
 	}

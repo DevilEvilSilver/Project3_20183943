@@ -11,9 +11,28 @@ namespace Silver {
 		m_Indices.clear();
 	}
 
-	void GeometryLoader::ExtractModelData(tinyxml2::XMLElement* node, 
-		const std::vector<std::shared_ptr<VertexSkinData>>& skinData, std::vector<std::shared_ptr<Mesh>>& meshes)
+	void GeometryLoader::ExtractAnimatedModelData(tinyxml2::XMLElement* node, const std::vector<std::shared_ptr<VertexSkinData>>& skinData, 
+		unsigned int maxWeightCount, std::vector<std::shared_ptr<Mesh>>& meshes)
     {
+		tinyxml2::XMLElement* geometry = node->FirstChildElement("geometry");
+		while (geometry != NULL)
+		{
+			unsigned int meshesCount = 0; // can delete
+			tinyxml2::XMLElement* mesh = geometry->FirstChildElement("mesh");
+			while (mesh != NULL)
+			{
+				meshes.push_back(AddSkinData(skinData, maxWeightCount, ReadRawData(mesh)));
+				meshesCount++; // can delete
+				mesh = mesh->NextSiblingElement("mesh");
+			}
+			if (meshesCount > 1)
+				SV_CORE_TRACE("Model load with more than 1 meshes per geometry !!!"); // can delete
+			geometry = geometry->NextSiblingElement("geometry");
+		}
+    }
+
+	void GeometryLoader::ExtractStaticModelData(tinyxml2::XMLElement* node, std::vector<std::shared_ptr<Mesh>>& meshes)
+	{
 		tinyxml2::XMLElement* geometry = node->FirstChildElement("geometry");
 		while (geometry != NULL)
 		{
@@ -29,7 +48,7 @@ namespace Silver {
 				SV_CORE_TRACE("Model load with more than 1 meshes per geometry !!!"); // can delete
 			geometry = geometry->NextSiblingElement("geometry");
 		}
-    }
+	}
 
 	std::shared_ptr<Mesh> GeometryLoader::ReadRawData(tinyxml2::XMLElement*& mesh)
 	{
@@ -207,6 +226,35 @@ namespace Silver {
 			m_Vertices[vertexIndex * 8 + 6] = texCoords[lstIndexData[i * typeCount + 2]].s;
 			m_Vertices[vertexIndex * 8 + 7] = texCoords[lstIndexData[i * typeCount + 2]].t;
 		}
+	}
+
+	std::shared_ptr<Mesh> GeometryLoader::AddSkinData(const std::vector<std::shared_ptr<VertexSkinData>>& skinData,
+		unsigned int maxWeightCount, std::shared_ptr<Mesh>& mesh)
+	{
+		unsigned int* jointID = new unsigned int[m_Vertices.size() / 8 * 3];
+		float* weight = new float[m_Vertices.size() / 8 * 3];
+		for (unsigned int i = 0; i < skinData.size(); ++i)
+		{
+			for (unsigned int j = 0; j < maxWeightCount; ++j)
+			{
+				jointID[i * maxWeightCount + j] = skinData[i]->GetJointIDList()[j];
+				weight[i * maxWeightCount + j] = skinData[i]->GetWeightList()[j];
+			}
+		}
+		std::shared_ptr<Silver::VertexBuffer> JointBuffer = 
+			std::make_shared<Silver::VertexBuffer>(jointID, sizeof(unsigned int) * m_Vertices.size() / 8 * 3);
+		JointBuffer->SetLayout({
+			{ Silver::DataType::Int3, "a_JointID"},
+			});
+		std::shared_ptr<Silver::VertexBuffer> WeightBuffer = 
+			std::make_shared<Silver::VertexBuffer>(weight, sizeof(float) * m_Vertices.size() / 8 * 3);
+		WeightBuffer->SetLayout({
+			{ Silver::DataType::Float3, "a_Weight"},
+			});
+		mesh->GetVertexArray()->AddVertexBuffer(JointBuffer);
+		mesh->GetVertexArray()->AddVertexBuffer(WeightBuffer);
+
+		return mesh;
 	}
 
 }

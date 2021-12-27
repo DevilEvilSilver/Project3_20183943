@@ -22,6 +22,7 @@ namespace Silver {
 
 	private:
 		uint32_t m_RendererID;
+		unsigned int m_LayoutIndex = 0;
 		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBufferList;
 		std::shared_ptr<IndexBuffer> m_IndexBuffer;
 	};

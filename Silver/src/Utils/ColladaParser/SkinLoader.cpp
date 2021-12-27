@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "SkinLoader.h"
 
-#include <algorithm>
-
 namespace Silver {
 
 	SkinLoader::SkinLoader(tinyxml2::XMLElement* node, unsigned int maxWeightCount)
@@ -99,13 +97,13 @@ namespace Silver {
 		std::string rawData = skinningdata
 			->FirstChildElement("vertex_weights")
 			->FirstChildElement("vcount")->GetText();
-		unsigned int pos;
+		size_t pos;
 		while ((pos = rawData.find(" ")) != std::string::npos)
 		{
 			effectorJointCounts.push_back(std::stoi(rawData.substr(0, pos)));
 			rawData.erase(0, pos + 1);
 		}
-		effectorJointCounts.push_back(std::stoi(rawData.substr(0, pos)));
+		//effectorJointCounts.push_back(std::stoi(rawData.substr(0, pos)));
 	}
 
 	void SkinLoader::LoadSkinData(tinyxml2::XMLElement* skinningdata, std::vector<unsigned int>& counts, std::vector<float>& weights)
@@ -169,7 +167,7 @@ namespace Silver {
 	float VertexSkinData::SaveTopWeights(std::vector<float>& topWeightsArray, unsigned int max)
 	{
 		float total = 0;
-		for (int i = 0; i < max; i++) {
+		for (unsigned int i = 0; i < max; i++) {
 			topWeightsArray.push_back(m_Weight[i]);
 			total += topWeightsArray[i];
 		}

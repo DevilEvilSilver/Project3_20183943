@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ColladaLoader.h"
 #include "SkinLoader.h"
+#include "SkeletonLoader.h"
 #include "GeometryLoader.h"
 
 #include <tinyxml2.h>
@@ -16,21 +17,16 @@ namespace Silver {
 			SV_CORE_ERROR("Load failed");
 		}
 
-		const unsigned int MAX_WEIGHT_COUNT = 3;
+		const unsigned int MAX_WEIGHT_COUNT = 3; // Currently support (1 vertex in effect of max to 3 joint)
 		std::unique_ptr<SkinLoader> skinLoader = 
 			std::make_unique<SkinLoader>(doc.RootElement()->FirstChildElement("library_controllers"), MAX_WEIGHT_COUNT);
 
-		//SkinLoader skinLoader = new SkinLoader(node.getChild("library_controllers"), maxWeights);
-		//SkinningData skinningData = skinLoader.extractSkinData();
-
-		//SkeletonLoader jointsLoader = new SkeletonLoader(node.getChild("library_visual_scenes"), skinningData.jointOrder);
-		//SkeletonData jointsData = jointsLoader.extractBoneData();
+		std::unique_ptr<SkeletonLoader> skeletonLoader = std::make_unique<SkeletonLoader>();
+		skeletonLoader->ExtractBoneData(doc.RootElement()->FirstChildElement("library_visual_scenes"), skinLoader->GetJointOrder(), joints);
 
 		std::unique_ptr<GeometryLoader> geometryLoader = std::make_unique<GeometryLoader>();
-		geometryLoader->ExtractModelData(doc.RootElement()->FirstChildElement("library_geometries"), skinLoader->GetSkinData(), meshes);
-
-		//GeometryLoader g = new GeometryLoader(node.getChild("library_geometries"), skinningData.verticesSkinData);
-		//MeshData meshData = g.extractModelData();
+		geometryLoader->ExtractAnimatedModelData(doc.RootElement()->FirstChildElement("library_geometries"), 
+			skinLoader->GetSkinData(), MAX_WEIGHT_COUNT, meshes);
 	}
 
 }

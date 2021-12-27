@@ -17,10 +17,19 @@ namespace Silver {
 		
 		virtual const std::string& GetName() { return m_Name; }
 		virtual const std::string& GetDirectory() { return m_Directory; }
+		virtual const std::vector<std::shared_ptr<Mesh>>& GetMeshes() { return m_Meshes; }
 
 	protected:
 		std::string m_Name;
 		std::string m_Directory;
+		std::vector<std::shared_ptr<Mesh>> m_Meshes;
+	};
+
+	class StaticModel : public Model
+	{
+	public:
+		StaticModel(const std::string& filepath);
+		~StaticModel() = default;
 	};
 
 	class AnimatedModel : public Model
@@ -29,13 +38,10 @@ namespace Silver {
 		AnimatedModel(const std::string& filepath);
 		~AnimatedModel() = default;
 
-		const std::vector<std::shared_ptr<Mesh>>& GetMeshes() { return m_Meshes; }
 		const std::shared_ptr<Skeleton>& GetJoints() { return m_Joints; }
 
 	private:
 		std::shared_ptr<Skeleton> m_Joints;
-		std::vector<std::shared_ptr<Mesh>> m_Meshes;
-
 	};
 
 }
