@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderer/VertexArray.h"
 
+#include <vector>
 #include <memory>
 
 namespace Silver {
@@ -9,6 +10,7 @@ namespace Silver {
 	{
 	public:
 		Mesh(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer);
+		Mesh(const std::vector<std::shared_ptr<VertexBuffer>>& vertexBuffers, const std::shared_ptr<IndexBuffer>& indexBuffer);
 		~Mesh();
 
 		const std::shared_ptr<VertexArray>& GetVertexArray() { return m_VertexArray; }

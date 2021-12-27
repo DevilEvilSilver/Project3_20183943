@@ -12,6 +12,15 @@ namespace Silver {
 		m_VertexArray->Unbind();
 	}
 
+	Mesh::Mesh(const std::vector<std::shared_ptr<VertexBuffer>>& vertexBuffers, const std::shared_ptr<IndexBuffer>& indexBuffer)
+	{
+		m_VertexArray = std::make_shared<VertexArray>();
+		for (auto vb : vertexBuffers)
+			m_VertexArray->AddVertexBuffer(vb);
+		m_VertexArray->SetIndexBuffer(indexBuffer);
+		m_VertexArray->Unbind();
+	}
+
 	Mesh::~Mesh()
 	{
 	}

@@ -36,7 +36,7 @@ const vec2 lightBias = vec2(0.7, 0.6); //just indicates the balance between diff
 
 void main()
 {
-	vec4 diffuseColour = vec4(0.5); //texture(diffuseMap, pass_textureCoords);		
+	vec4 diffuseColour = texture(u_Texture, v_TexCoord);		
 	vec3 unitNormal = normalize(v_Normal);
 	float diffuseLight = max(dot(-lightDirection, unitNormal), 0.0) * lightBias.x + lightBias.y;
 	color = diffuseColour * diffuseLight;

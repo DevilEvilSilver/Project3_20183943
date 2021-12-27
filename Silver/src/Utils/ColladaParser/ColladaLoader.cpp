@@ -18,6 +18,11 @@ namespace Silver {
 		}
 
 		const unsigned int MAX_WEIGHT_COUNT = 3; // Currently support (1 vertex in effect of max to 3 joint)
+		if (doc.RootElement()->FirstChildElement("library_controllers") == NULL)
+		{
+			SV_CORE_ERROR("file doesn't have library_controllers: {0}", filepath);
+			return;
+		}
 		std::unique_ptr<SkinLoader> skinLoader = 
 			std::make_unique<SkinLoader>(doc.RootElement()->FirstChildElement("library_controllers"), MAX_WEIGHT_COUNT);
 
@@ -27,6 +32,18 @@ namespace Silver {
 		std::unique_ptr<GeometryLoader> geometryLoader = std::make_unique<GeometryLoader>();
 		geometryLoader->ExtractAnimatedModelData(doc.RootElement()->FirstChildElement("library_geometries"), 
 			skinLoader->GetSkinData(), MAX_WEIGHT_COUNT, meshes);
+	}
+
+	void ColladaLoader::LoadStaticModel(const std::string& filepath, std::vector<std::shared_ptr<Mesh>>& meshes)
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(filepath.c_str()))
+		{
+			SV_CORE_ERROR("Load failed");
+		}
+
+		std::unique_ptr<GeometryLoader> geometryLoader = std::make_unique<GeometryLoader>();
+		geometryLoader->ExtractStaticModelData(doc.RootElement()->FirstChildElement("library_geometries"), meshes);
 	}
 
 }

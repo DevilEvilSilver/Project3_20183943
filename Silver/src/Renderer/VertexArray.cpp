@@ -67,10 +67,9 @@ namespace Silver {
 				DataTypeToOpenGLType(attrib.type),
 				attrib.normalized ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
-				(const void*)attrib.offset);
+				(const void*)(attrib.offset));
 			m_LayoutIndex++;
 		}
-
 		m_VertexBufferList.push_back(vertexBuffer);
 	}
 

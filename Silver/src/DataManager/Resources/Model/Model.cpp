@@ -15,14 +15,14 @@ namespace Silver {
 	}
 
 	Model::Model(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes)
-		: m_Name(name), m_Directory("")
+		: m_Name(name), m_Directory(""), m_Meshes(meshes)
 	{
 	}
 
 	StaticModel::StaticModel(const std::string& filepath)
 		: Model(filepath)
 	{
-		//ColladaLoader::LoadStaticModel(filepath, m_Meshes);
+		ColladaLoader::LoadStaticModel(filepath, m_Meshes);
 	}
 
 	AnimatedModel::AnimatedModel(const std::string& filepath)

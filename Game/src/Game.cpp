@@ -12,19 +12,33 @@ public:
 	{
 		// Init Square
 		{
-			float vertices[5 * 4] = {
-				-0.7f, -0.7f, 0.0f, 0.0f, 0.0f,
-				0.7f, -0.7f, 0.0f, 1.0f, 0.0f,
-				0.7f, 0.7f, 0.0f, 1.0f, 1.0f,
-				-0.7f, 0.7f, 0.0f, 0.0f, 1.0f
+			float vertices[3 * 4] = {
+				-0.7f, -0.7f, 0.0f,
+				0.7f, -0.7f, 0.0f,
+				0.7f, 0.7f, 0.0f, 
+				-0.7f, 0.7f, 0.0f
 
 			};
 			std::shared_ptr<Silver::VertexBuffer> squareVB;
 			squareVB = std::make_shared<Silver::VertexBuffer>(vertices, sizeof(vertices));
 			squareVB->SetLayout({
 				{ Silver::DataType::Float3, "a_Position"},
+				});
+			float normals[2 * 4] = {
+				0.0f, 0.0f,
+				1.0f, 0.0f,
+				1.0f, 1.0f,
+				0.0f, 1.0f
+
+			};
+			std::shared_ptr<Silver::VertexBuffer> squareNormal;
+			squareNormal = std::make_shared<Silver::VertexBuffer>(normals, sizeof(normals));
+			squareNormal->SetLayout({
 				{ Silver::DataType::Float2, "a_TexCoord"}
 				});
+			std::vector<std::shared_ptr<Silver::VertexBuffer>> VBList;
+			VBList.push_back(squareVB);
+			VBList.push_back(squareNormal);
 
 			unsigned int indices[2 * 3] = {
 				0, 1, 2,
@@ -32,7 +46,9 @@ public:
 			};
 			std::shared_ptr<Silver::IndexBuffer> squareIB;
 			squareIB = std::make_shared<Silver::IndexBuffer>(indices, std::size(indices));
-			auto squareMesh = std::make_shared<Silver::Mesh>(squareVB, squareIB);
+
+			auto squareMesh = std::make_shared<Silver::Mesh>(VBList, squareIB);
+
 			std::vector<std::shared_ptr<Silver::Mesh>> meshes;
 			meshes.push_back(squareMesh);
 			m_SquareModel = std::make_shared<Silver::Model>("squareModel", meshes);
@@ -88,8 +104,11 @@ public:
 		// Init 3D model
 		{
 			//m_3DModel = m_ModelLibrary.Load("F:/_Work/_School/Project_3/repository/Game/assets/models/duck.dae");
+			m_Cube = m_ModelLibrary.LoadStatic("assets/models/cube.dae");
 			m_3DModel = m_ModelLibrary.LoadAnimated("assets/models/animModel.dae");
-			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");
+			m_3DTexture = std::make_shared<Silver::Texture2D>("assets/textures/animTexture.png");
+			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");	
+			m_AnimModelShader = m_ShaderLibrary.Load("assets/shaders/AnimModel.glsl");
 		}
 	}
 
@@ -152,7 +171,10 @@ public:
 		//m_Texture->Bind();
 		//Silver::Renderer::Submit(textureShader, m_SquareModel, triangleWorldMatrix);
 
-		Silver::Renderer::Submit(m_ModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+		m_ModelShader->Bind();
+		m_3DTexture->Bind();
+		m_ModelShader->SubmitUniformInt("u_Texture", 0);
+		Silver::Renderer::Submit(m_AnimModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 
 		Silver::Renderer::EndScene();
 	}
@@ -173,10 +195,10 @@ private:
 	// tmp
 	Silver::ShaderLibrary m_ShaderLibrary;
 	Silver::ModelLibrary m_ModelLibrary;
-	std::shared_ptr<Silver::Model> m_SquareModel;
+	std::shared_ptr<Silver::Model> m_SquareModel, m_Cube;
 	std::shared_ptr <Silver::AnimatedModel> m_3DModel;
-	std::shared_ptr<Silver::Shader> m_SquareShader, m_ModelShader;
-	std::shared_ptr<Silver::Texture2D> m_Texture;
+	std::shared_ptr<Silver::Shader> m_SquareShader, m_ModelShader, m_AnimModelShader;
+	std::shared_ptr<Silver::Texture2D> m_Texture, m_3DTexture;
 
 	Silver::PerspectiveCamera m_Camera;
 	glm::vec3 m_CameraPosition;
