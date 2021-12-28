@@ -218,7 +218,7 @@ namespace Silver {
 
 	void GeometryLoader::ProcessVertex(unsigned int vertexIndex, unsigned int normalIndex, unsigned int texCoordIndex)
 	{
-		if (m_Vertices[vertexIndex]->IsSet())
+		if (m_Vertices[vertexIndex]->IsNotSet())
 		{
 			m_Vertices[vertexIndex]->m_NormalIndex = normalIndex;
 			m_Vertices[vertexIndex]->m_TextureIndex = texCoordIndex;
@@ -249,13 +249,14 @@ namespace Silver {
 						m_Vertices[vertexIndex]->m_Position);
 				duplicateVertex->m_NormalIndex = normalIndex;
 				duplicateVertex->m_TextureIndex = texCoordIndex;
+				m_Vertices[vertexIndex]->m_DuplicateVertex = duplicateVertex;
 				m_Vertices.push_back(duplicateVertex);
 				m_Indices.push_back(duplicateVertex->m_Index);
 			}
 		}
 	}
 
-	std::shared_ptr<Mesh> GeometryLoader::ConvertToStaticMeshData()
+	std::vector<std::shared_ptr<Silver::VertexBuffer>> GeometryLoader::GetBufferList()
 	{
 		float* vertices = new float[m_Vertices.size() * 8];
 		for (unsigned int i = 0; i < m_Vertices.size(); ++i)
@@ -275,39 +276,30 @@ namespace Silver {
 			{ Silver::DataType::Float3, "a_Normal"},
 			{ Silver::DataType::Float2, "a_TexCoord"}
 			});
+
+		std::vector<std::shared_ptr<Silver::VertexBuffer>> BufferList;
+		BufferList.push_back(VertexBuffer);
+		delete[]vertices;
+
+		return BufferList;
+	}
+
+	std::shared_ptr<Mesh> GeometryLoader::ConvertToStaticMeshData()
+	{
+		std::vector<std::shared_ptr<Silver::VertexBuffer>> BufferList = GetBufferList();
+
 		unsigned int* indices = new unsigned int[m_Indices.size()];
 		std::copy(m_Indices.begin(), m_Indices.end(), indices);
 		std::shared_ptr<Silver::IndexBuffer> IndexBuffer = std::make_shared<Silver::IndexBuffer>(indices, m_Indices.size());
-
-		delete[]vertices;
 		delete[]indices;
 
-		auto meshData = std::make_shared<Mesh>(VertexBuffer, IndexBuffer);
+		auto meshData = std::make_shared<Mesh>(BufferList, IndexBuffer);
 
 		return meshData;
 	}
 
 	std::shared_ptr<Mesh> GeometryLoader::ConvertToAnimatedMeshData()
 	{
-		float* vertices = new float[m_Vertices.size() * 8];
-		for (unsigned int i = 0; i < m_Vertices.size(); ++i)
-		{
-			vertices[i * 8] = m_Vertices[i]->m_Position.x;
-			vertices[i * 8 + 1] = m_Vertices[i]->m_Position.y;
-			vertices[i * 8 + 2] = m_Vertices[i]->m_Position.z;
-			vertices[i * 8 + 3] = m_Normals[m_Vertices[i]->m_NormalIndex * 3];
-			vertices[i * 8 + 4] = m_Normals[m_Vertices[i]->m_NormalIndex * 3 + 1];
-			vertices[i * 8 + 5] = m_Normals[m_Vertices[i]->m_NormalIndex * 3 + 2];
-			vertices[i * 8 + 6] = m_TexCoords[m_Vertices[i]->m_TextureIndex * 2];
-			vertices[i * 8 + 7] = m_TexCoords[m_Vertices[i]->m_TextureIndex * 2 + 1];
-		}
-		std::shared_ptr<Silver::VertexBuffer> VertexBuffer = std::make_shared<Silver::VertexBuffer>(vertices, sizeof(float) * m_Vertices.size() * 8);
-		VertexBuffer->SetLayout({
-			{ Silver::DataType::Float3, "a_Position"},
-			{ Silver::DataType::Float3, "a_Normal"},
-			{ Silver::DataType::Float2, "a_TexCoord"}
-			});
-
 		unsigned int* jointID = new unsigned int[m_Vertices.size() * 3];
 		float* weight = new float[m_Vertices.size() * 3];
 		for (unsigned int i = 0; i < m_Vertices.size(); ++i)
@@ -329,8 +321,8 @@ namespace Silver {
 		WeightBuffer->SetLayout({
 			{ Silver::DataType::Float3, "a_Weight"},
 			});
-		std::vector<std::shared_ptr<Silver::VertexBuffer>> BufferList;
-		BufferList.push_back(VertexBuffer);
+
+		std::vector<std::shared_ptr<Silver::VertexBuffer>> BufferList = GetBufferList();
 		BufferList.push_back(JointBuffer);
 		BufferList.push_back(WeightBuffer);
 
@@ -338,7 +330,6 @@ namespace Silver {
 		std::copy(m_Indices.begin(), m_Indices.end(), indices);
 		std::shared_ptr<Silver::IndexBuffer> IndexBuffer = std::make_shared<Silver::IndexBuffer>(indices, m_Indices.size());
 
-		delete[]vertices;
 		delete[]jointID;
 		delete[]weight;
 		delete[]indices;

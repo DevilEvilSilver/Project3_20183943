@@ -23,7 +23,7 @@ namespace Silver {
 		}
 		~ColladaVertex() = default;
 
-		bool IsSet() { return m_NormalIndex == -1 && m_TextureIndex == -1; }
+		bool IsNotSet() { return m_NormalIndex == -1 && m_TextureIndex == -1; }
 
 		unsigned int m_Index;
 		glm::vec3 m_Position;
@@ -49,6 +49,7 @@ namespace Silver {
 		void DealWithAlreadyProcessedVertex(unsigned int vertexIndex, unsigned int normalIndex, unsigned int texCoordIndex);
 		std::shared_ptr<Mesh> ConvertToStaticMeshData();
 		std::shared_ptr<Mesh> ConvertToAnimatedMeshData();
+		std::vector<std::shared_ptr<Silver::VertexBuffer>> GetBufferList();
 
 	private:
 		// should consider using double instead of float

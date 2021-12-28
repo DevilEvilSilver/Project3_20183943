@@ -31,13 +31,11 @@ in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;
 
-const vec3 lightDirection = vec3(0.0, 1.0, 1.0);
+const vec3 lightDirection = vec3(0.0, 10.0, 0.0);
 const vec2 lightBias = vec2(0.7, 0.6); //just indicates the balance between diffuse and ambient lighting
 
 void main()
 {
-	vec4 diffuseColour = texture(u_Texture, v_TexCoord);		
-	vec3 unitNormal = normalize(v_Normal);
-	float diffuseLight = max(dot(-lightDirection, unitNormal), 0.0) * lightBias.x + lightBias.y;
-	color = diffuseColour * diffuseLight;
+	color = texture(u_Texture, v_TexCoord);		
+
 }
