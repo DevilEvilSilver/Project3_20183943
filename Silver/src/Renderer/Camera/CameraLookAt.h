@@ -11,9 +11,12 @@ namespace Silver {
 
 		void SetTargetPos(const glm::vec3& position);
 		void SetCameraPos(const glm::vec3& position);
-		void SetPositionForward(const glm::vec3& position);		// Move forward & backward
-		void SetPositionHorizontal(const glm::vec3& position);	// Move left & right
-		void SetPositionVertical(const glm::vec3& position);		// Move up & down
+		void MoveForward(float dist);
+		void MoveBackward(float dist);
+		void MoveLeft(float dist);
+		void MoveRight(float dist);
+		void MoveUp(float dist);
+		void MoveDown(float dist);
 		void SetRotation(float xAngle, float yAngle, float zAngle = 0.0f); // Not supporting zAngle currently
 
 		const glm::vec3& GetTargetPos() const { return m_Target; }

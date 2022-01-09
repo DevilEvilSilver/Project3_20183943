@@ -34,16 +34,52 @@ namespace Silver {
 		}
 	}
 
-	void CameraLookAt::SetPositionForward(const glm::vec3& position)
+	void CameraLookAt::MoveForward(float dist)
 	{
+		glm::vec3 delta = glm::normalize(m_Direction) * dist;
+		m_Position += delta;
+		m_Target += delta;
+		UpdateViewMatrix();
 	}
 
-	void CameraLookAt::SetPositionHorizontal(const glm::vec3& position)
+	void CameraLookAt::MoveBackward(float dist)
 	{
+		glm::vec3 delta = glm::normalize(m_Direction) * -dist;
+		m_Position += delta;
+		m_Target += delta;
+		UpdateViewMatrix();
 	}
 
-	void CameraLookAt::SetPositionVertical(const glm::vec3& position)
+	void CameraLookAt::MoveLeft(float dist)
 	{
+		glm::vec3 delta = glm::normalize(glm::cross(m_Up, m_Direction)) * dist;
+		m_Position += delta;
+		m_Target += delta;
+		UpdateViewMatrix();
+	}
+
+	void CameraLookAt::MoveRight(float dist)
+	{
+		glm::vec3 delta = glm::normalize(glm::cross(m_Up, m_Direction)) * -dist;
+		m_Position += delta;
+		m_Target += delta;
+		UpdateViewMatrix();
+	}
+
+	void CameraLookAt::MoveUp(float dist)
+	{
+		glm::vec3 delta = glm::normalize(m_Up) * dist;
+		m_Position += delta;
+		m_Target += delta;
+		UpdateViewMatrix();
+	}
+
+	void CameraLookAt::MoveDown(float dist)
+	{
+		glm::vec3 delta = glm::normalize(m_Up) * -dist;
+		m_Position += delta;
+		m_Target += delta;
+		UpdateViewMatrix();
 	}
 
 	void CameraLookAt::SetRotation(float xAngle, float yAngle, float zAngle)
@@ -57,6 +93,7 @@ namespace Silver {
 
 	void CameraLookAt::SetUpRotation()
 	{
+		// HAVEN"T CHECK CORRECTION FOR X_ROTATION & Z_ROTATION
 		m_XRotation = glm::orientedAngle(
 			glm::vec3(0.0f, m_Direction.y, m_Direction.z), 
 			glm::vec3(0.0f, 0.0f, -1.0f), 

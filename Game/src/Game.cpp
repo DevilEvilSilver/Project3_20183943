@@ -108,8 +108,8 @@ public:
 		{
 			//m_3DModel = m_ModelLibrary.Load("F:/_Work/_School/Project_3/repository/Game/assets/models/duck.dae");
 			m_Cube = m_ModelLibrary.LoadStatic("assets/models/cube.dae");
-			//m_3DModel = m_ModelLibrary.LoadAnimated("assets/models/originAnimModel.dae");
-			m_3DTexture = std::make_shared<Silver::Texture2D>("assets/textures/cube.png");
+			m_3DModel = m_ModelLibrary.LoadAnimated("assets/models/originAnimModel.dae");
+			m_3DTexture = std::make_shared<Silver::Texture2D>("assets/textures/animTexture.png");
 			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");	
 			m_AnimModelShader = m_ShaderLibrary.Load("assets/shaders/AnimModel.glsl");
 		}
@@ -120,14 +120,19 @@ public:
 		//SV_TRACE("Delta Time: {0} ({1} ms)", deltaTime, deltaTime * 1000.f);
 
 		if (Silver::Input::IsKeyPressed(KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;
+			m_Camera.MoveLeft(m_CameraMoveSpeed * deltaTime);
 		else if (Silver::Input::IsKeyPressed(KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
+			m_Camera.MoveRight(m_CameraMoveSpeed * deltaTime);
 		if (Silver::Input::IsKeyPressed(KEY_DOWN))
-			m_CameraPosition.z += m_CameraMoveSpeed * deltaTime;
+			m_Camera.MoveBackward(m_CameraMoveSpeed * deltaTime);
 		else if (Silver::Input::IsKeyPressed(KEY_UP))
-			m_CameraPosition.z -= m_CameraMoveSpeed * deltaTime;
+			m_Camera.MoveForward(m_CameraMoveSpeed * deltaTime);
+		if (Silver::Input::IsKeyPressed(KEY_I))
+			m_Camera.MoveUp(m_CameraMoveSpeed * deltaTime);
+		else if (Silver::Input::IsKeyPressed(KEY_K))
+			m_Camera.MoveDown(m_CameraMoveSpeed * deltaTime);
 
+		float oldCamYRot = m_CameraXRotation;
 		if (Silver::Input::IsKeyPressed(KEY_W))
 			m_CameraXRotation += m_CameraRotationSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_S))
@@ -136,18 +141,17 @@ public:
 			m_CameraYRotation -= m_CameraRotationSpeed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_D))
 			m_CameraYRotation += m_CameraRotationSpeed * deltaTime;
+		//add rotation lock 
+		if (m_CameraXRotation < -80 || m_CameraXRotation > 80)
+			m_CameraXRotation = oldCamYRot;
+		m_Camera.SetRotation(m_CameraXRotation, m_CameraYRotation);
 
 		if (Silver::Input::IsKeyPressed(KEY_J))
 			m_Position.x -= m_Speed * deltaTime;
 		else if (Silver::Input::IsKeyPressed(KEY_L))
 			m_Position.x += m_Speed * deltaTime;
-		if (Silver::Input::IsKeyPressed(KEY_I))
-			m_Position.y += m_Speed * deltaTime;
-		else if (Silver::Input::IsKeyPressed(KEY_K))
-			m_Position.y -= m_Speed * deltaTime;
-
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraXRotation, m_CameraYRotation);
+		
+		
 		glm::mat4 triangleWorldMatrix = glm::translate(glm::mat4(1.0f), m_Position);
 		glm::mat4 tileScale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -175,7 +179,7 @@ public:
 		m_ModelShader->Bind();
 		m_3DTexture->Bind();
 		m_ModelShader->SubmitUniformInt("u_Texture", 0);
-		Silver::Renderer::Submit(m_AnimModelShader, m_Cube, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+		Silver::Renderer::Submit(m_AnimModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 
 		Silver::Renderer::EndScene();
 	}
