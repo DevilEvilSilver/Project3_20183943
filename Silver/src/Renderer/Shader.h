@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <glm/glm.hpp>
 
 // Temp fix !!!
@@ -28,6 +29,7 @@ namespace Silver {
 
 		void SubmitUniformMat3(const std::string& name, const glm::mat3& matrix);
 		void SubmitUniformMat4(const std::string& name, const glm::mat4& matrix);
+		void SubmitUniformMat4Array(const std::string& name, const std::vector<glm::mat4>& matrices);
 
 		const std::string& GetName() { return m_Name; }
 	private:

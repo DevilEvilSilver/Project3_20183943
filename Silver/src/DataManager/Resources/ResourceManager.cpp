@@ -50,11 +50,11 @@ namespace Silver {
 			SV_CORE_ERROR("Model {0} does not exist in ModelLibrary !!!", name);
 		return m_Models[name];
 	}
+
 	bool ModelLibrary::IsExist(const std::string& name) const
 	{
 		return m_Models.find(name) != m_Models.end();
 	}
-
 
 	void ShaderLibrary::Add(const std::shared_ptr<Shader>& shader)
 	{

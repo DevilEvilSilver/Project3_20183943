@@ -29,6 +29,51 @@ namespace Silver {
 		: Model(filepath)
 	{
 		ColladaLoader::LoadAnimatedModel(filepath, m_Joints, m_Meshes);
+		AddAnimation(ColladaLoader::LoadAnimation(filepath));
+	}
+
+	AnimatedModel::~AnimatedModel()
+	{
+		m_AnimationList.clear();
+	}
+
+	void AnimatedModel::ClearAnimationList()
+	{
+		m_AnimationList.clear();
+	}
+
+	void AnimatedModel::AddAnimation(const std::vector<std::shared_ptr<Animation>>& list)
+	{
+		for (auto anim : list)
+		{
+			AddAnimation(anim);
+		}
+	}
+
+	void AnimatedModel::AddAnimation(const std::shared_ptr<Animation>& anim)
+	{
+		if (IsExist(anim->GetName()))
+			SV_CORE_ERROR("Animation {0} already exist in {1} !!!", anim->GetName(), m_Name);
+		m_AnimationList[anim->GetName()] = anim;
+	}
+
+	bool AnimatedModel::IsExist(const std::string& name)
+	{
+		return m_AnimationList.find(name) != m_AnimationList.end();
+	}
+
+	const std::shared_ptr<Animation>& AnimatedModel::GetAnimation(const std::string& name)
+	{
+		if (!IsExist(name))
+		{
+			SV_CORE_ERROR("Animation {0} already exist in {1} !!!", name, m_Name);
+			return m_AnimationList[DEFAULT_ANIMATION];
+		}	
+		else if (name == "")
+		{
+			return m_AnimationList[DEFAULT_ANIMATION];
+		}
+		return m_AnimationList[name];
 	}
 
 }

@@ -3,6 +3,7 @@
 #include "SkinLoader.h"
 #include "SkeletonLoader.h"
 #include "GeometryLoader.h"
+#include "AnimationLoader.h"
 
 #include <tinyxml2.h>
 
@@ -44,6 +45,24 @@ namespace Silver {
 
 		std::unique_ptr<GeometryLoader> geometryLoader = std::make_unique<GeometryLoader>();
 		geometryLoader->ExtractStaticModelData(doc.RootElement()->FirstChildElement("library_geometries"), meshes);
+	}
+
+	std::vector<std::shared_ptr<Animation>> ColladaLoader::LoadAnimation(const std::string& filepath)
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(filepath.c_str()))
+		{
+			SV_CORE_ERROR("Load failed");
+		}
+
+		if (doc.RootElement()->FirstChildElement("library_animations") == NULL)
+		{
+			SV_CORE_ERROR("file doesn't have library_animations: {0}", filepath);
+			return std::vector<std::shared_ptr<Animation>>();
+		}
+
+		std::unique_ptr<AnimationLoader> animationLoader = std::make_unique<AnimationLoader>();
+		return animationLoader->ExtractAnimattionData(doc.RootElement()->FirstChildElement("library_animations"), filepath);
 	}
 
 }

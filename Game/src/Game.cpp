@@ -179,7 +179,7 @@ public:
 		m_ModelShader->Bind();
 		m_3DTexture->Bind();
 		m_ModelShader->SubmitUniformInt("u_Texture", 0);
-		Silver::Renderer::Submit(m_AnimModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+		Silver::Renderer::SubmitAnim(m_AnimModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 
 		Silver::Renderer::EndScene();
 	}

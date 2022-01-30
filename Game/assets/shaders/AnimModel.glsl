@@ -1,6 +1,9 @@
 #type vertex
 #version 330 core
 
+const int MAX_JOINTS = 100;//max joints allowed in a skeleton
+const int MAX_WEIGHTS = 3;//max number of joints that can affect a vertex
+
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
@@ -9,7 +12,7 @@ layout(location = 4) in vec3 a_Weight;
 
 uniform	mat4 u_ViewProjection;
 uniform	mat4 u_World;
-uniform mat4 u_JointTransform[];
+uniform mat4 u_JointTransform[MAX_JOINTS];
 
 out vec3 v_Pos;
 out vec3 v_Normal;
@@ -17,9 +20,22 @@ out vec2 v_TexCoord;
 
 void main()
 {
-	gl_Position = u_ViewProjection * u_World * vec4(a_Position, 1.0);
+	vec4 totalLocalPos = vec4(0.0);
+	vec4 totalNormal = vec4(0.0);
+	
+	for(int i = 0; i < MAX_WEIGHTS; i++)
+	{
+		mat4 jointTransform = u_JointTransform[a_JointID[i]];
+		vec4 posePosition = jointTransform * vec4(a_Position, 1.0);
+		totalLocalPos += posePosition * a_Weight[i];
+		
+		vec4 worldNormal = jointTransform * vec4(a_Normal, 0.0);
+		totalNormal += worldNormal * a_Weight[i];
+	}
+
+	gl_Position = u_ViewProjection * u_World * totalLocalPos;
 	v_TexCoord = a_TexCoord;
-	v_Normal = a_Normal;
+	v_Normal = totalNormal.xyz;
 	v_Pos = vec3(gl_Position);
 }
 

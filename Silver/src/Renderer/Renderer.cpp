@@ -54,4 +54,30 @@ namespace Silver {
 		}
 	}
 
+	void Renderer::SubmitAnim(const std::shared_ptr<Shader>& shader, const std::shared_ptr<AnimatedModel>& model, const glm::mat4& worldMatrix)
+	{
+		shader->Bind();
+		shader->SubmitUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		shader->SubmitUniformMat4("u_World", worldMatrix);
+
+		std::vector<glm::mat4> jointTransforms;
+		for (auto joint : model->GetAnimation(DEFAULT_ANIMATION)->GetJointAnimations())
+		{
+			jointTransforms.push_back(joint->GetKeyFrames()[0]->GetJointTransforms());
+		}
+		shader->SubmitUniformMat4Array("u_JointTransform", jointTransforms);
+
+#ifdef SV_DEBUG
+		if (model->GetMeshes().empty())
+			SV_CORE_ERROR("Empty Model: {0}", model->GetName());
+#endif // DEBUG
+
+		for (auto mesh : model->GetMeshes())
+		{
+			auto vertexArray = mesh->GetVertexArray(); // NEED TO CHECK IF MESH IS EMPTY !!!!
+			vertexArray->Bind();
+			RenderCommand::DrawIndexed(vertexArray);
+		}
+	}
+
 }

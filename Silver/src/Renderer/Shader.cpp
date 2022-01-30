@@ -220,4 +220,12 @@ namespace Silver {
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
+	void Shader::SubmitUniformMat4Array(const std::string& name, const std::vector<glm::mat4>& matrices)
+	{
+		for (unsigned int i = 0; i < matrices.size(); ++i)
+		{
+			SubmitUniformMat4(name + "[" + std::to_string(i) + "]", matrices[i]);
+		}
+	}
+
 }
