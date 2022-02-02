@@ -19,6 +19,7 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Framebuffer.h"
 #include "Renderer/Camera/Camera.h"
 #include "Renderer/Camera/CameraLookAt.h"
 

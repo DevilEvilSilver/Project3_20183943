@@ -111,8 +111,16 @@ public:
 			m_3DModel = m_ModelLibrary.LoadAnimated("assets/models/originAnimModel.dae");
 			m_3DTexture = std::make_shared<Silver::Texture2D>("assets/textures/animTexture.png");
 			m_ModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");	
-			m_AnimModelShader = m_ShaderLibrary.Load("assets/shaders/AnimModel.glsl");
+			m_AnimModelShader = m_ShaderLibrary.Load("assets/shaders/Model.glsl");
 		}
+	}
+
+	void OnAttach() override
+	{
+		Silver::FramebufferSpec spec;
+		spec.Width = 1280; 
+		spec.Height = 720;
+		m_Framebuffer = std::make_shared<Silver::Framebuffer>(spec);
 	}
 
 	void OnUpdate(float deltaTime) override
@@ -155,6 +163,7 @@ public:
 		glm::mat4 triangleWorldMatrix = glm::translate(glm::mat4(1.0f), m_Position);
 		glm::mat4 tileScale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
+		m_Framebuffer->Bind();
 		Silver::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		Silver::RenderCommand::Clear();
 
@@ -179,15 +188,23 @@ public:
 		m_ModelShader->Bind();
 		m_3DTexture->Bind();
 		m_ModelShader->SubmitUniformInt("u_Texture", 0);
-		Silver::Renderer::SubmitAnim(m_AnimModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
+		Silver::Renderer::Submit(m_AnimModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 
 		Silver::Renderer::EndScene();
+		m_Framebuffer->Unbind();
 	}
 
 	void OnImGuiRender() override
 	{
-		ImGui::Begin("Setting");
-		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImTextureID textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
+
+		//ImGui::Begin("Setting");
+		//ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		//ImGui::Image(textureID, ImVec2(1280, 720));
+		//ImGui::End();
+
+		ImGui::Begin("View port");
+		ImGui::Image(textureID, ImVec2(1280, 720), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
 		ImGui::End();
 	}
 
@@ -204,6 +221,7 @@ private:
 	std::shared_ptr <Silver::AnimatedModel> m_3DModel;
 	std::shared_ptr<Silver::Shader> m_SquareShader, m_ModelShader, m_AnimModelShader;
 	std::shared_ptr<Silver::Texture2D> m_Texture, m_3DTexture;
+	std::shared_ptr<Silver::Framebuffer> m_Framebuffer;
 
 	Silver::CameraLookAt m_Camera;
 	glm::vec3 m_CameraPosition;
