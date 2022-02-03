@@ -17,14 +17,15 @@ namespace Silver {
 		~Framebuffer();
 
 		void Invalidate();
+		void Resize(unsigned int width, unsigned int height); // Creating new rendering id when resize !!!
 		void Bind() const;
 		void Unbind() const;
 
 		unsigned int GetColorAttachmentRendererID() const { return m_ColorAttachment; }
 
 	private:
-		unsigned int m_RendererID;
-		unsigned int m_ColorAttachment, m_DepthAttachment;
+		unsigned int m_RendererID = 0;
+		unsigned int m_ColorAttachment = 0, m_DepthAttachment = 0;
 		FramebufferSpec m_Specification;
 	};
 

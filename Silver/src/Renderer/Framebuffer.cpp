@@ -14,10 +14,19 @@ namespace Silver {
 	Framebuffer::~Framebuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
+		glDeleteTextures(1, &m_ColorAttachment);
+		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
 	void Framebuffer::Invalidate()
 	{
+		if (m_RendererID)
+		{
+			glDeleteFramebuffers(1, &m_RendererID);
+			glDeleteTextures(1, &m_ColorAttachment);
+			glDeleteTextures(1, &m_DepthAttachment);
+		}
+
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
@@ -29,6 +38,7 @@ namespace Silver {
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
 
+		// should consider using render buffer object
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
 		glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
@@ -40,9 +50,17 @@ namespace Silver {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	void Framebuffer::Resize(unsigned int width, unsigned int height)
+	{
+		m_Specification.Width = width;
+		m_Specification.Height = height;
+		Invalidate();
+	}
+
 	void Framebuffer::Bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 	}
 
 	void Framebuffer::Unbind() const
