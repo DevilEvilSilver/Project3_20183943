@@ -48,6 +48,8 @@ namespace Silver {
 	public:
 		PerspectiveCamera(float fov, float aspect, float zNear, float zFar);
 		virtual ~PerspectiveCamera() = default;
+
+		void SetProjection(float fov, float aspect, float zNear, float zFar);
 	};
 
 }

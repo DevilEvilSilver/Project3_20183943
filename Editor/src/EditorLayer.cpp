@@ -6,10 +6,8 @@
 namespace Silver {
 
 	EditorLayer::EditorLayer()
-		:Layer("EditorLayer"), m_Camera(45.0f, 16.0f / 9, 0.1f, 1000.0f), m_CameraPosition(0.0f, 0.0f, 3.0f)
+		:Layer("EditorLayer"), m_EditorCameraController(16 / 9)
 	{
-		m_CameraXRotation = m_Camera.GetXRotation();
-		m_CameraYRotation = m_Camera.GetYRotation();
 	}
 
 	void EditorLayer::OnAttach()
@@ -31,44 +29,15 @@ namespace Silver {
 	void EditorLayer::OnUpdate(float deltaTime)
 	{
 		//SV_TRACE("Delta Time: {0} ({1} ms)", deltaTime, deltaTime * 1000.f);
+        //Update
+        m_EditorCameraController.OnUpdate(deltaTime);
 
-		if (Silver::Input::IsKeyPressed(KEY_LEFT))
-			m_Camera.MoveLeft(m_CameraMoveSpeed * deltaTime);
-		else if (Silver::Input::IsKeyPressed(KEY_RIGHT))
-			m_Camera.MoveRight(m_CameraMoveSpeed * deltaTime);
-		if (Silver::Input::IsKeyPressed(KEY_DOWN))
-			m_Camera.MoveBackward(m_CameraMoveSpeed * deltaTime);
-		else if (Silver::Input::IsKeyPressed(KEY_UP))
-			m_Camera.MoveForward(m_CameraMoveSpeed * deltaTime);
-		if (Silver::Input::IsKeyPressed(KEY_I))
-			m_Camera.MoveUp(m_CameraMoveSpeed * deltaTime);
-		else if (Silver::Input::IsKeyPressed(KEY_K))
-			m_Camera.MoveDown(m_CameraMoveSpeed * deltaTime);
-
-		float oldCamYRot = m_CameraXRotation;
-		if (Silver::Input::IsKeyPressed(KEY_W))
-			m_CameraXRotation += m_CameraRotationSpeed * deltaTime;
-		else if (Silver::Input::IsKeyPressed(KEY_S))
-			m_CameraXRotation -= m_CameraRotationSpeed * deltaTime;
-		if (Silver::Input::IsKeyPressed(KEY_A))
-			m_CameraYRotation -= m_CameraRotationSpeed * deltaTime;
-		else if (Silver::Input::IsKeyPressed(KEY_D))
-			m_CameraYRotation += m_CameraRotationSpeed * deltaTime;
-		//add rotation lock 
-		if (m_CameraXRotation < -80 || m_CameraXRotation > 80)
-			m_CameraXRotation = oldCamYRot;
-		m_Camera.SetRotation(m_CameraXRotation, m_CameraYRotation);
-
-		if (Silver::Input::IsKeyPressed(KEY_J))
-			m_Position.x -= m_Speed * deltaTime;
-		else if (Silver::Input::IsKeyPressed(KEY_L))
-			m_Position.x += m_Speed * deltaTime;
-
+        // Render
 		m_Framebuffer->Bind();
 		Silver::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		Silver::RenderCommand::Clear();
 
-		Silver::Renderer::BeginScene(m_Camera);
+		Silver::Renderer::BeginScene(m_EditorCameraController.GetCamera());
 
 		m_AnimModelShader->Bind();
 		m_3DTexture->Bind();
@@ -166,8 +135,9 @@ namespace Silver {
 
 	}
 
-	void EditorLayer::OnEvent(Event& event)
+	void EditorLayer::OnEvent(Event& e)
 	{
+        m_EditorCameraController.OnEvent(e);
 	}
 
 }
