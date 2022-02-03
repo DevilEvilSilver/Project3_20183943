@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "Silver/vendor/GLFW/include"
 IncludeDir["Glad"] = "Silver/vendor/Glad/include"
 IncludeDir["ImGui"] = "Silver/vendor/ImGui"
 IncludeDir["glm"] = "Silver/vendor/glm"
+IncludeDir["entt"] = "Silver/vendor/entt/include"
 IncludeDir["stb_image"] = "Silver/vendor/stb_image"
 IncludeDir["tinyxml2"] = "Silver/vendor/tinyxml2"
 
@@ -60,6 +61,7 @@ project "Silver"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.tinyxml2}"
 	}
@@ -118,6 +120,7 @@ project "Game"
 		"Silver/src",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.tinyxml2}"
 	}
@@ -171,6 +174,7 @@ project "Editor"
 		"Silver/src",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.tinyxml2}"
 	}

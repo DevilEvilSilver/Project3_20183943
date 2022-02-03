@@ -6,7 +6,7 @@
 namespace Silver {
 
 	EditorLayer::EditorLayer()
-		:Layer("EditorLayer"), m_EditorCameraController(16 / 9)
+		:Layer("EditorLayer"), m_EditorCameraController(16.0f / 9.0f)
 	{
 	}
 

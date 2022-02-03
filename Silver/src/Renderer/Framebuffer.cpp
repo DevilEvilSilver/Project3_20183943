@@ -5,6 +5,8 @@
 
 namespace Silver {
 
+	static const unsigned int s_MaxFramebufferSize = 8192;
+
 	Framebuffer::Framebuffer(const FramebufferSpec& spec)
 		:m_Specification(spec)
 	{
@@ -52,6 +54,11 @@ namespace Silver {
 
 	void Framebuffer::Resize(unsigned int width, unsigned int height)
 	{
+		if (width == 0 || height == 0 || width > s_MaxFramebufferSize || height > s_MaxFramebufferSize)
+		{
+			SV_CORE_WARN("Attempted to resize Framebuffer to {0}, {1}", width, height);
+			return;
+		}
 		m_Specification.Width = width;
 		m_Specification.Height = height;
 		Invalidate();
