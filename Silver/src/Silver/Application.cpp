@@ -27,6 +27,7 @@ namespace Silver {
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_FN(Application::OnWindowResize));
 
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
 		{
@@ -52,9 +53,11 @@ namespace Silver {
 		{
 			m_Timer.UpdateTimestep();
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(m_Timer.GetTimestep());
-
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(m_Timer.GetTimestep());	
+			}
 			// Temporary here, need its own render func/thread
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
@@ -74,6 +77,20 @@ namespace Silver {
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& event)
+	{
+		if (event.GetWidth() == 0 || event.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		m_Minimized = false;
+		Renderer::OnWindowResize(event.GetWidth(), event.GetHeight());
+
+		return false;
 	}
 
 }

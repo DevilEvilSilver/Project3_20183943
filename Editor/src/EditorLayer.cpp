@@ -127,6 +127,7 @@ namespace Silver {
 		{
 			m_ViewPortSize = { viewportPanelSize.x, viewportPanelSize.y };
 			m_Framebuffer->Resize((unsigned int)viewportPanelSize.x, (unsigned int)viewportPanelSize.y);
+            m_EditorCameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
 		}
 		ImTextureID textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(textureID, ImVec2(m_ViewPortSize.x, m_ViewPortSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv

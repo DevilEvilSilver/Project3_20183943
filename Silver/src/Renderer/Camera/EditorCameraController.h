@@ -12,6 +12,7 @@ namespace Silver {
 
 		void OnUpdate(float deltaTime);
 		void OnEvent(Event& e);
+		void OnResize(float width, float height);
 
 		const CameraLookAt& GetCamera() { return m_Camera; }
 

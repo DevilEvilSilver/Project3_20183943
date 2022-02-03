@@ -5,6 +5,11 @@
 
 namespace Silver {
 
+	void RenderCommand::SetViewPort(unsigned int x, unsigned int y, unsigned int width, unsigned int height)
+	{
+		glViewport(x, y, width, height);
+	}
+
 	void RenderCommand::SetClearColor(const glm::vec4 & color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);

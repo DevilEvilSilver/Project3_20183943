@@ -29,6 +29,15 @@ namespace Silver {
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_FN(EditorCameraController::OnWindowResized));
 	}
 
+	void EditorCameraController::OnResize(float width, float height)
+	{
+		if (height != 0)
+		{
+			m_AspectRatio = width / height;
+			m_Camera.SetProjection(45.0f, m_AspectRatio, 0.1f, 1000.0f);
+		}	
+	}
+
 	bool EditorCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		m_Camera.MoveForward(m_CameraZoomSpeed * e.GetYOffset());
@@ -36,8 +45,7 @@ namespace Silver {
 	}
 	bool EditorCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Camera.SetProjection(45.0f, m_AspectRatio, 0.1f, 1000.0f);
+		OnResize((float)e.GetWidth(), (float)e.GetHeight());
 		return false;
 	}
 }
