@@ -30,7 +30,8 @@ namespace Silver {
 	{
 		//SV_TRACE("Delta Time: {0} ({1} ms)", deltaTime, deltaTime * 1000.f);
         //Update
-        m_EditorCameraController.OnUpdate(deltaTime);
+        if (m_ViewportFocused)
+            m_EditorCameraController.OnUpdate(deltaTime);
 
         // Render
 		m_Framebuffer->Bind();
@@ -122,6 +123,11 @@ namespace Silver {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("View port");
+
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+        Application::GetInstance().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		if (m_ViewPortSize != *(glm::vec2*)&viewportPanelSize)
 		{
@@ -134,6 +140,8 @@ namespace Silver {
 		ImGui::End();
 		ImGui::PopStyleVar();
 
+        static bool show = true;
+        ImGui::ShowDemoWindow(&show);
 	}
 
 	void EditorLayer::OnEvent(Event& e)

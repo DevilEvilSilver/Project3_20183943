@@ -25,6 +25,7 @@ namespace Silver {
 		Silver::EditorCameraController m_EditorCameraController;
 
 		glm::vec2 m_ViewPortSize;
+		bool m_ViewportFocused = false, m_ViewportHovered = false;
 	};
 
 }

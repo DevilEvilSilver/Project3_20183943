@@ -24,6 +24,7 @@ namespace Silver {
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		Window& GetWindow() { return *m_Window; }
 
 		static Application& GetInstance() { return *s_Instance; }

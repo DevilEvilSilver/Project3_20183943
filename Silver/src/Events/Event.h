@@ -25,6 +25,30 @@ namespace Silver {
 		virtual std::string ToString() const { return GetName(); }
 
 		bool m_Handled = false;
+
+		bool IsWindowEvent()
+		{
+			return (GetEventType() == EventType::WindowClose ||
+				GetEventType() == EventType::WindowResize ||
+				GetEventType() == EventType::WindowFocus ||
+				GetEventType() == EventType::WindowLostFocus ||
+				GetEventType() == EventType::WindowMoved);
+		}
+
+		bool IsKeyEvent()
+		{
+			return (GetEventType() == EventType::KeyPressed ||
+				GetEventType() == EventType::KeyTyped ||
+				GetEventType() == EventType::KeyReleased);
+		}
+
+		bool IsMouseEvent()
+		{
+			return (GetEventType() == EventType::MouseButtonPressed || 
+				GetEventType() == EventType::MouseButtonReleased ||
+				GetEventType() == EventType::MouseMoved ||
+				GetEventType() == EventType::MouseScrolled);
+		}
 	};
 
 	class EventDispatcher

@@ -62,10 +62,14 @@ namespace Silver {
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnImGuiRender()
+	void ImGuiLayer::OnEvent(Event& e)
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		if (m_BlockEvents)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			e.m_Handled |= e.IsMouseEvent()& io.WantCaptureMouse;
+			e.m_Handled |= e.IsKeyEvent() & io.WantCaptureKeyboard;
+		}
 	}
 
 	void ImGuiLayer::Begin()
