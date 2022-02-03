@@ -3,15 +3,15 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/vector_angle.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 namespace Silver {
 
 	CameraLookAt::CameraLookAt(float fov, float aspect, float zNear, float zFar)
 		: PerspectiveCamera(fov, aspect, zNear, zFar)
 	{
-		m_Direction = m_Target - m_Position;
+		m_ZAxis = GetZAxis(); m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
 		UpdateViewMatrix();
-		SetUpRotation();
 	}
 
 	void CameraLookAt::SetTargetPos(const glm::vec3& position)
@@ -19,7 +19,7 @@ namespace Silver {
 		if (m_Target != position)
 		{
 			m_Target = position;
-			m_Direction = m_Target - m_Position;
+			m_ZAxis = GetZAxis(); m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
 			UpdateViewMatrix();
 		}
 	}
@@ -29,14 +29,14 @@ namespace Silver {
 		if (m_Position != position)
 		{
 			m_Position = position;
-			m_Direction = m_Target - m_Position;
+			m_ZAxis = GetZAxis(); m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
 			UpdateViewMatrix();
 		}
 	}
 
 	void CameraLookAt::MoveForward(float dist)
 	{
-		glm::vec3 delta = glm::normalize(m_Direction) * dist;
+		glm::vec3 delta = glm::normalize(-m_ZAxis) * dist;
 		m_Position += delta;
 		m_Target += delta;
 		UpdateViewMatrix();
@@ -44,7 +44,7 @@ namespace Silver {
 
 	void CameraLookAt::MoveBackward(float dist)
 	{
-		glm::vec3 delta = glm::normalize(m_Direction) * -dist;
+		glm::vec3 delta = glm::normalize(-m_ZAxis) * -dist;
 		m_Position += delta;
 		m_Target += delta;
 		UpdateViewMatrix();
@@ -52,7 +52,7 @@ namespace Silver {
 
 	void CameraLookAt::MoveLeft(float dist)
 	{
-		glm::vec3 delta = glm::normalize(glm::cross(m_Up, m_Direction)) * dist;
+		glm::vec3 delta = glm::normalize(glm::cross(m_Up, -m_ZAxis)) * dist;
 		m_Position += delta;
 		m_Target += delta;
 		UpdateViewMatrix();
@@ -60,7 +60,7 @@ namespace Silver {
 
 	void CameraLookAt::MoveRight(float dist)
 	{
-		glm::vec3 delta = glm::normalize(glm::cross(m_Up, m_Direction)) * -dist;
+		glm::vec3 delta = glm::normalize(glm::cross(m_Up, -m_ZAxis)) * -dist;
 		m_Position += delta;
 		m_Target += delta;
 		UpdateViewMatrix();
@@ -82,36 +82,74 @@ namespace Silver {
 		UpdateViewMatrix();
 	}
 
-	void CameraLookAt::SetRotation(float xAngle, float yAngle, float zAngle)
+	void CameraLookAt::RotationLeft(float angle)
 	{
-		m_Direction.x = cos(glm::radians(yAngle)) * cos(glm::radians(xAngle));
-		m_Direction.y = sin(glm::radians(xAngle));
-		m_Direction.z = sin(glm::radians(yAngle)) * cos(glm::radians(xAngle));
-		glm::normalize(m_Direction);
+		m_ZAxis = glm::rotate(m_ZAxis, glm::radians(angle), m_YAxis);
+		m_Target = m_Position - m_ZAxis;
+		m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
 		UpdateViewMatrix();
 	}
 
-	void CameraLookAt::SetUpRotation()
+	void CameraLookAt::RotationRight(float angle)
 	{
-		// HAVEN"T CHECK CORRECTION FOR X_ROTATION & Z_ROTATION
-		m_XRotation = glm::orientedAngle(
-			glm::vec3(0.0f, m_Direction.y, m_Direction.z), 
-			glm::vec3(0.0f, 0.0f, -1.0f), 
-			glm::vec3(-1.0f, 0.0f, 0.0f));
-		m_YRotation = glm::orientedAngle(
-			glm::vec3(m_Direction.x, 0.0f, m_Direction.z), 
-			glm::vec3(-1.0f, 0.0f, 0.0f), 
-			glm::vec3(0.0f, -1.0f, 0.0f));;
-		m_ZRotation = glm::orientedAngle(
-			glm::vec3(m_Direction.x, m_Direction.y, 0.0f), 
-			glm::vec3(0.0f, 1.0f, 0.0f),
-			glm::vec3(0.0f, 0.0f, -1.0f));
+		m_ZAxis = glm::rotate(m_ZAxis, glm::radians(-angle), m_YAxis);
+		m_Target = m_Position - m_ZAxis;
+		m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
+		UpdateViewMatrix();
+	}
+
+	void CameraLookAt::RotationUp(float angle)
+	{
+		if (m_RotationLock + angle < 80)
+		{
+			m_RotationLock += angle;
+			m_ZAxis = glm::rotate(m_ZAxis, glm::radians(angle), m_XAxis);
+			m_Target = m_Position - m_ZAxis;
+			m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
+			UpdateViewMatrix();
+		}
+	}
+
+	void CameraLookAt::RotationDown(float angle)
+	{
+		if (m_RotationLock - angle > -80)
+		{
+			m_RotationLock -= angle;
+			m_ZAxis = glm::rotate(m_ZAxis, glm::radians(-angle), m_XAxis);
+			m_Target = m_Position - m_ZAxis;
+			m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
+			UpdateViewMatrix();
+		}
+	}
+
+	glm::mat4 CameraLookAt::GetWorldMatrix()
+	{
+		return glm::mat4({
+			m_XAxis.x, m_XAxis.y, m_XAxis.z, 0.0f,
+			m_YAxis.x, m_YAxis.y, m_YAxis.z, 0.0f,
+			m_ZAxis.x, m_ZAxis.y, m_ZAxis.z, 0.0f,
+			m_Position.x, m_Position.y, m_Position.z, 1.0f,
+		});
+	}
+
+	glm::vec3 CameraLookAt::GetXAxis()
+	{
+		return glm::normalize(glm::cross(m_Up, m_ZAxis));
+	}
+
+	glm::vec3 CameraLookAt::GetYAxis()
+	{
+		return glm::normalize(glm::cross(m_ZAxis, m_XAxis));
+	}
+
+	glm::vec3 CameraLookAt::GetZAxis()
+	{
+		return glm::normalize(m_Position - m_Target);
 	}
 
 	void CameraLookAt::UpdateViewMatrix()
 	{
-		glm::vec3 camRight = glm::normalize(glm::cross(m_Up, -m_Direction));
-		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Direction, glm::cross(-m_Direction, camRight));
+		m_ViewMatrix = glm::lookAt(m_Position, m_Target, glm::cross(m_ZAxis, m_XAxis));
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 

@@ -17,19 +17,27 @@ namespace Silver {
 		void MoveRight(float dist);
 		void MoveUp(float dist);
 		void MoveDown(float dist);
-		void SetRotation(float xAngle, float yAngle, float zAngle = 0.0f); // Not supporting zAngle currently
+		void RotationLeft(float angle);
+		void RotationRight(float angle);
+		void RotationUp(float angle);
+		void RotationDown(float angle);
 
 		const glm::vec3& GetTargetPos() const { return m_Target; }
 		const glm::vec3& GetCameraPos() const { return m_Position; }
 
 	private:
-		void SetUpRotation();
+		glm::mat4 GetWorldMatrix();
+		glm::mat4 RotateAngleAxis(float angle, glm::vec3 axis);
+		glm::vec3 GetXAxis();
+		glm::vec3 GetYAxis();
+		glm::vec3 GetZAxis();
 		void UpdateViewMatrix() override;
 
 	private:
 		glm::vec3 m_Target = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 m_Up = { 0.0f, 1.0f, 0.0f };
-		glm::vec3 m_Direction;
+		glm::vec3  m_XAxis, m_YAxis, m_ZAxis;
+		float m_RotationLock = 0.0f;
 	};
 
 }
