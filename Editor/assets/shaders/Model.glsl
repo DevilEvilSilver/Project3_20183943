@@ -18,7 +18,7 @@ void main()
 	gl_Position = u_ViewProjection * u_World * vec4(a_Position, 1.0);
 	v_TexCoord = a_TexCoord;
 	v_Normal = a_Normal;
-	v_Pos = vec3(gl_Position);
+	v_Pos = vec3(a_Position);
 }
 
 #type fragment

@@ -17,6 +17,9 @@ namespace Silver {
 
 	private:
 		// tmp
+		std::shared_ptr<Scene> m_Scene;
+		std::shared_ptr<Entity> m_Entity;
+
 		std::shared_ptr <Silver::AnimatedModel> m_3DModel;
 		std::shared_ptr<Silver::Shader>  m_AnimModelShader;
 		std::shared_ptr<Silver::Texture2D> m_3DTexture;

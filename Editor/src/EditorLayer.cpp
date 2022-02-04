@@ -13,13 +13,19 @@ namespace Silver {
 	void EditorLayer::OnAttach()
 	{
 		m_3DModel = std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae");
-		m_3DTexture = std::make_shared<Silver::Texture2D>("assets/textures/animTexture.png");
+		m_3DTexture = std::make_shared<Texture2D>("assets/textures/animTexture.png");
 		m_AnimModelShader = std::make_shared<Shader>("assets/shaders/Model.glsl");
 
-		Silver::FramebufferSpec spec;
+		FramebufferSpec spec;
 		spec.Width = 1280;
 		spec.Height = 720;
-		m_Framebuffer = std::make_shared<Silver::Framebuffer>(spec);
+		m_Framebuffer = std::make_shared<Framebuffer>(spec);
+
+        m_Scene = std::make_shared<Scene>();
+        m_Entity = m_Scene->CreateEntity("3D Model");
+        m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae"));
+        m_Entity->AddComponent<Texture2DComponent>(std::make_shared<Texture2D>("assets/textures/animTexture.png"));
+        m_Entity->AddComponent<ShaderComponent>(std::make_shared<Shader>("assets/shaders/Model.glsl"));
 	}
 
 	void EditorLayer::OnDetach()
@@ -35,18 +41,15 @@ namespace Silver {
 
         // Render
 		m_Framebuffer->Bind();
-		Silver::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
-		Silver::RenderCommand::Clear();
+		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
+		RenderCommand::Clear();
 
-		Silver::Renderer::BeginScene(m_EditorCameraController.GetCamera());
+		Renderer::BeginScene(m_EditorCameraController.GetCamera());
 
-		m_AnimModelShader->Bind();
-		m_3DTexture->Bind();
-		m_AnimModelShader->SubmitUniformInt("u_Texture", 0);
+        //Update Scene
+        m_Scene->OnUpdate(deltaTime);
 
-		Silver::Renderer::Submit(m_AnimModelShader, m_3DModel, glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
-
-		Silver::Renderer::EndScene();
+		Renderer::EndScene();
 		m_Framebuffer->Unbind();
 	}
 

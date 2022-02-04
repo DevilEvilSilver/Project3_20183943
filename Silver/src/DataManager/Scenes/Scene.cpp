@@ -1,24 +1,15 @@
 #include "pch.h"
 #include "Scene.h"
-
-#include <glm/glm.hpp>
+#include "DataManager/ECS/Entity.h"
+#include "DataManager/ECS/Components.h"
+#include "Renderer/Renderer.h"
 
 namespace Silver {
 
 	Scene::Scene()
 	{
-		struct TransformComponent
-		{
-			glm::mat4 Transform;
-
-			TransformComponent() = default;
-			TransformComponent(const TransformComponent&) = default;
-			TransformComponent(const glm::mat4& transform)
-				:Transform(transform) {}
-
-			operator const glm::mat4& () const { return Transform; }
-		};
-
+		
+#ifdef ENTT_EXAMPLE 
 		entt::entity entity = m_Registry.create();
 		m_Registry.emplace<TransformComponent>(entity, glm::mat4(1.0f));
 
@@ -30,11 +21,34 @@ namespace Silver {
 		{
 			auto& transform = view.get<TransformComponent>(entity);
 		}
-
+#endif
 
 	}
 
 	Scene::~Scene()
 	{
 	}
+
+	std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name)
+	{
+		auto entity = std::make_shared<Entity>(m_Registry.create(), this);
+		entity->AddComponent<TransformComponent>();
+		auto& tag = entity->AddComponent<TagComponent>();
+		tag = name.empty() ? "Entity" : name;
+		return entity;
+	}
+
+	void Scene::OnUpdate(float deltaTime)
+	{
+		auto view = m_Registry.view<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>();
+		view.each([](const auto& transform, const auto& model, const auto& shader, const auto& texture)
+		{
+			shader.m_Shader->Bind();
+			texture.m_Texture->Bind();
+			shader.m_Shader->SubmitUniformInt("u_Texture", 0);
+
+			Renderer::Submit(shader.m_Shader, model.m_Model, transform);
+		});
+	}
+
 }
