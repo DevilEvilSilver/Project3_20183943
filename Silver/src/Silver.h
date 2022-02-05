@@ -20,12 +20,11 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Framebuffer.h"
-#include "Renderer/Camera/EditorCameraController.h"
+#include "Renderer/Camera/CameraLookAt.h"
 
 // Data ------------------------
 #include "DataManager/Resources/ResourceManager.h"
 #include "DataManager/Scenes/Scene.h"
-#include "DataManager/ECS/Entity.h"
 #include "DataManager/ECS/Components.h"
 #include "DataManager/Resources/Model/Model.h"
 

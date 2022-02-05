@@ -1,4 +1,5 @@
 #pragma once
+#include "DataManager/ECS/ScriptableEntity.h"
 #include "DataManager/Resources/Model/Model.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
@@ -84,6 +85,26 @@ namespace Silver {
 		CameraComponent(const CameraComponent&) = default;
 		CameraComponent(const std::shared_ptr<Camera>& camera)
 			:m_Camera(camera) {}
+	};
+
+	struct ScriptComponent
+	{
+		std::shared_ptr<ScriptableEntity> Instance = nullptr;
+
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+
+		void Bind(const std::shared_ptr<ScriptableEntity>& se)
+		{
+			Instance = se;
+			Instance->OnAttach();
+		}
+
+		void Unbind()
+		{
+			Instance = nullptr;
+			Instance->OnDetach();
+		}
 	};
 
 }

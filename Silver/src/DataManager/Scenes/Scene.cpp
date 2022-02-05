@@ -40,6 +40,19 @@ namespace Silver {
 
 	void Scene::OnUpdate(float deltaTime)
 	{
+		// Update scripts
+		{
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto entity : view)
+			{
+				auto& sc = view.get<ScriptComponent>(entity);
+				if (sc.Instance)
+				{
+					sc.Instance->OnUpdate(deltaTime);
+				}
+			}
+		}
+
 		// Get main camera
 		std::shared_ptr<Camera> mainCamera;
 		{
@@ -72,6 +85,22 @@ namespace Silver {
 		}
 
 		Renderer::EndScene();
+	}
+
+	void Scene::OnEvent(Event& e)
+	{
+		// Update scripts
+		{
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto entity : view)
+			{
+				auto& sc = view.get<ScriptComponent>(entity);
+				if (sc.Instance)
+				{
+					sc.Instance->OnEvent(e);
+				}
+			}
+		}
 	}
 
 	void Scene::OnViewportResize(float width, float height)

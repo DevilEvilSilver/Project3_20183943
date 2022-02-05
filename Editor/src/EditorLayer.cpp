@@ -6,7 +6,8 @@
 namespace Silver {
 
 	EditorLayer::EditorLayer()
-		:Layer("EditorLayer"), m_EditorCameraController(16.0f / 9.0f)
+		:Layer("EditorLayer")
+        //, m_EditorCameraController(16.0f / 9.0f)
 	{
 	}
 
@@ -28,6 +29,53 @@ namespace Silver {
         auto& cam = m_CameraEntity->AddComponent<CameraComponent>(std::make_shared<CameraLookAt>(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f));
         cam.Primary = true;
         cam.FixedAspectRatio = true;
+
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            CameraController(const std::shared_ptr<Entity>& entity)
+                :ScriptableEntity(entity) {}
+
+            void OnAttach() override
+            {
+                m_Camera = std::static_pointer_cast<CameraLookAt>(GetComponent<CameraComponent>().m_Camera);
+            }
+
+            void OnDetach() override
+            {
+
+            }
+
+            void OnUpdate(float deltaTime) override
+            {
+                if (Input::IsKeyPressed(KEY_W))
+                    m_Camera->RotationUp(m_CameraRotationSpeed * deltaTime);
+                else if (Input::IsKeyPressed(KEY_S))
+                    m_Camera->RotationDown(m_CameraRotationSpeed * deltaTime);
+                if (Input::IsKeyPressed(KEY_A))
+                    m_Camera->RotationLeft(m_CameraRotationSpeed * deltaTime);
+                else if (Input::IsKeyPressed(KEY_D))
+                    m_Camera->RotationRight(m_CameraRotationSpeed * deltaTime);
+            }
+
+            void OnEvent(Event& e) override
+            {
+                EventDispatcher dispatcher(e);
+                dispatcher.Dispatch<MouseScrolledEvent>(BIND_FN(CameraController::OnMouseScrolled));
+            }
+
+            bool OnMouseScrolled(MouseScrolledEvent& e)
+            {
+                m_Camera->MoveForward(m_CameraZoomSpeed * e.GetYOffset());
+                return false;
+            }
+
+        private:
+            std::shared_ptr<CameraLookAt> m_Camera;
+            float m_CameraRotationSpeed = 90.0f;
+            float m_CameraZoomSpeed = 0.5f;
+        };
+        m_CameraEntity->AddComponent<ScriptComponent>().Bind(std::make_shared<CameraController>(m_CameraEntity));
 	}
 
 	void EditorLayer::OnDetach()
@@ -41,14 +89,14 @@ namespace Silver {
             (m_Framebuffer->GetSpecification().Width != m_ViewportSize.x || m_Framebuffer->GetSpecification().Height != m_ViewportSize.y))
         {
             m_Framebuffer->Resize((unsigned int)m_ViewportSize.x, (unsigned int)m_ViewportSize.y);
-            m_EditorCameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            //m_EditorCameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 
             m_Scene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
         //Update
-        if (m_ViewportFocused)
-            m_EditorCameraController.OnUpdate(deltaTime);
+        //if (m_ViewportFocused)
+            //m_EditorCameraController.OnUpdate(deltaTime);
 
         // Render
 		m_Framebuffer->Bind();
@@ -153,7 +201,10 @@ namespace Silver {
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-        m_EditorCameraController.OnEvent(e);
+        //m_EditorCameraController.OnEvent(e);
+
+        // Update Scene
+        m_Scene->OnEvent(e);
 	}
 
 }
