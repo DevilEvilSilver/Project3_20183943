@@ -3,7 +3,7 @@
 
 namespace Silver {
 
-	class CameraLookAt : public PerspectiveCamera
+	class CameraLookAt : public Camera
 	{
 	public:
 		CameraLookAt(float fov, float aspect, float zNear, float zFar);
@@ -27,13 +27,13 @@ namespace Silver {
 
 	private:
 		glm::mat4 GetWorldMatrix();
-		glm::mat4 RotateAngleAxis(float angle, glm::vec3 axis);
 		glm::vec3 GetXAxis();
 		glm::vec3 GetYAxis();
 		glm::vec3 GetZAxis();
-		void UpdateViewMatrix() override;
+		void UpdateViewMatrix();
 
-	private:
+	private:	
+		glm::vec3 m_Position = { 0.0f, 0.0f, 3.0f };
 		glm::vec3 m_Target = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 m_Up = { 0.0f, 1.0f, 0.0f };
 		glm::vec3  m_XAxis, m_YAxis, m_ZAxis;

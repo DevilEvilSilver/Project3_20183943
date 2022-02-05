@@ -5,57 +5,49 @@
 
 namespace Silver {
 
-	void Camera::SetPosition(const glm::vec3& position)
+	Camera::Camera(float left, float right, float bottom, float top, float zNear, float zFar)
 	{
-		m_Position = position;
-		UpdateViewMatrix();
+		SetOrthographic(left, right, bottom, top, zNear, zFar);
 	}
 
-	void Camera::SetXRotation(float angle)
+	Camera::Camera(float fov, float aspect, float zNear, float zFar)
 	{
-		m_XRotation = glm::radians(angle);
-		UpdateViewMatrix();
+		SetPerspective(fov, aspect, zNear, zFar);
 	}
 
-	void Camera::SetYRotation(float angle)
+	void Camera::ResizeAspectRatio(float width, float height)
 	{
-		m_YRotation = glm::radians(angle);
-		UpdateViewMatrix();
+		if (height != 0)
+		{
+			m_AspectRatio = width / height;
+			if (m_ProjectionType == ProjectionType::Perspective)
+				SetPerspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			else
+			{
+				float orthoLeft = -m_OrthoSize * m_AspectRatio * 0.5f;
+				float orthoRight = m_OrthoSize * m_AspectRatio * 0.5f;
+				float orthoBottom = -m_OrthoSize * 0.5f;
+				float orthoTop = m_OrthoSize * 0.5f;
+
+				SetOrthographic(orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
+			}
+
+		}
 	}
 
-	void Camera::SetZRotation(float angle)
+	void Camera::SetOrthographic(float left, float right, float bottom, float top, float zNear, float zFar)
 	{
-		m_ZRotation = glm::radians(angle);
-		UpdateViewMatrix();
-	}
-
-	void Camera::UpdateViewMatrix()
-	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) *
-			glm::rotate(glm::mat4(1.0f), m_YRotation, glm::vec3(0, 1, 0)) *
-			glm::rotate(glm::mat4(1.0f), m_XRotation, glm::vec3(1, 0, 0)) *
-			glm::rotate(glm::mat4(1.0f), m_ZRotation, glm::vec3(0, 0, 1));
-
-		m_ViewMatrix = glm::inverse(transform);
+		m_ProjectionType = ProjectionType::Orthographic;
+		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, zNear, zFar);
+		m_OrthoSize = top - bottom; m_AspectRatio = (right - left) / (top - bottom);
+		m_OrthographicNear = zNear; m_OrthographicFar = zFar;
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
+	void Camera::SetPerspective(float fov, float aspect, float zNear, float zFar)
 	{
-		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
-		m_ViewMatrix = glm::mat4(1.0f);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
-	}
-
-	PerspectiveCamera::PerspectiveCamera(float fov, float aspect, float zNear, float zFar)
-	{
-		m_ProjectionMatrix = glm::perspective(fov, aspect, zNear, zFar);
-		m_ViewMatrix = glm::mat4(1.0f);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
-	}
-
-	void PerspectiveCamera::SetProjection(float fov, float aspect, float zNear, float zFar)
-	{
+		m_ProjectionType = ProjectionType::Perspective;
+		m_PerspectiveFOV = fov; m_AspectRatio = aspect; m_PerspectiveNear = zNear; m_PerspectiveFar = zFar;
 		m_ProjectionMatrix = glm::perspective(fov, aspect, zNear, zFar);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}

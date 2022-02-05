@@ -2,6 +2,7 @@
 #include "DataManager/Resources/Model/Model.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Camera/CameraLookAt.h"
 
 #include <string>
 #include <glm/glm.hpp>
@@ -71,6 +72,18 @@ namespace Silver {
 		ShaderComponent(const ShaderComponent&) = default;
 		ShaderComponent(const std::shared_ptr<Shader>& shader)
 			:m_Shader(shader) {}
+	};
+
+	struct CameraComponent
+	{
+		std::shared_ptr<Camera> m_Camera;
+		bool Primary = false;
+		bool FixedAspectRatio = false;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const std::shared_ptr<Camera>& camera)
+			:m_Camera(camera) {}
 	};
 
 }

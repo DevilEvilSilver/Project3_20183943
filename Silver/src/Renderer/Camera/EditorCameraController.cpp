@@ -31,11 +31,7 @@ namespace Silver {
 
 	void EditorCameraController::OnResize(float width, float height)
 	{
-		if (height != 0)
-		{
-			m_AspectRatio = width / height;
-			m_Camera.SetProjection(45.0f, m_AspectRatio, 0.1f, 1000.0f);
-		}	
+		m_Camera.ResizeAspectRatio(width, height);
 	}
 
 	bool EditorCameraController::OnMouseScrolled(MouseScrolledEvent& e)

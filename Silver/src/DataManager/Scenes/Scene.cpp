@@ -40,15 +40,57 @@ namespace Silver {
 
 	void Scene::OnUpdate(float deltaTime)
 	{
-		auto view = m_Registry.view<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>();
-		view.each([](const auto& transform, const auto& model, const auto& shader, const auto& texture)
+		// Get main camera
+		std::shared_ptr<Camera> mainCamera;
 		{
-			shader.m_Shader->Bind();
-			texture.m_Texture->Bind();
-			shader.m_Shader->SubmitUniformInt("u_Texture", 0);
+			auto view = m_Registry.view<CameraComponent>();
+			for (auto entity : view)
+			{
+				auto& camera = view.get<CameraComponent>(entity);
+				if (camera.Primary)
+				{
+					mainCamera = camera.m_Camera;
+					break;
+				}
+			}
+		}
+		Renderer::BeginScene(mainCamera);
 
-			Renderer::Submit(shader.m_Shader, model.m_Model, transform);
-		});
+		// Render animated model
+		{
+			auto view = m_Registry.view<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>();
+			for (auto entity : view)
+			{
+				auto& [transform, model, shader, texture] =
+					view.get<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>(entity);
+				shader.m_Shader->Bind();
+				texture.m_Texture->Bind();
+				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
+
+				Renderer::Submit(shader.m_Shader, model.m_Model, transform);
+			}
+		}
+
+		Renderer::EndScene();
+	}
+
+	void Scene::OnViewportResize(float width, float height)
+	{
+		if (height == 0)
+			return;
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+
+		// Resize camera
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& camera = view.get<CameraComponent>(entity);
+			if (camera.FixedAspectRatio)
+			{
+				camera.m_Camera->ResizeAspectRatio((float)width, (float)height);
+			}
+		}
 	}
 
 }

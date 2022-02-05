@@ -12,20 +12,22 @@ namespace Silver {
 
 	void EditorLayer::OnAttach()
 	{
-		m_3DModel = std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae");
-		m_3DTexture = std::make_shared<Texture2D>("assets/textures/animTexture.png");
-		m_AnimModelShader = std::make_shared<Shader>("assets/shaders/Model.glsl");
-
 		FramebufferSpec spec;
 		spec.Width = 1280;
 		spec.Height = 720;
 		m_Framebuffer = std::make_shared<Framebuffer>(spec);
 
         m_Scene = std::make_shared<Scene>();
-        m_Entity = m_Scene->CreateEntity("3D Model");
+
+        m_Entity = m_Scene->CreateEntity("3D Model Entity");
         m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae"));
         m_Entity->AddComponent<Texture2DComponent>(std::make_shared<Texture2D>("assets/textures/animTexture.png"));
         m_Entity->AddComponent<ShaderComponent>(std::make_shared<Shader>("assets/shaders/Model.glsl"));
+
+        m_CameraEntity = m_Scene->CreateEntity("Camera Entity");
+        auto& cam = m_CameraEntity->AddComponent<CameraComponent>(std::make_shared<CameraLookAt>(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f));
+        cam.Primary = true;
+        cam.FixedAspectRatio = true;
 	}
 
 	void EditorLayer::OnDetach()
@@ -34,7 +36,16 @@ namespace Silver {
 
 	void EditorLayer::OnUpdate(float deltaTime)
 	{
-		//SV_TRACE("Delta Time: {0} ({1} ms)", deltaTime, deltaTime * 1000.f);
+        // Resize
+        if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+            (m_Framebuffer->GetSpecification().Width != m_ViewportSize.x || m_Framebuffer->GetSpecification().Height != m_ViewportSize.y))
+        {
+            m_Framebuffer->Resize((unsigned int)m_ViewportSize.x, (unsigned int)m_ViewportSize.y);
+            m_EditorCameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_Scene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        }
+
         //Update
         if (m_ViewportFocused)
             m_EditorCameraController.OnUpdate(deltaTime);
@@ -44,12 +55,9 @@ namespace Silver {
 		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		RenderCommand::Clear();
 
-		Renderer::BeginScene(m_EditorCameraController.GetCamera());
-
         //Update Scene
         m_Scene->OnUpdate(deltaTime);
 
-		Renderer::EndScene();
 		m_Framebuffer->Unbind();
 	}
 
@@ -132,14 +140,10 @@ namespace Silver {
         Application::GetInstance().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewPortSize != *(glm::vec2*)&viewportPanelSize)
-		{
-			m_ViewPortSize = { viewportPanelSize.x, viewportPanelSize.y };
-			m_Framebuffer->Resize((unsigned int)viewportPanelSize.x, (unsigned int)viewportPanelSize.y);
-            m_EditorCameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-		}
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+		
 		ImTextureID textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image(textureID, ImVec2(m_ViewPortSize.x, m_ViewPortSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
+		ImGui::Image(textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
 		ImGui::End();
 		ImGui::PopStyleVar();
 

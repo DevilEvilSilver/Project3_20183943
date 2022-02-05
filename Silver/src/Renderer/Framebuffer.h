@@ -21,6 +21,7 @@ namespace Silver {
 		void Bind() const;
 		void Unbind() const;
 
+		const FramebufferSpec& GetSpecification() const { return m_Specification; }
 		unsigned int GetColorAttachmentRendererID() const { return m_ColorAttachment; }
 
 	private:

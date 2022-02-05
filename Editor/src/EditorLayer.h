@@ -19,15 +19,12 @@ namespace Silver {
 		// tmp
 		std::shared_ptr<Scene> m_Scene;
 		std::shared_ptr<Entity> m_Entity;
+		std::shared_ptr<Entity> m_CameraEntity;
 
-		std::shared_ptr <Silver::AnimatedModel> m_3DModel;
-		std::shared_ptr<Silver::Shader>  m_AnimModelShader;
-		std::shared_ptr<Silver::Texture2D> m_3DTexture;
+		EditorCameraController m_EditorCameraController;
+
 		std::shared_ptr<Silver::Framebuffer> m_Framebuffer;
-
-		Silver::EditorCameraController m_EditorCameraController;
-
-		glm::vec2 m_ViewPortSize;
+		glm::vec2 m_ViewportSize{0.0f, 0.0f};
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 	};
 

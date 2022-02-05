@@ -8,7 +8,7 @@
 namespace Silver {
 
 	CameraLookAt::CameraLookAt(float fov, float aspect, float zNear, float zFar)
-		: PerspectiveCamera(fov, aspect, zNear, zFar)
+		: Camera(fov, aspect, zNear, zFar)
 	{
 		m_ZAxis = GetZAxis(); m_XAxis = GetXAxis(); m_YAxis = GetYAxis();
 		UpdateViewMatrix();
