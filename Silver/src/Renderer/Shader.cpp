@@ -222,6 +222,8 @@ namespace Silver {
 
 	void Shader::SubmitUniformMat4Array(const std::string& name, const std::vector<glm::mat4>& matrices)
 	{
+		//GLint location = (glGetUniformLocation(m_RendererID, name.c_str()));
+		//glUniformMatrix4fv(location, matrices.size(), GL_FALSE, glm::value_ptr(matrices[1]));
 		for (unsigned int i = 0; i < matrices.size(); ++i)
 		{
 			SubmitUniformMat4(name + "[" + std::to_string(i) + "]", matrices[i]);

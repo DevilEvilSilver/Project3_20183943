@@ -1,6 +1,6 @@
 #pragma once
-#include "DataManager/Resources/Model/Model.h"
-#include "DataManager/Resources/Model/Animation.h"
+#include "DataManager/ECS/Model/Model.h"
+#include "DataManager/ECS/Animation/Animation.h"
 
 #include <string>
 #include <vector>

@@ -1,5 +1,5 @@
 #pragma once
-#include "DataManager/Resources/Model/Model.h"
+#include "DataManager/ECS/Model/Model.h"
 #include "Shader.h"
 #include "Camera/Camera.h"
 

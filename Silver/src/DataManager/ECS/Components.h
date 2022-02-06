@@ -1,6 +1,6 @@
 #pragma once
 #include "DataManager/ECS/ScriptableEntity.h"
-#include "DataManager/Resources/Model/Model.h"
+#include "DataManager/ECS/Animation/Animator.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Camera/CameraLookAt.h"
@@ -47,11 +47,21 @@ namespace Silver {
 	struct AnimatedModelComponent
 	{
 		std::shared_ptr<AnimatedModel> m_Model;
+		std::shared_ptr<Animator> m_Animator;
 
 		AnimatedModelComponent() = default;
 		AnimatedModelComponent(const AnimatedModelComponent&) = default;
 		AnimatedModelComponent(const std::shared_ptr<AnimatedModel>& model)
-			:m_Model(model) {}
+			:m_Model(model) 
+		{
+			m_Animator = std::make_shared<Animator>();
+			m_Animator->SetAnimation(m_Model->GetAnimation(DEFAULT_ANIMATION));
+		}
+
+		void ApplyPose()
+		{
+			m_Animator->ApplyPoseToJoints(m_Model->GetJoints()->GetHeadJoint(), glm::mat4(1.0f));
+		}
 	};
 
 	struct Texture2DComponent

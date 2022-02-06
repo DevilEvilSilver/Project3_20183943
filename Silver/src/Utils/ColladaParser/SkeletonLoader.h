@@ -1,5 +1,5 @@
 #pragma once
-#include "DataManager/Resources/Model/Skeleton.h"
+#include "DataManager/ECS/Model/Skeleton.h"
 #include "SkinLoader.h"
 
 #include <memory>

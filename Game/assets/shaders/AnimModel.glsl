@@ -33,10 +33,10 @@ void main()
 		totalNormal += worldNormal * a_Weight[i];
 	}
 
-	gl_Position = u_ViewProjection * u_World * totalLocalPos;
+	gl_Position = u_ViewProjection * u_World * a_Position;
 	v_TexCoord = a_TexCoord;
 	v_Normal = totalNormal.xyz;
-	v_Pos = vec3(a_Position);
+	v_Pos = vec3(totalLocalPos);
 }
 
 #type fragment

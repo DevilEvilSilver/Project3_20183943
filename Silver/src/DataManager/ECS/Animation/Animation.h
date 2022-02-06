@@ -14,6 +14,7 @@ namespace Silver {
 		void SetKeyFrames(const std::vector<std::shared_ptr<KeyFrame>>& keyFrames);
 		const std::string& GetName() { return m_Name; }
 		const std::vector<std::shared_ptr<KeyFrame>>& GetKeyFrames() { return m_KeyFrames; }
+		const std::shared_ptr<KeyFrame>& GetLastKeyFrame();
 
 	private:
 		std::string m_Name;
@@ -32,6 +33,7 @@ namespace Silver {
 		const std::string& GetFilePath() { return m_FilePath; }
 		float GetDuration() const { return m_Duration; }
 		const std::vector<std::shared_ptr<JointAnimation>>& GetJointAnimations() { return m_JointAnimations; }
+		bool HasAnimations() { return m_JointAnimations.size(); }
 
 	private:
 		std::string m_Name;

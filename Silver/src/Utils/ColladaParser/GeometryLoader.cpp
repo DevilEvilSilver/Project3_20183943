@@ -300,8 +300,8 @@ namespace Silver {
 
 	std::shared_ptr<Mesh> GeometryLoader::ConvertToAnimatedMeshData()
 	{
-		unsigned int* jointID = new unsigned int[m_Vertices.size() * 3];
-		float* weight = new float[m_Vertices.size() * 3];
+		int* jointID = new int[m_Vertices.size() * m_MaxWeightCount];
+		float* weight = new float[m_Vertices.size() * m_MaxWeightCount];
 		for (unsigned int i = 0; i < m_Vertices.size(); ++i)
 		{
 			jointID[i * m_MaxWeightCount] = m_Vertices[i]->m_SkinData->GetJointIDList()[0];
@@ -312,12 +312,12 @@ namespace Silver {
 			weight[i * m_MaxWeightCount + 2] = m_Vertices[i]->m_SkinData->GetWeightList()[2];
 		}
 		std::shared_ptr<Silver::VertexBuffer> JointBuffer =
-			std::make_shared<Silver::VertexBuffer>(jointID, sizeof(unsigned int) * m_Vertices.size() * 3);
+			std::make_shared<Silver::VertexBuffer>(jointID, sizeof(int) * m_Vertices.size() * m_MaxWeightCount);
 		JointBuffer->SetLayout({
 			{ Silver::DataType::Int3, "a_JointID"},
 			});
 		std::shared_ptr<Silver::VertexBuffer> WeightBuffer =
-			std::make_shared<Silver::VertexBuffer>(weight, sizeof(float) * m_Vertices.size() * 3);
+			std::make_shared<Silver::VertexBuffer>(weight, sizeof(float) * m_Vertices.size() * m_MaxWeightCount);
 		WeightBuffer->SetLayout({
 			{ Silver::DataType::Float3, "a_Weight"},
 			});

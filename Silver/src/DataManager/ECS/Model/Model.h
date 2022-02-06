@@ -1,7 +1,7 @@
 #pragma once
 #include "Mesh.h"
 #include "Skeleton.h"
-#include "Animation.h"
+#include "../Animation/Animation.h"
 
 #include <string>
 #include <memory>

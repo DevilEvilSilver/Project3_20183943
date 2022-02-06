@@ -17,7 +17,7 @@ namespace Silver {
 		void AddJointEffect(unsigned int jointID, float weight);
 		void LimitJointNumber(unsigned int max);
 
-		const std::vector<unsigned int>& GetJointIDList() { return m_JointIDs; }
+		const std::vector<int>& GetJointIDList() { return m_JointIDs; }
 		const std::vector<float>& GetWeightList() { return m_Weight; }
 
 	private:
@@ -27,7 +27,7 @@ namespace Silver {
 		void FillEmptyWeights(unsigned int max);
 
 	private:
-		std::vector<unsigned int> m_JointIDs;
+		std::vector<int> m_JointIDs;
 		std::vector<float> m_Weight;
 	};
 

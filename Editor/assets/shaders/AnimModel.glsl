@@ -26,17 +26,22 @@ void main()
 	for(int i = 0; i < MAX_WEIGHTS; i++)
 	{
 		mat4 jointTransform = u_JointTransform[a_JointID[i]];
-		vec4 posePosition = jointTransform * vec4(a_Position, 1.0);
+		vec4 posePosition = vec4(a_Position, 1.0) * jointTransform;
 		totalLocalPos += posePosition * a_Weight[i];
 		
-		vec4 worldNormal = jointTransform * vec4(a_Normal, 0.0);
+		vec4 worldNormal = vec4(a_Normal, 0.0) * jointTransform;
 		totalNormal += worldNormal * a_Weight[i];
+	}
+	if (totalLocalPos == vec4(0.0))
+	{
+		totalLocalPos = vec4(a_Position, 1.0);
+		totalNormal =  vec4(a_Normal, 0.0);
 	}
 
 	gl_Position = u_ViewProjection * u_World * totalLocalPos;
 	v_TexCoord = a_TexCoord;
 	v_Normal = totalNormal.xyz;
-	v_Pos = vec3(gl_Position);
+	v_Pos = vec3(totalLocalPos);
 }
 
 #type fragment

@@ -1,5 +1,5 @@
 #pragma once
-#include "DataManager/Resources/Model/Animation.h"
+#include "DataManager/ECS/Animation/Animation.h"
 
 #include <tinyxml2.h>
 

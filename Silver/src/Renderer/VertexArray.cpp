@@ -49,7 +49,6 @@ namespace Silver {
 
 	void VertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
 	{
-		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
 
 		if (!vertexBuffer->GetLayout().GetLayout().size())
@@ -60,14 +59,27 @@ namespace Silver {
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& attrib : layout)
 		{
-			glEnableVertexAttribArray(m_LayoutIndex);
-			glVertexAttribPointer(
-				m_LayoutIndex,
-				attrib.GetComponentCount(),
-				DataTypeToOpenGLType(attrib.type),
-				attrib.normalized ? GL_TRUE : GL_FALSE,
-				layout.GetStride(),
-				(const void*)(attrib.offset));
+			if (DataTypeToOpenGLType(attrib.type) == GL_FLOAT)
+			{
+				glEnableVertexAttribArray(m_LayoutIndex);
+				glVertexAttribPointer(
+					m_LayoutIndex,
+					attrib.GetComponentCount(),
+					DataTypeToOpenGLType(attrib.type),
+					attrib.normalized ? GL_TRUE : GL_FALSE,
+					layout.GetStride(),
+					(const void*)(attrib.offset));
+			}
+			else
+			{
+				glEnableVertexAttribArray(m_LayoutIndex);
+				glVertexAttribIPointer(
+					m_LayoutIndex,
+					attrib.GetComponentCount(),
+					DataTypeToOpenGLType(attrib.type),
+					layout.GetStride(),
+					(const void*)(attrib.offset));
+			}
 			m_LayoutIndex++;
 		}
 		m_VertexBufferList.push_back(vertexBuffer);

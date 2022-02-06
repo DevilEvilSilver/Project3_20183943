@@ -1,6 +1,6 @@
 #pragma once
 #include "Utils/Singleton.h"
-#include "Model/Model.h"
+#include "DataManager/ECS/Model/Model.h"
 #include "Renderer/Shader.h"
 
 #include <string>

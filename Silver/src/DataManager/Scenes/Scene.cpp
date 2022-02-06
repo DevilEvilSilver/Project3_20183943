@@ -8,21 +8,6 @@ namespace Silver {
 
 	Scene::Scene()
 	{
-		
-#ifdef ENTT_EXAMPLE 
-		entt::entity entity = m_Registry.create();
-		m_Registry.emplace<TransformComponent>(entity, glm::mat4(1.0f));
-
-		if (m_Registry.all_of<TransformComponent>(entity))
-			TransformComponent& transform = m_Registry.get<TransformComponent>(entity);
-
-		auto view = m_Registry.view<TransformComponent>();
-		for (auto entity : view)
-		{
-			auto& transform = view.get<TransformComponent>(entity);
-		}
-#endif
-
 	}
 
 	Scene::~Scene()
@@ -40,6 +25,7 @@ namespace Silver {
 
 	void Scene::OnUpdate(float deltaTime)
 	{
+		//// UPDATE
 		// Update scripts
 		{
 			auto view = m_Registry.view<ScriptComponent>();
@@ -52,7 +38,19 @@ namespace Silver {
 				}
 			}
 		}
+		// Update animator
+		{
+			auto view = m_Registry.view<AnimatedModelComponent>();
+			for (auto entity : view)
+			{
+				auto& component = view.get<AnimatedModelComponent>(entity);
+				component.m_Animator->OnUpdate(deltaTime);
+				component.ApplyPose();
+			}
+		}
 
+
+		//// RENDER
 		// Get main camera
 		std::shared_ptr<Camera> mainCamera;
 		{
@@ -79,6 +77,8 @@ namespace Silver {
 				shader.m_Shader->Bind();
 				texture.m_Texture->Bind();
 				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
+				if (model.m_Animator->HasAnimation())
+					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_Model->GetJoints()->GetJointTransforms());
 
 				Renderer::Submit(shader.m_Shader, model.m_Model, transform);
 			}

@@ -26,7 +26,7 @@
 #include "DataManager/Resources/ResourceManager.h"
 #include "DataManager/Scenes/Scene.h"
 #include "DataManager/ECS/Components.h"
-#include "DataManager/Resources/Model/Model.h"
+#include "DataManager/ECS/Model/Model.h"
 
 // Debug -----------------------
 #include "ImGui/ImGuiLayer.h"
