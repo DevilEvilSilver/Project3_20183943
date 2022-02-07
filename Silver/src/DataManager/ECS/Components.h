@@ -55,7 +55,17 @@ namespace Silver {
 			:m_Model(model) 
 		{
 			m_Animator = std::make_shared<Animator>();
-			m_Animator->SetAnimation(m_Model->GetAnimation(DEFAULT_ANIMATION));
+			m_Animator->BindAnimation(m_Model->GetAnimation(DEFAULT_ANIMATION));
+		}
+
+		void BindAnimation(const std::string& anim)
+		{
+			m_Animator->BindAnimation(m_Model->GetAnimation(anim));
+		}
+
+		void UnbindAnimation()
+		{
+			m_Animator->UnbindAnimation();
 		}
 
 		void ApplyPose()

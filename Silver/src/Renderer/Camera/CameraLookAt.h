@@ -33,7 +33,7 @@ namespace Silver {
 		void UpdateViewMatrix();
 
 	private:	
-		glm::vec3 m_Position = { 0.0f, 0.0f, 3.0f };
+		glm::vec3 m_Position = { 0.0f, 0.0f, 30.0f };
 		glm::vec3 m_Target = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 m_Up = { 0.0f, 1.0f, 0.0f };
 		glm::vec3  m_XAxis, m_YAxis, m_ZAxis;

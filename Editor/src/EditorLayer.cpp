@@ -21,7 +21,9 @@ namespace Silver {
         m_Scene = std::make_shared<Scene>();
 
         m_Entity = m_Scene->CreateEntity("3D Model Entity");
-        m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/AnimModel.dae"));
+        m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae"));
+        //m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/AnimModel.dae"))
+        //    .BindAnimation("action_container-Armature");
         m_Entity->AddComponent<Texture2DComponent>(std::make_shared<Texture2D>("assets/textures/animTexture.png"));
         m_Entity->AddComponent<ShaderComponent>(std::make_shared<Shader>("assets/shaders/AnimModel.glsl"));
 

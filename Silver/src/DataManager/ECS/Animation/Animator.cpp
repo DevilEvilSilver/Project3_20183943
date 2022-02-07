@@ -7,9 +7,14 @@ namespace Silver{
 	{
 	}
 
-	void Animator::SetAnimation(const std::shared_ptr<Animation>& animtion)
+	void Animator::BindAnimation(const std::shared_ptr<Animation>& animtion)
 	{
 		m_CurrAnimation = animtion;
+	}
+
+	void Animator::UnbindAnimation()
+	{
+		m_CurrAnimation = nullptr;
 	}
 
 	void Animator::OnUpdate(float deltaTime)
@@ -26,13 +31,21 @@ namespace Silver{
 		if (!HasAnimation()) {
 			return;
 		}
-		glm::mat4 currentLocalTransform = m_CurrPose[joint->GetName()];
-		glm::mat4 currentTransform = parentTransform * currentLocalTransform;
+		glm::mat4 currentLocalTransform = GetCurrLocalTransform(joint->GetName());
+		glm::mat4 currentTransform = currentLocalTransform * parentTransform;
 		for (auto& childJoint : joint->GetChilds()) {
 			ApplyPoseToJoints(childJoint, currentTransform);
 		}
-		currentTransform = currentTransform * joint->GetInverseBindTransform();
-		joint->SetAnimatedTransform(currentTransform);
+		joint->SetAnimatedTransform(joint->GetInverseBindTransform() * currentTransform);
+	}
+
+	glm::mat4 Animator::GetCurrLocalTransform(const std::string& name)
+	{
+		if (m_CurrPose.find(name) != m_CurrPose.end())
+		{
+			return m_CurrPose[name];
+		}
+		return glm::mat4(1.0f);
 	}
 
 	void Animator::IncreaseCurrentTime(float deltaTime)
@@ -63,15 +76,18 @@ namespace Silver{
 				prev = jointAnim->GetLastKeyFrame();
 
 			float progression = (m_CurrTime - prev->GetKeyTime()) / (next->GetKeyTime() - prev->GetKeyTime());
-			m_CurrPose[jointAnim->GetName()] = Interpolate(prev, next, progression);
+			m_CurrPose[jointAnim->GetName()] = glm::transpose(Interpolate(prev, next, progression));
 		}
 	}
 
 	glm::mat4 Animator::Interpolate(std::shared_ptr<KeyFrame> prev, std::shared_ptr<KeyFrame> next, float progression)
 	{
-		glm::quat firstQuat = glm::quat_cast(prev->GetJointTransforms());
-		glm::quat secondQuat = glm::quat_cast(next->GetJointTransforms());
-		return glm::mat4_cast(glm::slerp(firstQuat, secondQuat, progression));
+		glm::vec3 firstPos = prev->GetJointTransforms().Position;
+		glm::vec3 secondPos = next->GetJointTransforms().Position;
+		glm::quat firstQuat = prev->GetJointTransforms().Rotatation;
+		glm::quat secondQuat = next->GetJointTransforms().Rotatation;
+		return glm::translate(glm::mat4(1), glm::mix(firstPos, secondPos, progression)) *
+			glm::mat4_cast(glm::slerp(firstQuat, secondQuat, progression));
 	}
 
 }

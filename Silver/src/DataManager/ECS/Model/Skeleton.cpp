@@ -15,7 +15,7 @@ namespace Silver {
 
 	void Joint::calInverseBindTransforms(glm::mat4& parentBindTransform)
 	{
-		glm::mat4 bindTransform = parentBindTransform * m_LocalBindTransform;
+		glm::mat4 bindTransform = m_LocalBindTransform * parentBindTransform;
 		m_InverseBindTransform = glm::inverse(bindTransform);
 		for (auto& child : m_Children) {
 			child->calInverseBindTransforms(bindTransform);
@@ -36,6 +36,7 @@ namespace Silver {
 	const std::vector<glm::mat4>& Skeleton::GetJointTransforms()
 	{
 		m_JointTransforms.clear();
+		m_JointTransforms.reserve(m_JointCount);
 		JointTransformRecursion(m_HeadJoint);
 		//std::sort(m_JointTransforms.begin(), m_JointTransforms.end(), [](std::shared_ptr<Joint> a, std::shared_ptr<Joint> b)
 		//{

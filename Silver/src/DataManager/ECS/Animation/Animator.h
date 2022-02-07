@@ -14,12 +14,14 @@ namespace Silver {
 		Animator();
 		~Animator() = default;
 
-		void SetAnimation(const std::shared_ptr<Animation>& animtion);
+		void BindAnimation(const std::shared_ptr<Animation>& animtion);
+		void UnbindAnimation();
 		void OnUpdate(float deltaTime);
 		void ApplyPoseToJoints(std::shared_ptr<Joint>& joint, glm::mat4& parentTransform);
 		bool HasAnimation() { return (m_CurrAnimation != nullptr && m_CurrAnimation->HasAnimations()); }
 
 	private:
+		glm::mat4 GetCurrLocalTransform(const std::string& name);
 		void IncreaseCurrentTime(float deltaTime);
 		void CalculateCurrentAnimationPose(float deltaTime);
 		glm::mat4 Interpolate(std::shared_ptr<KeyFrame> prev, std::shared_ptr<KeyFrame> next, float progression);

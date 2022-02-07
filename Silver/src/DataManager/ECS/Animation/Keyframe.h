@@ -4,6 +4,12 @@
 
 namespace Silver {
 
+	struct JointTransform
+	{
+		glm::vec3 Position;
+		glm::quat Rotatation;
+	};
+
 	class KeyFrame
 	{
 	public:
@@ -11,11 +17,11 @@ namespace Silver {
 
 		void SetTransform(const float mat[16]);
 		float GetKeyTime() { return m_KeyTime; }
-		glm::mat4 GetJointTransforms() { return m_JointLocalTransform; }
+		JointTransform GetJointTransforms() { return m_JointLocalTransform; }
 
 	private:
 		float m_KeyTime;
-		glm::mat4 m_JointLocalTransform;
+		JointTransform m_JointLocalTransform;
 	};
 
 }

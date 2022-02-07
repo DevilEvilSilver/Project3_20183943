@@ -38,7 +38,7 @@ namespace Silver {
 	std::shared_ptr<Joint> SkeletonLoader::ExtractJointData(tinyxml2::XMLElement* node, const std::vector<std::string>& jointOrder, bool isRoot)
 	{
 		std::string nameId = node->Attribute("id");
-		unsigned int index = std::distance(jointOrder.begin(), std::find(jointOrder.begin(), jointOrder.end(), nameId));
+		unsigned int index = std::distance(jointOrder.begin(), std::find(jointOrder.begin(), jointOrder.end(), node->Attribute("sid")));
 		float matrixData[16];
 
 		// Get matrix data

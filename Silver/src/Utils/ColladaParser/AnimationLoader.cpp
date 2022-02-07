@@ -106,7 +106,7 @@ namespace Silver {
 				std::string strTimeStepData = source->FirstChildElement("float_array")->GetText();
 				unsigned int numTimeStepData;
 				source->FirstChildElement("float_array")->QueryUnsignedAttribute("count", &numTimeStepData);
-				list.reserve(++numTimeStepData);
+				list.reserve(numTimeStepData);
 				for (unsigned int i = 0; i < numTimeStepData; i++)
 				{
 					list.push_back(std::make_shared<KeyFrame>(std::stof(strTimeStepData.substr(0, strTimeStepData.find(" ")))));
