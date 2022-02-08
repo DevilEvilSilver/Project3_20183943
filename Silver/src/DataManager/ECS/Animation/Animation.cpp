@@ -20,7 +20,7 @@ namespace Silver {
 
 	const std::shared_ptr<KeyFrame>& JointAnimation::GetLastKeyFrame()
 	{
-		return m_KeyFrames[m_KeyFrames.size()];
+		return m_KeyFrames[m_KeyFrames.size() - 1];
 	}
 
 	Animation::Animation(const std::string& name, const std::string& filepath)

@@ -31,7 +31,7 @@ namespace Silver{
 		if (!HasAnimation()) {
 			return;
 		}
-		glm::mat4 currentLocalTransform = GetCurrLocalTransform(joint->GetName());
+		glm::mat4 currentLocalTransform = GetCurrLocalTransform(joint);
 		glm::mat4 currentTransform = currentLocalTransform * parentTransform;
 		for (auto& childJoint : joint->GetChilds()) {
 			ApplyPoseToJoints(childJoint, currentTransform);
@@ -39,13 +39,13 @@ namespace Silver{
 		joint->SetAnimatedTransform(joint->GetInverseBindTransform() * currentTransform);
 	}
 
-	glm::mat4 Animator::GetCurrLocalTransform(const std::string& name)
+	glm::mat4 Animator::GetCurrLocalTransform(const std::shared_ptr<Joint>& joint)
 	{
-		if (m_CurrPose.find(name) != m_CurrPose.end())
+		if (m_CurrPose.find(joint->GetName()) != m_CurrPose.end())
 		{
-			return m_CurrPose[name];
+			return m_CurrPose[joint->GetName()];
 		}
-		return glm::mat4(1.0f);
+		return joint->GetLocalBindTransform();
 	}
 
 	void Animator::IncreaseCurrentTime(float deltaTime)

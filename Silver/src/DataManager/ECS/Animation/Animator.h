@@ -21,7 +21,7 @@ namespace Silver {
 		bool HasAnimation() { return (m_CurrAnimation != nullptr && m_CurrAnimation->HasAnimations()); }
 
 	private:
-		glm::mat4 GetCurrLocalTransform(const std::string& name);
+		glm::mat4 GetCurrLocalTransform(const std::shared_ptr<Joint>& joint);
 		void IncreaseCurrentTime(float deltaTime);
 		void CalculateCurrentAnimationPose(float deltaTime);
 		glm::mat4 Interpolate(std::shared_ptr<KeyFrame> prev, std::shared_ptr<KeyFrame> next, float progression);

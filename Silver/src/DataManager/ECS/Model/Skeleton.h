@@ -19,6 +19,7 @@ namespace Silver {
 		unsigned int GetIndex() { return m_Index; }
 		const std::string& GetName() { return m_NameID; }
 		std::vector<std::shared_ptr<Joint>>& GetChilds() { return m_Children; }
+		const glm::mat4& GetLocalBindTransform() { return m_LocalBindTransform; }
 		const glm::mat4& GetInverseBindTransform() { return m_InverseBindTransform; }
 		const glm::mat4& GetAnimatedTransform() { return m_AnimatedTransform; }
 
