@@ -20,9 +20,9 @@ namespace Silver {
 		RenderCommand::SetViewPort(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(const std::shared_ptr<Camera>& camera)
+	void Renderer::BeginScene(const glm::mat4& viewProjectionMat)
 	{
-		s_SceneData->ViewProjectionMatrix = camera->GetViewProjectionMatrix();
+		s_SceneData->ViewProjectionMatrix = viewProjectionMat;
 	}
 
 	void Renderer::EndScene()

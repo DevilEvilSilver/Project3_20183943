@@ -20,19 +20,14 @@ namespace Silver {
 		if (height != 0)
 		{
 			m_AspectRatio = width / height;
-			if (m_ProjectionType == ProjectionType::Perspective)
-				SetPerspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
-			else
-			{
-				float orthoLeft = -m_OrthoSize * m_AspectRatio * 0.5f;
-				float orthoRight = m_OrthoSize * m_AspectRatio * 0.5f;
-				float orthoBottom = -m_OrthoSize * 0.5f;
-				float orthoTop = m_OrthoSize * 0.5f;
-
-				SetOrthographic(orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
-			}
-
+			ResetProjectionMatrix();
 		}
+	}
+
+	void Camera::SetProjectionType(ProjectionType type)
+	{
+		m_ProjectionType = type;
+		ResetProjectionMatrix();
 	}
 
 	void Camera::SetOrthographic(float left, float right, float bottom, float top, float zNear, float zFar)
@@ -48,7 +43,18 @@ namespace Silver {
 	{
 		m_ProjectionType = ProjectionType::Perspective;
 		m_PerspectiveFOV = fov; m_AspectRatio = aspect; m_PerspectiveNear = zNear; m_PerspectiveFar = zFar;
-		m_ProjectionMatrix = glm::perspective(fov, aspect, zNear, zFar);
+		m_ProjectionMatrix = glm::perspective(glm::radians(fov), aspect, zNear, zFar);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
+	void Camera::ResetProjectionMatrix()
+	{
+		if (m_ProjectionType == ProjectionType::Orthographic)
+			m_ProjectionMatrix = glm::ortho(-m_OrthoSize * m_AspectRatio * 0.5f, m_OrthoSize * m_AspectRatio * 0.5f, 
+				-m_OrthoSize * 0.5f, m_OrthoSize * 0.5f, m_OrthographicNear, m_OrthographicFar);
+		else if (m_ProjectionType == ProjectionType::Perspective)
+			m_ProjectionMatrix = glm::perspective(glm::radians(m_PerspectiveFOV), m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 

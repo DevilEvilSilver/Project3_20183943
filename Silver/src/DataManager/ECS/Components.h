@@ -12,7 +12,7 @@ namespace Silver {
 
 	struct TagComponent
 	{
-		std::string Tag;
+		std::string Tag = "Entity";
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;

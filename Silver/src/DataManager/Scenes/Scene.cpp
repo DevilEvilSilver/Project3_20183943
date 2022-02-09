@@ -52,7 +52,7 @@ namespace Silver {
 
 		//// RENDER
 		// Get main camera
-		std::shared_ptr<Camera> mainCamera;
+		std::shared_ptr<Camera> mainCamera = nullptr;
 		{
 			auto view = m_Registry.view<CameraComponent>();
 			for (auto entity : view)
@@ -65,7 +65,13 @@ namespace Silver {
 				}
 			}
 		}
-		Renderer::BeginScene(mainCamera);
+		if (!mainCamera)
+		{
+			SV_CORE_ERROR("NO PRIMARY CAMERA !!!");
+			Renderer::BeginScene();
+		}
+		else
+			Renderer::BeginScene(mainCamera->GetViewProjectionMatrix());
 
 		// Render animated model
 		{
