@@ -1,5 +1,6 @@
 #pragma once
-#include <Silver.h>
+#include "Silver.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace Silver {
 
@@ -17,6 +18,8 @@ namespace Silver {
 
 	private:
 		// tmp
+		std::shared_ptr<SceneHierarchyPanel> m_SceneHierarchyPanel;
+
 		std::shared_ptr<Scene> m_Scene;
 		std::shared_ptr<Entity> m_Entity;
 		std::shared_ptr<Entity> m_CameraEntity;

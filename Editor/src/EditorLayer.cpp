@@ -9,6 +9,7 @@ namespace Silver {
 		:Layer("EditorLayer")
         //, m_EditorCameraController(16.0f / 9.0f)
 	{
+        m_SceneHierarchyPanel = std::make_shared<SceneHierarchyPanel>();
 	}
 
 	void EditorLayer::OnAttach()
@@ -21,7 +22,7 @@ namespace Silver {
         m_Scene = std::make_shared<Scene>();
 
         m_Entity = m_Scene->CreateEntity("3D Model Entity");
-        m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae"));
+        m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae")).UnbindAnimation();
         //m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/AnimModel.dae"))
         //    .BindAnimation("action_container-Armature");
         m_Entity->AddComponent<Texture2DComponent>(std::make_shared<Texture2D>("assets/textures/animTexture.png"));
@@ -78,6 +79,8 @@ namespace Silver {
             float m_CameraZoomSpeed = 0.5f;
         };
         m_CameraEntity->AddComponent<ScriptComponent>().Bind(std::make_shared<CameraController>(m_CameraEntity));
+
+        m_SceneHierarchyPanel->SetContext(m_Scene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -182,6 +185,7 @@ namespace Silver {
         }
         ImGui::End();
 
+        // View port
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("View port");
 
@@ -192,13 +196,17 @@ namespace Silver {
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		
-		ImTextureID textureID = (void*)m_Framebuffer->GetColorAttachmentRendererID();
+		ImTextureID textureID = (void*)(uint64_t)m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
 		ImGui::End();
 		ImGui::PopStyleVar();
 
+        // DEMO panel
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
+
+        // Scene Hierarchy Panel
+        m_SceneHierarchyPanel->OnImGuiRender();
 	}
 
 	void EditorLayer::OnEvent(Event& e)
