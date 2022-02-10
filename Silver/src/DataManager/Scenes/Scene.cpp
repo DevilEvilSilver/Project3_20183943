@@ -86,7 +86,7 @@ namespace Silver {
 				if (model.m_Animator->HasAnimation())
 					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_Model->GetJoints()->GetJointTransforms());
 
-				Renderer::Submit(shader.m_Shader, model.m_Model, transform);
+				Renderer::Submit(shader.m_Shader, model.m_Model, transform.GetTransform());
 			}
 		}
 
