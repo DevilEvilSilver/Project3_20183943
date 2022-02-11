@@ -23,6 +23,11 @@ namespace Silver {
 		return entity;
 	}
 
+	void Scene::DestroyEntity(Entity& entity)
+	{
+		m_Registry.destroy(entity);
+	}
+
 	void Scene::OnUpdate(float deltaTime)
 	{
 		//// UPDATE

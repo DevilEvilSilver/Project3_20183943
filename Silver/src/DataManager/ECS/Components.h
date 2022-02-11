@@ -114,7 +114,7 @@ namespace Silver {
 		bool Primary = false;
 		bool FixedAspectRatio = false;
 
-		CameraComponent() = default;
+		CameraComponent() { m_Camera = std::make_shared<Camera>(); }
 		CameraComponent(const CameraComponent&) = default;
 		CameraComponent(const std::shared_ptr<Camera>& camera)
 			:m_Camera(camera) {}

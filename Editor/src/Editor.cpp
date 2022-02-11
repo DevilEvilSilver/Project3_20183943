@@ -8,7 +8,7 @@ namespace Silver {
 	{
 	public:
 		Editor()
-			:Application("Silver Editor")
+			:Application("Silver Editor", 1600, 900)
 		{
 			PushLayer(new EditorLayer());
 		}

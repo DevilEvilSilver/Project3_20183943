@@ -15,6 +15,7 @@ namespace Silver {
 		virtual ~Scene();
 
 		std::shared_ptr<Entity> CreateEntity(const std::string& name = "");
+		void DestroyEntity(Entity& entity);
 
 		void OnUpdate(float deltaTime);
 		void OnEvent(Event& e);

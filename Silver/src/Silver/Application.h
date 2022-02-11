@@ -13,7 +13,7 @@ namespace Silver {
 	class Application
 	{
 	public:
-		Application(const std::string& name = "Silver App");
+		Application(const std::string& name = "Silver App", unsigned int width = 1280, unsigned int height = 720);
 		virtual ~Application();
 
 		void Run();

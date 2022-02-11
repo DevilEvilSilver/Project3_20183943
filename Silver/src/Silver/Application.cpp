@@ -7,11 +7,11 @@ namespace Silver {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application(const std::string& name)
+	Application::Application(const std::string& name, unsigned int width, unsigned int height)
 	{
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));
+		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name, width, height)));
 		m_Window->SetEventCallback(BIND_FN(Application::OnEvent));
 
 		m_ImGuiLayer = new ImGuiLayer();

@@ -9,6 +9,7 @@ namespace Silver {
 	public:
 		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 	public:
+		Camera() { ResetProjectionMatrix(); };
 		Camera(float left, float right, float bottom, float top, float zNear, float zFar);
 		Camera(float fov, float aspect, float zNear, float zFar);
 		virtual ~Camera() = default;
@@ -42,7 +43,7 @@ namespace Silver {
 		void ResetProjectionMatrix();
 
 	protected:
-		ProjectionType m_ProjectionType = ProjectionType::Orthographic;
+		ProjectionType m_ProjectionType = ProjectionType::Perspective;
 		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_ViewMatrix{1.0f};
 		glm::mat4 m_ViewProjectionMatrix;
