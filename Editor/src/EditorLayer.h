@@ -1,6 +1,7 @@
 #pragma once
 #include "Silver.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Events/KeyEvent.h"
 
 namespace Silver {
 
@@ -15,6 +16,12 @@ namespace Silver {
 		virtual void OnUpdate(float deltaTime) override;
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
+
+	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
 
 	private:
 		// tmp

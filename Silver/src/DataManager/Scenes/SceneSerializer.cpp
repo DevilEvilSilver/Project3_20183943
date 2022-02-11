@@ -184,7 +184,7 @@ namespace Silver {
 		if (!data["Scene"])
 			return false;
 
-		m_Scene->Clear(); // Optional
+		//m_Scene->Clear(); // Optional
 		std::string sceneName = data["Scene"].as<std::string>();
 		SV_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 

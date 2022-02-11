@@ -1,6 +1,8 @@
 //#include "pch.h"
 #include "EditorLayer.h"
+
 #include "DataManager/Scenes/SceneSerializer.h"
+#include "Utils/FileDialogs.h"
 
 #include <imgui.h>
 
@@ -176,17 +178,9 @@ namespace Silver {
                 // which we can't undo at the moment without finer window depth/z control.
                 //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
 
-                if (ImGui::MenuItem("Serialize")) 
-                { 
-                    SceneSerializer serializer(m_Scene);
-                    serializer.Serialize("assets/scenes/TestScene.silver");
-                }
-                if (ImGui::MenuItem("Deserialize"))
-                {
-                    SceneSerializer serializer(m_Scene);
-                    serializer.Deserialize("assets/scenes/TestScene.silver");
-                }
-
+                if (ImGui::MenuItem("New", "Ctrl+N")) { NewScene(); }
+                if (ImGui::MenuItem("Open...", "Ctrl+O")) { OpenScene(); }
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) { SaveSceneAs(); }
 				if (ImGui::MenuItem("Exit")) { Application::GetInstance().Close(); }
 
                 ImGui::EndMenu();
@@ -227,6 +221,72 @@ namespace Silver {
 
         // Update Scene
         m_Scene->OnEvent(e);
+
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<KeyPressedEvent>(BIND_FN(EditorLayer::OnKeyPressed));
 	}
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+    {
+        // Shortcuts
+        if (e.GetRepeatCount() > 0)
+            return false;
+
+        bool control = Input::IsKeyPressed(KEY_LEFT_CONTROL) || Input::IsKeyPressed(KEY_RIGHT_CONTROL);
+        bool shift = Input::IsKeyPressed(KEY_LEFT_SHIFT) || Input::IsKeyPressed(KEY_RIGHT_SHIFT);
+        switch (e.GetKeyCode())
+        {
+            case KEY_N:
+            {
+                if (control)
+                    NewScene();
+                break;
+            }
+            case KEY_O:
+            {
+                if (control)
+                    OpenScene();
+                break;
+            }
+            case KEY_S:
+            {
+                if (control && shift)
+                    SaveSceneAs();
+                break;
+            }
+        }
+        return true;
+    }
+
+    void EditorLayer::NewScene()
+    {
+        m_Scene = std::make_shared<Scene>();
+        m_Scene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        m_SceneHierarchyPanel->SetContext(m_Scene);
+    }
+
+    void EditorLayer::OpenScene()
+    {
+        std::string filepath = FileDialogs::OpenFile("Silver Scene (*.silver)\0*.silver\0");
+        if (!filepath.empty())
+        {
+            m_Scene = std::make_shared<Scene>();
+            m_Scene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_SceneHierarchyPanel->SetContext(m_Scene);
+
+            SceneSerializer serializer(m_Scene);
+            serializer.Deserialize(filepath);
+        }
+    }
+
+    void EditorLayer::SaveSceneAs()
+    {
+        std::string filepath = FileDialogs::OpenFile("Silver Scene (*.silver)\0*.silver\0");
+        if (!filepath.empty())
+        {
+            SceneSerializer serializer(m_Scene);
+            serializer.Serialize(filepath);
+        }
+    }
 
 }

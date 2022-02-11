@@ -14,6 +14,7 @@ namespace Silver {
 	void SceneHierarchyPanel::SetContext(const std::shared_ptr<Scene>& scene)
 	{
 		m_Context = scene;
+		m_SelectionContext = { entt::null, m_Context.get() };
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
