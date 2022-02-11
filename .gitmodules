@@ -13,3 +13,6 @@
 [submodule "Silver/vendor/tinyxml2"]
 	path = Silver/vendor/tinyxml2
 	url = https://github.com/DevilEvilSilver/tinyxml2
+[submodule "Silver/vendor/yaml-cpp"]
+	path = Silver/vendor/yaml-cpp
+	url = https://github.com/DevilEvilSilver/yaml-cpp

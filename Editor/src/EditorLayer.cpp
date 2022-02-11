@@ -1,5 +1,6 @@
 //#include "pch.h"
 #include "EditorLayer.h"
+#include "DataManager/Scenes/SceneSerializer.h"
 
 #include <imgui.h>
 
@@ -174,6 +175,17 @@ namespace Silver {
                 // Disabling fullscreen would allow the window to be moved to the front of other windows,
                 // which we can't undo at the moment without finer window depth/z control.
                 //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+
+                if (ImGui::MenuItem("Serialize")) 
+                { 
+                    SceneSerializer serializer(m_Scene);
+                    serializer.Serialize("assets/scenes/TestScene.silver");
+                }
+                if (ImGui::MenuItem("Deserialize"))
+                {
+                    SceneSerializer serializer(m_Scene);
+                    serializer.Deserialize("assets/scenes/TestScene.silver");
+                }
 
 				if (ImGui::MenuItem("Exit")) { Application::GetInstance().Close(); }
 

@@ -1,0 +1,27 @@
+Scene: Untitled
+Entities:
+  - Entity: 123456
+    TagComponent:
+      Tag: Camera Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [-90, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 720
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: true
+  - Entity: 123456
+    TagComponent:
+      Tag: 3D Model Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [-90, 0, 0]
+      Scale: [1, 1, 1]

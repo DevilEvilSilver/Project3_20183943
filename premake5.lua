@@ -20,10 +20,12 @@ IncludeDir["glm"] = "Silver/vendor/glm"
 IncludeDir["entt"] = "Silver/vendor/entt/include"
 IncludeDir["stb_image"] = "Silver/vendor/stb_image"
 IncludeDir["tinyxml2"] = "Silver/vendor/tinyxml2"
+IncludeDir["yaml_cpp"] = "Silver/vendor/yaml-cpp/include"
 
 include "Silver/vendor/GLFW"
 include "Silver/vendor/Glad"
 include "Silver/vendor/ImGui"
+include "Silver/vendor/yaml-cpp"
 
 project "Silver"
 	location "Silver"
@@ -50,7 +52,8 @@ project "Silver"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"YAML_CPP_STATIC_DEFINE"
 	}
 
 	includedirs
@@ -63,7 +66,8 @@ project "Silver"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.tinyxml2}"
+		"%{IncludeDir.tinyxml2}",
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links
@@ -71,6 +75,7 @@ project "Silver"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib",
 	}
 

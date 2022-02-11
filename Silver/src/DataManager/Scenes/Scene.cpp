@@ -28,6 +28,11 @@ namespace Silver {
 		m_Registry.destroy(entity);
 	}
 
+	void Scene::Clear()
+	{
+		m_Registry.clear();
+	}
+
 	void Scene::OnUpdate(float deltaTime)
 	{
 		//// UPDATE
