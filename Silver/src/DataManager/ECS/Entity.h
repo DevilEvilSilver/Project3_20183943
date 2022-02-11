@@ -15,7 +15,10 @@ namespace Silver {
 		T& AddComponent(Args&&... args)
 		{
 			if (HasComponent<T>())
+			{
 				SV_CORE_ERROR("Entity already has component");
+				return GetComponent<T>();
+			}
 			return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 		}
 
@@ -37,7 +40,10 @@ namespace Silver {
 		void RemoveComponent()
 		{
 			if (!HasComponent<T>())
+			{
 				SV_CORE_ERROR("Entity doesn't have component");
+				return;
+			}	
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
