@@ -17,6 +17,11 @@ namespace Silver {
 		m_SelectionContext = { entt::null, m_Context.get() };
 	}
 
+	void SceneHierarchyPanel::SetSelectedEntity(const Entity& entity)
+	{
+		m_SelectionContext = entity;
+	}
+
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
@@ -183,6 +188,12 @@ namespace Silver {
 			DragFloat3("Rotation", rotation, glm::vec3(-90.0f, 0.0f, 0.0f), 70.f);
 			component.Rotation = glm::radians(rotation);
 			DragFloat3("Scale", component.Scale, glm::vec3(1.0f), 70.0f);
+			if (ImGui::Button("Reset"))
+			{
+				component.Translation = { 0.0f, 0.0f, 0.0f };
+				component.Rotation = { glm::radians(-90.0f), 0.0f, 0.0f };
+				component.Scale = { 1.0f, 1.0f, 1.0f };
+			}
 		});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)

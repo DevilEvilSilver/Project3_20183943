@@ -20,6 +20,7 @@ namespace Silver {
 
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMousePressed(MouseButtonPressedEvent& e);
 		void NewScene();
 		void OpenScene();
 		void SaveSceneAs();
@@ -34,9 +35,11 @@ namespace Silver {
 		std::shared_ptr<Entity> m_CameraEntity;
 
 		std::shared_ptr<EditorCamera> m_EditorCamrera;
+		Entity m_HoveredEntity = { entt::null, m_Scene.get() };
 
 		std::shared_ptr<Silver::Framebuffer> m_Framebuffer;
 		glm::vec2 m_ViewportSize{0.0f, 0.0f};
+		glm::vec2 m_ViewportBounds[2];
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 	};
 

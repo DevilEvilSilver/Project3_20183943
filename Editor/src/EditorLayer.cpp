@@ -3,7 +3,6 @@
 
 #include "DataManager/Scenes/SceneSerializer.h"
 #include "Utils/FileDialogs.h"
-#include "Utils/Math.h"
 #include <imgui.h>
 #include "ImGuizmo.h"
 
@@ -11,14 +10,15 @@ namespace Silver {
 
 	EditorLayer::EditorLayer()
 		:Layer("EditorLayer")
-        //, m_EditorCameraController(16.0f / 9.0f)
 	{
         m_SceneHierarchyPanel = std::make_shared<SceneHierarchyPanel>();
+        m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 	}
 
 	void EditorLayer::OnAttach()
 	{
 		FramebufferSpec spec;
+        spec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		spec.Width = 1280;
 		spec.Height = 720;
 		m_Framebuffer = std::make_shared<Framebuffer>(spec);
@@ -105,7 +105,7 @@ namespace Silver {
             m_Scene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
-        //Update
+        // Update
         if (m_ViewportFocused)
             m_EditorCamrera->OnUpdate(deltaTime);
 
@@ -113,9 +113,25 @@ namespace Silver {
 		m_Framebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1 });
 		RenderCommand::Clear();
+        m_Framebuffer->ClearAttachment(1, -1); // clear entity ID attachment to -1
 
-        //Update Scene
+        // Update Scene
         m_Scene->OnUpdateEditor(deltaTime, m_EditorCamrera->GetViewProjectionMatrix());
+
+        // Mouse pos
+        auto [mx, my] = ImGui::GetMousePos();
+        mx -= m_ViewportBounds[0].x;
+        my -= m_ViewportBounds[0].y;
+        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        my = viewportSize.y - my;
+        int mouseX = (int)mx;
+        int mouseY = (int)my;
+
+        if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+        {
+            int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+            m_HoveredEntity = pixelData == -1 ? Entity(entt::null, m_Scene.get()) : Entity((entt::entity)pixelData, m_Scene.get());
+        }
 
 		m_Framebuffer->Unbind();
 	}
@@ -197,6 +213,12 @@ namespace Silver {
         // View port
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("View port");
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
+        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
 
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
@@ -256,10 +278,11 @@ namespace Silver {
                 if (ImGuizmo::IsUsing())
                 {
                     glm::vec3 translation, rotation, scale;
-                    Math::DecomposeTransform(transform, translation, rotation, scale);
+                    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), 
+                        glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
 
                     tc.Translation = translation;
-                    tc.Rotation = rotation;
+                    tc.Rotation = glm::radians(rotation);
                     tc.Scale = scale;
                 }
             } 
@@ -285,6 +308,7 @@ namespace Silver {
 
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<KeyPressedEvent>(BIND_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_FN(EditorLayer::OnMousePressed));
 	}
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -339,7 +363,17 @@ namespace Silver {
                 break;
             }
         }
-        return true;
+        return false;
+    }
+
+    bool EditorLayer::OnMousePressed(MouseButtonPressedEvent& e)
+    {
+        // Select entity from viewport
+        if (m_ViewportHovered && e.GetMouseCode() == MOUSE_BUTTON_LEFT && !Input::IsKeyPressed(KEY_LEFT_ALT) && !ImGuizmo::IsOver())
+        {
+            m_SceneHierarchyPanel->SetSelectedEntity(m_HoveredEntity);
+        }
+        return false;
     }
 
     void EditorLayer::NewScene()

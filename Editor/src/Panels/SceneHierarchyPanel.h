@@ -13,6 +13,7 @@ namespace Silver {
 		~SceneHierarchyPanel() = default;
 
 		void SetContext(const std::shared_ptr<Scene>& scene);
+		void SetSelectedEntity(const Entity& entity);
 		Entity GetSelectedEntity() const { return m_SelectionContext; }
 
 		void OnImGuiRender();

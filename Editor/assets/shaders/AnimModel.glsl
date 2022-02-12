@@ -48,12 +48,14 @@ void main()
 #version 330 core
 
 layout(location = 0) out vec4 color;
+layout(location = 1) out int color2;
 
 in vec3 v_Pos;
 in vec3 v_Normal;
 in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;
+uniform int u_EntityId;
 
 const vec3 lightPos = vec3(0.0, -3.0, 10.0);
 const vec3 lightColor = vec3(1.0);
@@ -67,4 +69,5 @@ void main()
 	vec3 diffuse = max(dot(normal, lightDir), 0.0) * lightColor;
 
 	color = vec4(vec3(objColor) * (diffuse + ambient), 1.0);
+	color2 = u_EntityId;
 }

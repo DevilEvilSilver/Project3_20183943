@@ -64,9 +64,10 @@ namespace Silver {
 				shader.m_Shader->Bind();
 				texture.m_Texture->Bind();
 				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
-				// NOT PASSING ANIMATION IN EDITING MODE
-				//if (model.m_Animator->HasAnimation())
-				//	shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_Model->GetJoints()->GetJointTransforms());
+				// Setting entity id for 2nd colorAttachment (might not need in actual game && CAN'T BE DONE WITH BATCHED RENDERING
+				shader.m_Shader->SubmitUniformInt("u_EntityId", (int)(uint32_t)entity); 
+				if (model.m_Animator->HasAnimation())
+					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_Model->GetJoints()->GetJointTransforms());
 
 				Renderer::Submit(shader.m_Shader, model.m_Model, transform.GetTransform());
 			}
