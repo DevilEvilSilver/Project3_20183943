@@ -16,6 +16,7 @@ IncludeDir["spdlog"] = "Silver/vendor/spdlog/include"
 IncludeDir["GLFW"] = "Silver/vendor/GLFW/include"
 IncludeDir["Glad"] = "Silver/vendor/Glad/include"
 IncludeDir["ImGui"] = "Silver/vendor/ImGui"
+IncludeDir["ImGuizmo"] = "Silver/vendor/ImGuizmo"
 IncludeDir["glm"] = "Silver/vendor/glm"
 IncludeDir["entt"] = "Silver/vendor/entt/include"
 IncludeDir["stb_image"] = "Silver/vendor/stb_image"
@@ -47,7 +48,8 @@ project "Silver"
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
 	}
 
 	defines
@@ -63,6 +65,7 @@ project "Silver"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.stb_image}",
@@ -78,6 +81,9 @@ project "Silver"
 		"yaml-cpp",
 		"opengl32.lib",
 	}
+
+	filter "files:ImGuizmo.cpp"
+		flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"
@@ -181,6 +187,7 @@ project "Editor"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.tinyxml2}"
 	}
 

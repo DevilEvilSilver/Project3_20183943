@@ -3,8 +3,10 @@
 
 #include "DataManager/Scenes/SceneSerializer.h"
 #include "Utils/FileDialogs.h"
+#include "Utils/Math.h"
 
 #include <imgui.h>
+#include "ImGuizmo.h"
 
 namespace Silver {
 
@@ -204,7 +206,57 @@ namespace Silver {
 		
 		ImTextureID textureID = (void*)(uint64_t)m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
-		ImGui::End();
+		
+         // Gizmos
+        Entity selectedEntity = m_SceneHierarchyPanel->GetSelectedEntity();
+        if (selectedEntity && m_GizmoType != -1)
+        {
+            ImGuizmo::SetOrthographic(true);
+            ImGuizmo::SetDrawlist();
+
+            float windowWidth = (float)ImGui::GetWindowWidth();
+            float windowHeight = (float)ImGui::GetWindowHeight();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+            // Camera
+            glm::mat4 cameraProjection(1.0f), cameraView(1.0f);
+            auto cameraEntity = m_Scene->GetPrimaryCameraEntity();
+            if (cameraEntity.HasComponent<CameraComponent>())
+            {
+                const auto& camera = cameraEntity.GetComponent<CameraComponent>().m_Camera;
+                cameraProjection = camera->GetProjectionMatrix();
+                cameraView = camera->GetViewMatrix();
+            }
+
+            // Entity Transform
+            auto& tc = selectedEntity.GetComponent<TransformComponent>();
+            glm::mat4 transform = tc.GetTransform();
+
+            // Snapping
+            bool snap = Input::IsKeyPressed(KEY_LEFT_CONTROL);
+            float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+            // Snap to 45 degrees for rotation
+            if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+                snapValue = 45.0f;
+
+            float snapValues[3] = { snapValue, snapValue, snapValue };
+
+            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+                (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+                nullptr, snap ? snapValues : nullptr);
+
+            if (ImGuizmo::IsUsing())
+            {
+                glm::vec3 translation, rotation, scale;
+                Math::DecomposeTransform(transform, translation, rotation, scale);
+
+                tc.Translation = translation;
+                tc.Rotation = rotation;
+                tc.Scale = scale;
+            }
+        }
+
+        ImGui::End();
 		ImGui::PopStyleVar();
 
         // DEMO panel
@@ -236,6 +288,7 @@ namespace Silver {
         bool shift = Input::IsKeyPressed(KEY_LEFT_SHIFT) || Input::IsKeyPressed(KEY_RIGHT_SHIFT);
         switch (e.GetKeyCode())
         {
+            // Files
             case KEY_N:
             {
                 if (control)
@@ -252,6 +305,28 @@ namespace Silver {
             {
                 if (control && shift)
                     SaveSceneAs();
+                break;
+            }
+
+            // Gizmos
+            case KEY_Q:
+            {
+                m_GizmoType = -1;
+                break;
+            }
+            case KEY_W:
+            {
+                m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+                break;
+            }
+            case KEY_E:
+            {
+                m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+                break;
+            }
+            case KEY_R:
+            {
+                m_GizmoType = ImGuizmo::OPERATION::SCALE;
                 break;
             }
         }

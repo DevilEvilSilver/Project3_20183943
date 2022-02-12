@@ -18,6 +18,8 @@ namespace Silver {
 		void DestroyEntity(Entity& entity);
 		void Clear();
 
+		Entity GetPrimaryCameraEntity();
+
 		void OnUpdate(float deltaTime);
 		void OnEvent(Event& e);
 		void OnViewportResize(float width, float height);

@@ -26,6 +26,7 @@ namespace Silver {
 	private:
 		// tmp
 		std::shared_ptr<SceneHierarchyPanel> m_SceneHierarchyPanel;
+		int m_GizmoType = -1;
 
 		std::shared_ptr<Scene> m_Scene;
 		std::shared_ptr<Entity> m_Entity;

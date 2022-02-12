@@ -16,3 +16,6 @@
 [submodule "Silver/vendor/yaml-cpp"]
 	path = Silver/vendor/yaml-cpp
 	url = https://github.com/DevilEvilSilver/yaml-cpp
+[submodule "Silver/vendor/ImGuizmo"]
+	path = Silver/vendor/ImGuizmo
+	url = https://github.com/DevilEvilSilver/ImGuizmo

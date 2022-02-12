@@ -179,7 +179,9 @@ namespace Silver {
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
 		{
 			DragFloat3("Position", component.Translation, glm::vec3(0.0f), 70.0f);
-			DragFloat3("Rotation", component.Rotation, glm::vec3(-90.0f, 0.0f, 0.0f), 70.f);
+			glm::vec3 rotation = glm::degrees(component.Rotation);
+			DragFloat3("Rotation", rotation, glm::vec3(-90.0f, 0.0f, 0.0f), 70.f);
+			component.Rotation = glm::radians(rotation);
 			DragFloat3("Scale", component.Scale, glm::vec3(1.0f), 70.0f);
 		});
 

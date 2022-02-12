@@ -33,6 +33,21 @@ namespace Silver {
 		m_Registry.clear();
 	}
 
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.Primary)
+			{
+				return Entity{ entity, this };
+			}
+		}
+		SV_CORE_ERROR("NO PRIMARY CAMERA !!!");
+		return Entity{ entt::null, this };
+	}
+
 	void Scene::OnUpdate(float deltaTime)
 	{
 		//// UPDATE
@@ -62,26 +77,11 @@ namespace Silver {
 
 		//// RENDER
 		// Get main camera
-		std::shared_ptr<Camera> mainCamera = nullptr;
-		{
-			auto view = m_Registry.view<CameraComponent>();
-			for (auto entity : view)
-			{
-				auto& camera = view.get<CameraComponent>(entity);
-				if (camera.Primary)
-				{
-					mainCamera = camera.m_Camera;
-					break;
-				}
-			}
-		}
-		if (!mainCamera)
-		{
-			SV_CORE_ERROR("NO PRIMARY CAMERA !!!");
-			Renderer::BeginScene();
-		}
+		Entity mainCamera = GetPrimaryCameraEntity();
+		if (mainCamera.HasComponent<CameraComponent>())	
+			Renderer::BeginScene(mainCamera.GetComponent<CameraComponent>().m_Camera->GetViewProjectionMatrix());
 		else
-			Renderer::BeginScene(mainCamera->GetViewProjectionMatrix());
+			Renderer::BeginScene();
 
 		// Render animated model
 		{
