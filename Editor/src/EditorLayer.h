@@ -1,8 +1,11 @@
 #pragma once
 #include "Silver.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 #include "EditorCamera.h"
 #include "Events/KeyEvent.h"
+
+#include <filesystem>
 
 namespace Silver {
 
@@ -22,12 +25,13 @@ namespace Silver {
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMousePressed(MouseButtonPressedEvent& e);
 		void NewScene();
-		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
 
 	private:
 		// tmp
 		std::shared_ptr<SceneHierarchyPanel> m_SceneHierarchyPanel;
+		std::shared_ptr<ContentBrowserPanel> m_ContentBrowserPanel;
 		int m_GizmoType = -1;
 
 		std::shared_ptr<Scene> m_Scene;

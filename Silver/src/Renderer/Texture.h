@@ -11,6 +11,7 @@ namespace Silver {
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
+		virtual unsigned int GetRendererID() const = 0;
 
 		virtual void Bind(unsigned int slot = 0) const = 0;
 	};
@@ -23,6 +24,7 @@ namespace Silver {
 
 		unsigned int GetWidth() const override { return m_Width; }
 		unsigned int GetHeight() const override { return m_Height; }
+		unsigned int GetRendererID() const override { return m_RendererID; }
 
 		void Bind(unsigned int slot = 0) const override;
 

@@ -8,10 +8,13 @@
 
 namespace Silver {
 
+    extern const std::filesystem::path g_AssetPath;
+
 	EditorLayer::EditorLayer()
 		:Layer("EditorLayer")
 	{
         m_SceneHierarchyPanel = std::make_shared<SceneHierarchyPanel>();
+        m_ContentBrowserPanel = std::make_shared<ContentBrowserPanel>();
         m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 	}
 
@@ -198,7 +201,7 @@ namespace Silver {
                 //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
 
                 if (ImGui::MenuItem("New", "Ctrl+N")) { NewScene(); }
-                if (ImGui::MenuItem("Open...", "Ctrl+O")) { OpenScene(); }
+                //if (ImGui::MenuItem("Open...", "Ctrl+O")) { OpenScene(); }
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) { SaveSceneAs(); }
 				if (ImGui::MenuItem("Exit")) { Application::GetInstance().Close(); }
 
@@ -230,6 +233,17 @@ namespace Silver {
 		ImTextureID textureID = (void*)(uint64_t)m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
 		
+        // Drag & drop scenes
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+            {
+                const wchar_t* path = (const wchar_t*)payload->Data;
+                OpenScene(std::filesystem::path(g_AssetPath) / path);
+            }
+            ImGui::EndDragDropTarget();
+        }
+
          // Gizmos
         Entity selectedEntity = m_SceneHierarchyPanel->GetSelectedEntity();
         if (selectedEntity && m_GizmoType != -1)
@@ -295,8 +309,9 @@ namespace Silver {
         static bool show = true;
         ImGui::ShowDemoWindow(&show);
 
-        // Scene Hierarchy Panel
+        // Editor Panel
         m_SceneHierarchyPanel->OnImGuiRender();
+        m_ContentBrowserPanel->OnImGuiRender();
 	}
 
 	void EditorLayer::OnEvent(Event& e)
@@ -328,12 +343,12 @@ namespace Silver {
                     NewScene();
                 break;
             }
-            case KEY_O:
-            {
-                if (control)
-                    OpenScene();
-                break;
-            }
+            //case KEY_O:
+            //{
+            //    if (control)
+            //        OpenScene();
+            //    break;
+            //}
             case KEY_S:
             {
                 if (control && shift)
@@ -383,17 +398,21 @@ namespace Silver {
         m_SceneHierarchyPanel->SetContext(m_Scene);
     }
 
-    void EditorLayer::OpenScene()
+    void EditorLayer::OpenScene(const std::filesystem::path& path)
     {
-        std::string filepath = FileDialogs::OpenFile("Silver Scene (*.silver)\0*.silver\0");
-        if (!filepath.empty())
+        if (path.extension().string() != ".silver")
         {
-            m_Scene = std::make_shared<Scene>();
+            SV_WARN("Could not load {0} - not a scene file", path.filename().string());
+            return;
+        }
+
+        std::shared_ptr<Scene> loadedScene = std::make_shared<Scene>();
+        SceneSerializer serializer(loadedScene);
+        if (serializer.Deserialize(path.string()))
+        {
+            m_Scene = loadedScene;
             m_Scene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
             m_SceneHierarchyPanel->SetContext(m_Scene);
-
-            SceneSerializer serializer(m_Scene);
-            serializer.Deserialize(filepath);
         }
     }
 
