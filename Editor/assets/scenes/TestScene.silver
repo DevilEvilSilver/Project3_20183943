@@ -5,7 +5,7 @@ Entities:
       Tag: Camera Entity
     TransformComponent:
       Translation: [0, 0, 0]
-      Rotation: [-90, 0, 0]
+      Rotation: [-1.57079637, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       Camera:
@@ -23,5 +23,5 @@ Entities:
       Tag: 3D Model Entity
     TransformComponent:
       Translation: [0, 0, 0]
-      Rotation: [-90, 0, 0]
+      Rotation: [-1.57079637, 0, 0]
       Scale: [1, 1, 1]

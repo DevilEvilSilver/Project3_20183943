@@ -14,10 +14,11 @@ namespace Silver {
 	{
 	}
 
-	std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name)
+	std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, bool hasTransform)
 	{
 		auto entity = std::make_shared<Entity>(m_Registry.create(), this);
-		entity->AddComponent<TransformComponent>();
+		if (hasTransform)
+			entity->AddComponent<TransformComponent>();
 		auto& tag = entity->AddComponent<TagComponent>();
 		tag = name.empty() ? "Entity" : name;
 		return entity;
@@ -48,7 +49,33 @@ namespace Silver {
 		return Entity{ entt::null, this };
 	}
 
-	void Scene::OnUpdate(float deltaTime)
+	void Scene::OnUpdateEditor(float deltaTime, const glm::mat4& viewProjectionMatrix)
+	{
+		//// RENDER (no need for update script, animator, ...)
+		Renderer::BeginScene(viewProjectionMatrix);
+
+		// Render animated model
+		{
+			auto view = m_Registry.view<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>();
+			for (auto entity : view)
+			{
+				auto& [transform, model, shader, texture] =
+					view.get<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>(entity);
+				shader.m_Shader->Bind();
+				texture.m_Texture->Bind();
+				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
+				// NOT PASSING ANIMATION IN EDITING MODE
+				//if (model.m_Animator->HasAnimation())
+				//	shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_Model->GetJoints()->GetJointTransforms());
+
+				Renderer::Submit(shader.m_Shader, model.m_Model, transform.GetTransform());
+			}
+		}
+
+		Renderer::EndScene();
+	}
+
+	void Scene::OnUpdateRuntime(float deltaTime)
 	{
 		//// UPDATE
 		// Update scripts

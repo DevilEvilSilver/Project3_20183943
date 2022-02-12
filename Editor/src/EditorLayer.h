@@ -1,6 +1,7 @@
 #pragma once
 #include "Silver.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "EditorCamera.h"
 #include "Events/KeyEvent.h"
 
 namespace Silver {
@@ -31,6 +32,8 @@ namespace Silver {
 		std::shared_ptr<Scene> m_Scene;
 		std::shared_ptr<Entity> m_Entity;
 		std::shared_ptr<Entity> m_CameraEntity;
+
+		std::shared_ptr<EditorCamera> m_EditorCamrera;
 
 		std::shared_ptr<Silver::Framebuffer> m_Framebuffer;
 		glm::vec2 m_ViewportSize{0.0f, 0.0f};

@@ -14,13 +14,14 @@ namespace Silver {
 		Scene();
 		virtual ~Scene();
 
-		std::shared_ptr<Entity> CreateEntity(const std::string& name = "");
+		std::shared_ptr<Entity> CreateEntity(const std::string& name = "", bool hasTransform = true);
 		void DestroyEntity(Entity& entity);
 		void Clear();
 
 		Entity GetPrimaryCameraEntity();
 
-		void OnUpdate(float deltaTime);
+		void OnUpdateEditor(float deltaTime, const glm::mat4& viewProjectionMatrix);
+		void OnUpdateRuntime(float deltaTime);
 		void OnEvent(Event& e);
 		void OnViewportResize(float width, float height);
 

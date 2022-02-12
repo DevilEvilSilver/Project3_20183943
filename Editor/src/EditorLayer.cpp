@@ -4,7 +4,6 @@
 #include "DataManager/Scenes/SceneSerializer.h"
 #include "Utils/FileDialogs.h"
 #include "Utils/Math.h"
-
 #include <imgui.h>
 #include "ImGuizmo.h"
 
@@ -23,6 +22,8 @@ namespace Silver {
 		spec.Width = 1280;
 		spec.Height = 720;
 		m_Framebuffer = std::make_shared<Framebuffer>(spec);
+
+        m_EditorCamrera = std::make_shared<EditorCamera>(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
 
         m_Scene = std::make_shared<Scene>();
 
@@ -99,14 +100,14 @@ namespace Silver {
             (m_Framebuffer->GetSpecification().Width != m_ViewportSize.x || m_Framebuffer->GetSpecification().Height != m_ViewportSize.y))
         {
             m_Framebuffer->Resize((unsigned int)m_ViewportSize.x, (unsigned int)m_ViewportSize.y);
-            //m_EditorCameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_EditorCamrera->SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 
             m_Scene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
         //Update
-        //if (m_ViewportFocused)
-            //m_EditorCameraController.OnUpdate(deltaTime);
+        if (m_ViewportFocused)
+            m_EditorCamrera->OnUpdate(deltaTime);
 
         // Render
 		m_Framebuffer->Bind();
@@ -114,7 +115,7 @@ namespace Silver {
 		RenderCommand::Clear();
 
         //Update Scene
-        m_Scene->OnUpdate(deltaTime);
+        m_Scene->OnUpdateEditor(deltaTime, m_EditorCamrera->GetViewProjectionMatrix());
 
 		m_Framebuffer->Unbind();
 	}
@@ -220,40 +221,48 @@ namespace Silver {
 
             // Camera
             glm::mat4 cameraProjection(1.0f), cameraView(1.0f);
-            auto cameraEntity = m_Scene->GetPrimaryCameraEntity();
-            if (cameraEntity.HasComponent<CameraComponent>())
-            {
-                const auto& camera = cameraEntity.GetComponent<CameraComponent>().m_Camera;
-                cameraProjection = camera->GetProjectionMatrix();
-                cameraView = camera->GetViewMatrix();
-            }
+            // Runtime Camera
+            //auto cameraEntity = m_Scene->GetPrimaryCameraEntity();
+            //if (cameraEntity.HasComponent<CameraComponent>())
+            //{
+            //    const auto& camera = cameraEntity.GetComponent<CameraComponent>().m_Camera;
+            //    cameraProjection = camera->GetProjectionMatrix();
+            //    cameraView = camera->GetViewMatrix();
+            //}
+
+            // Editor Camera
+            cameraProjection = m_EditorCamrera->GetProjectionMatrix();
+            cameraView = m_EditorCamrera->GetViewMatrix();
 
             // Entity Transform
-            auto& tc = selectedEntity.GetComponent<TransformComponent>();
-            glm::mat4 transform = tc.GetTransform();
-
-            // Snapping
-            bool snap = Input::IsKeyPressed(KEY_LEFT_CONTROL);
-            float snapValue = 0.5f; // Snap to 0.5m for translation/scale
-            // Snap to 45 degrees for rotation
-            if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-                snapValue = 45.0f;
-
-            float snapValues[3] = { snapValue, snapValue, snapValue };
-
-            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-                (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-                nullptr, snap ? snapValues : nullptr);
-
-            if (ImGuizmo::IsUsing())
+            if (selectedEntity.HasComponent<TransformComponent>())
             {
-                glm::vec3 translation, rotation, scale;
-                Math::DecomposeTransform(transform, translation, rotation, scale);
+                auto& tc = selectedEntity.GetComponent<TransformComponent>();
+                glm::mat4 transform = tc.GetTransform();
 
-                tc.Translation = translation;
-                tc.Rotation = rotation;
-                tc.Scale = scale;
-            }
+                // Snapping
+                bool snap = Input::IsKeyPressed(KEY_LEFT_CONTROL);
+                float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+                // Snap to 45 degrees for rotation
+                if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+                    snapValue = 45.0f;
+
+                float snapValues[3] = { snapValue, snapValue, snapValue };
+
+                ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+                    (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+                    nullptr, snap ? snapValues : nullptr);
+
+                if (ImGuizmo::IsUsing())
+                {
+                    glm::vec3 translation, rotation, scale;
+                    Math::DecomposeTransform(transform, translation, rotation, scale);
+
+                    tc.Translation = translation;
+                    tc.Rotation = rotation;
+                    tc.Scale = scale;
+                }
+            } 
         }
 
         ImGui::End();
@@ -269,7 +278,7 @@ namespace Silver {
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-        //m_EditorCameraController.OnEvent(e);
+        m_EditorCamrera->OnEvent(e);
 
         // Update Scene
         m_Scene->OnEvent(e);

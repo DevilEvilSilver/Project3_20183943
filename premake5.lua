@@ -60,6 +60,7 @@ project "Silver"
 
 	includedirs
 	{
+		"%{prj.name}/vendor",
 		"%{prj.name}/src",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",
@@ -70,7 +71,7 @@ project "Silver"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.tinyxml2}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
 	}
 
 	links
@@ -82,7 +83,7 @@ project "Silver"
 		"opengl32.lib",
 	}
 
-	filter "files:ImGuizmo.cpp"
+	filter "files:Silver/vendor/ImGuizmo/**.cpp"
 		flags { "NoPCH" }
 
 	filter "system:windows"
