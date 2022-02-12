@@ -8,6 +8,13 @@ namespace Silver {
 	{
 	public:
 		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
+		enum class CameraType
+		{
+			None = 0,
+			Orbit,
+			LookAt
+		};
+
 	public:
 		Camera() { ResetProjectionMatrix(); };
 		Camera(float left, float right, float bottom, float top, float zNear, float zFar);
@@ -35,6 +42,7 @@ namespace Silver {
 		void SetOrthographicFarClip(float farClip) { m_OrthographicFar = farClip; ResetProjectionMatrix(); }
 
 		virtual const ProjectionType& GetProjectionType() const { return m_ProjectionType; }
+		virtual const CameraType& GetCameraType() const { return m_CameraType; }
 		virtual const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
 		virtual const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		virtual const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
@@ -47,6 +55,9 @@ namespace Silver {
 		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_ViewMatrix{1.0f};
 		glm::mat4 m_ViewProjectionMatrix;
+
+	protected:
+		CameraType m_CameraType = CameraType::None;
 
 	private:
 		float m_AspectRatio = 16.0f / 9.0f;

@@ -14,6 +14,10 @@ namespace Silver {
 		virtual unsigned int GetRendererID() const = 0;
 
 		virtual void Bind(unsigned int slot = 0) const = 0;
+
+		const std::string& GetName() { return m_Name; }
+	protected:
+		std::string m_Name;
 	};
 
 	class Texture2D : public Texture
@@ -29,7 +33,7 @@ namespace Silver {
 		void Bind(unsigned int slot = 0) const override;
 
 	private:
-		unsigned int m_RendererID;
+		unsigned int m_RendererID = -1;
 		std::string m_Path;
 		unsigned int m_Width, m_Height;
 	};

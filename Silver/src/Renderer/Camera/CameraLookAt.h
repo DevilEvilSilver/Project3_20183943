@@ -6,6 +6,7 @@ namespace Silver {
 	class CameraLookAt : public Camera
 	{
 	public:
+		CameraLookAt() { m_CameraType = CameraType::LookAt; }
 		CameraLookAt(float fov, float aspect, float zNear, float zFar);
 		~CameraLookAt() = default;
 

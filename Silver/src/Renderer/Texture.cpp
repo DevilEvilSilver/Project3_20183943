@@ -3,6 +3,7 @@
 
 #include "stb_image.h"
 
+#include <filesystem>
 #include <glad/glad.h>
 
 namespace Silver {
@@ -10,6 +11,9 @@ namespace Silver {
 	Texture2D::Texture2D(const std::string & path)
 		: m_Path(path)
 	{
+		std::filesystem::path filepath = path;
+		m_Name = filepath.stem().string();
+
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
 		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);

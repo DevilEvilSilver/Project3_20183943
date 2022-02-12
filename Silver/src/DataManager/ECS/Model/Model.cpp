@@ -19,10 +19,20 @@ namespace Silver {
 	{
 	}
 
+	StaticModel::StaticModel(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes)
+		: Model(name, meshes)
+	{
+	}
+
 	StaticModel::StaticModel(const std::string& filepath)
 		: Model(filepath)
 	{
 		ColladaLoader::LoadStaticModel(filepath, m_Meshes);
+	}
+
+	AnimatedModel::AnimatedModel(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes)
+		: Model(name, meshes)
+	{
 	}
 
 	AnimatedModel::AnimatedModel(const std::string& filepath)

@@ -62,14 +62,15 @@ namespace Silver {
 				auto& [transform, model, shader, texture] =
 					view.get<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>(entity);
 				shader.m_Shader->Bind();
-				texture.m_Texture->Bind();
+				if (texture.m_Texture)
+					texture.m_Texture->Bind();
 				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
 				// Setting entity id for 2nd colorAttachment (might not need in actual game && CAN'T BE DONE WITH BATCHED RENDERING
 				shader.m_Shader->SubmitUniformInt("u_EntityId", (int)(uint32_t)entity); 
 				if (model.m_Animator->HasAnimation())
-					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_Model->GetJoints()->GetJointTransforms());
+					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_AnimatedModel->GetJoints()->GetJointTransforms());
 
-				Renderer::Submit(shader.m_Shader, model.m_Model, transform.GetTransform());
+				Renderer::Submit(shader.m_Shader, model.m_AnimatedModel, transform.GetTransform());
 			}
 		}
 
@@ -122,9 +123,9 @@ namespace Silver {
 				texture.m_Texture->Bind();
 				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
 				if (model.m_Animator->HasAnimation())
-					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_Model->GetJoints()->GetJointTransforms());
+					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_AnimatedModel->GetJoints()->GetJointTransforms());
 
-				Renderer::Submit(shader.m_Shader, model.m_Model, transform.GetTransform());
+				Renderer::Submit(shader.m_Shader, model.m_AnimatedModel, transform.GetTransform());
 			}
 		}
 

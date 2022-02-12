@@ -37,7 +37,7 @@ namespace Silver {
         m_Entity->AddComponent<Texture2DComponent>(std::make_shared<Texture2D>("assets/textures/animTexture.png"));
         m_Entity->AddComponent<ShaderComponent>(std::make_shared<Shader>("assets/shaders/AnimModel.glsl"));
 
-        m_CameraEntity = m_Scene->CreateEntity("Camera Entity");
+        m_CameraEntity = m_Scene->CreateEntity("Camera Entity", false);
         auto& cam = m_CameraEntity->AddComponent<CameraComponent>(std::make_shared<CameraLookAt>(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f));
         cam.Primary = true;
         cam.FixedAspectRatio = true;

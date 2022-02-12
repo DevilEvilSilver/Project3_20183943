@@ -11,6 +11,7 @@ namespace Silver {
 	CameraOrbit::CameraOrbit(float fov, float aspectRatio, float nearClip, float farClip)
 		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera()
 	{
+		m_CameraType = CameraType::Orbit;
 		UpdateView();
 	}
 

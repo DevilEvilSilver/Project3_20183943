@@ -1,10 +1,17 @@
 #include "SceneHierarchyPanel.h"
+#include "DataManager/Resources/ResourceManager.h"
 #include "DataManager/ECS/Components.h"
+#include "Renderer/Camera/CameraOrbit.h"
+#include "Renderer/Camera/CameraLookAt.h"
 #include "../Styles/ImGuiStyles.h"
+
+#include <filesystem>
 #include <imgui.h>
 #include <imgui_internal.h>
 
 namespace Silver {
+
+	extern const std::filesystem::path g_AssetPath;
 
 	SceneHierarchyPanel::SceneHierarchyPanel(const std::shared_ptr<Scene>& scene)
 		:m_Context(scene)
@@ -175,6 +182,31 @@ namespace Silver {
 				m_SelectionContext.AddComponent<CameraComponent>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (ImGui::MenuItem("StaticModel"))
+			{
+				m_SelectionContext.AddComponent<StaticModelComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("AnimatedModel"))
+			{
+				m_SelectionContext.AddComponent<AnimatedModelComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("Texture2D"))
+			{
+				m_SelectionContext.AddComponent<Texture2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("Shader"))
+			{
+				m_SelectionContext.AddComponent<ShaderComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("Script"))
+			{
+				m_SelectionContext.AddComponent<ScriptComponent>();
+				ImGui::CloseCurrentPopup();
+			}
 
 			ImGui::EndPopup();
 		}
@@ -227,6 +259,39 @@ namespace Silver {
 				ImGui::EndCombo();
 			}
 
+			const char* cameraTypeString[] = { "None", "Orbit", "LookAt" };
+			const char* currCameraTypeString = cameraTypeString[(int)camera->GetCameraType()];
+			if (ImGui::BeginCombo("Type", currCameraTypeString))
+			{
+				for (unsigned int i = 0; i < 3; ++i)
+				{
+					bool isSelected = currCameraTypeString == cameraTypeString[i];
+					if (ImGui::Selectable(cameraTypeString[i], isSelected))
+					{
+						switch (i)
+						{
+						case 0:
+							camera = std::make_shared<Camera>();
+							break;
+						case 1:
+							camera = std::make_shared<CameraOrbit>();
+							break;
+						case 2:
+							camera = std::make_shared<CameraLookAt>();
+							break;
+						}
+					}
+
+					if (isSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+
+				}
+
+				ImGui::EndCombo();
+			}
+
 			if (camera->GetProjectionType() == Camera::ProjectionType::Perspective)
 			{
 				float perspectiveFOV = camera->GetPerspectiveFOV();
@@ -253,6 +318,129 @@ namespace Silver {
 					camera->SetOrthographicFarClip(orthoFar);
 			}
 		});
+
+		DrawComponent<StaticModelComponent>("Static Model", entity, [](auto& component)
+		{
+			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path modelPath = std::filesystem::path(g_AssetPath) / path;
+					std::shared_ptr<StaticModel> model = ResourceManager::GetInstance()->m_ModelLibrary.LoadStatic(modelPath.string());
+					if (!model->GetMeshes().empty())
+						component.m_StaticModel = model;
+					else
+						SV_WARN("Could not load model {0}", modelPath.filename().string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (ImGui::Button("Reset"))
+			{
+				component.m_StaticModel = std::static_pointer_cast<StaticModel>
+					(ResourceManager::GetInstance()->m_ModelLibrary.Get(DEFAULT_STATIC_MODEL));
+			}
+		});
+
+		DrawComponent<AnimatedModelComponent>("Animated Model", entity, [](auto& component)
+		{
+			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path modelPath = std::filesystem::path(g_AssetPath) / path;
+					std::shared_ptr<AnimatedModel> model = ResourceManager::GetInstance()->m_ModelLibrary.LoadAnimated(modelPath.string());
+					if (!model->GetMeshes().empty())
+						component.m_AnimatedModel = model;
+					else
+						SV_WARN("Could not load model {0}", modelPath.filename().string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (ImGui::Button("Reset"))
+			{
+				component.m_AnimatedModel = std::static_pointer_cast<AnimatedModel>
+					(ResourceManager::GetInstance()->m_ModelLibrary.Get(DEFAULT_ANIMATED_MODEL));
+				component.UnbindAnimation();
+			}
+		});
+
+		DrawComponent<Texture2DComponent>("Texture2D", entity, [](auto& component)
+		{
+			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+					std::shared_ptr<Texture2D> texture = ResourceManager::GetInstance()->m_TextureLibrary.LoadTexture2D(texturePath.string());
+					if (texture->GetRendererID() != -1)
+						component.m_Texture = texture;
+					else
+						SV_WARN("Could not load texture {0}", texturePath.filename().string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (ImGui::Button("Reset"))
+			{
+				component.m_Texture.reset();
+			}
+		});
+
+		DrawComponent<ShaderComponent>("Shader", entity, [](auto& component)
+		{
+			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path shaderPath = std::filesystem::path(g_AssetPath) / path;
+					std::shared_ptr<Shader> shader = ResourceManager::GetInstance()->m_ShaderLibrary.Load(shaderPath.string());
+					if (true)
+						component.m_Shader = shader;
+					else
+						SV_WARN("Could not load shader {0}", shaderPath.filename().string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (ImGui::Button("Reset"))
+			{
+				component.m_Shader = ResourceManager::GetInstance()->m_ShaderLibrary.Get(DEFAULT_SHADER);
+			}
+		});
+
+		//DrawComponent<ScriptComponent>("Native Script", entity, [](auto& component)
+		//{
+		//	ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+		//	if (ImGui::BeginDragDropTarget())
+		//	{
+		//		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+		//		{
+		//			const wchar_t* path = (const wchar_t*)payload->Data;
+		//			std::filesystem::path shaderPath = std::filesystem::path(g_AssetPath) / path;
+		//			std::shared_ptr<ScriptableEntity> instance = ResourceManager::GetInstance()->m_ShaderLibrary.Load(shaderPath.string());
+		//			if (true)
+		//				component.Bind(instance);
+		//			else
+		//				SV_WARN("Could not load script {0}", shaderPath.filename().string());
+		//		}
+		//		ImGui::EndDragDropTarget();
+		//	}
+
+		//	if (ImGui::Button("Reset"))
+		//	{
+		//		component.Unbind(instance);
+		//	}
+		//});
 	}
 
 }

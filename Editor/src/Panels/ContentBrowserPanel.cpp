@@ -20,7 +20,7 @@ namespace Silver {
 
 		if (m_CurrDirectory != std::filesystem::path(g_AssetPath))
 		{
-			if (ImGui::Button("<-"))
+			if (ImGui::Button("Back"))
 			{
 				m_CurrDirectory = m_CurrDirectory.parent_path();
 			}
@@ -56,7 +56,7 @@ namespace Silver {
 			}
 
 			ImGui::PopStyleColor();
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
 				if (directoryEntry.is_directory())
 					m_CurrDirectory /= path.filename();

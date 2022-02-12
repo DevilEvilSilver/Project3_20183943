@@ -20,7 +20,7 @@ namespace Silver {
 				s_Instance = new T();
 		}
 
-		static T& GetInstance()
+		static T* GetInstance()
 		{
 			return s_Instance;
 		}

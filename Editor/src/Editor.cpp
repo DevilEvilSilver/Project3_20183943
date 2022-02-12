@@ -35,6 +35,7 @@ int main(int argc, char** argv)
 	SV_INFO("Start up ! ! !");
 
 	auto app = Silver::CreateApplication();
+	Silver::ResourceManager::CreateInstance();
 	app->Run();
 	delete app;
 }

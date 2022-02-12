@@ -29,6 +29,7 @@ namespace Silver {
 	class StaticModel : public Model
 	{
 	public:
+		StaticModel(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes);
 		StaticModel(const std::string& filepath);
 		~StaticModel() = default;
 	};
@@ -36,6 +37,7 @@ namespace Silver {
 	class AnimatedModel : public Model
 	{
 	public:
+		AnimatedModel(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes);
 		AnimatedModel(const std::string& filepath);
 		~AnimatedModel();
 		

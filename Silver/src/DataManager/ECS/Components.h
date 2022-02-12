@@ -1,9 +1,8 @@
 #pragma once
+#include "DataManager/Resources/ResourceManager.h"
 #include "DataManager/ECS/ScriptableEntity.h"
 #include "DataManager/ECS/Animation/Animator.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Texture.h"
-#include "Renderer/Camera/CameraLookAt.h"
+#include "Renderer/Camera/Camera.h"
 
 #include <string>
 #include <glm/glm.hpp>
@@ -45,31 +44,36 @@ namespace Silver {
 
 	struct StaticModelComponent
 	{
-		std::shared_ptr<StaticModel> m_Model;
+		std::shared_ptr<StaticModel> m_StaticModel;
 
-		StaticModelComponent() = default;
+		StaticModelComponent() { m_StaticModel = std::static_pointer_cast<StaticModel>
+			(ResourceManager::GetInstance()->m_ModelLibrary.Get(DEFAULT_STATIC_MODEL)); }
 		StaticModelComponent(const StaticModelComponent&) = default;
 		StaticModelComponent(const std::shared_ptr<StaticModel>& model)
-			:m_Model(model) {}
+			:m_StaticModel(model) {}
 	};
 
 	struct AnimatedModelComponent
 	{
-		std::shared_ptr<AnimatedModel> m_Model;
+		std::shared_ptr<AnimatedModel> m_AnimatedModel;
 		std::shared_ptr<Animator> m_Animator;
 
-		AnimatedModelComponent() = default;
+		AnimatedModelComponent() 
+		{ 
+			m_AnimatedModel = std::static_pointer_cast<AnimatedModel>(ResourceManager::GetInstance()->m_ModelLibrary.Get(DEFAULT_ANIMATED_MODEL));
+			m_Animator = std::make_shared<Animator>(); 
+		}
 		AnimatedModelComponent(const AnimatedModelComponent&) = default;
 		AnimatedModelComponent(const std::shared_ptr<AnimatedModel>& model)
-			:m_Model(model) 
+			:m_AnimatedModel(model) 
 		{
 			m_Animator = std::make_shared<Animator>();
-			m_Animator->BindAnimation(m_Model->GetAnimation(DEFAULT_ANIMATION));
+			m_Animator->BindAnimation(m_AnimatedModel->GetAnimation(DEFAULT_ANIMATION));
 		}
 
 		void BindAnimation(const std::string& anim)
 		{
-			m_Animator->BindAnimation(m_Model->GetAnimation(anim));
+			m_Animator->BindAnimation(m_AnimatedModel->GetAnimation(anim));
 		}
 
 		void UnbindAnimation()
@@ -79,7 +83,7 @@ namespace Silver {
 
 		void ApplyPose()
 		{
-			m_Animator->ApplyPoseToJoints(m_Model->GetJoints()->GetHeadJoint(), glm::mat4(1.0f));
+			m_Animator->ApplyPoseToJoints(m_AnimatedModel->GetJoints()->GetHeadJoint(), glm::mat4(1.0f));
 		}
 	};
 
@@ -98,7 +102,8 @@ namespace Silver {
 	{
 		std::shared_ptr<Shader> m_Shader;
 
-		ShaderComponent() = default;
+		ShaderComponent() {
+			m_Shader = (ResourceManager::GetInstance()->m_ShaderLibrary.Get(DEFAULT_SHADER)); }
 		ShaderComponent(const ShaderComponent&) = default;
 		ShaderComponent(const std::shared_ptr<Shader>& shader)
 			:m_Shader(shader) {}

@@ -12,7 +12,7 @@ namespace Silver {
 	class CameraOrbit : public Camera
 	{
 	public:
-		CameraOrbit() = default;
+		CameraOrbit() { m_CameraType = CameraType::Orbit; }
 		CameraOrbit(float fov, float aspectRatio, float nearClip, float farClip);
 
 		inline float GetDistance() const { return m_Distance; }
