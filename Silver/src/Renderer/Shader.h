@@ -32,6 +32,8 @@ namespace Silver {
 		void SubmitUniformMat4Array(const std::string& name, const std::vector<glm::mat4>& matrices);
 
 		const std::string& GetName() { return m_Name; }
+		const std::string& GetDirectory() const { return m_Directory; }
+
 	private:
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
@@ -40,6 +42,7 @@ namespace Silver {
 	private:
 		uint32_t m_RendererID;
 		std::string m_Name;
+		std::string m_Directory;
 	};
 
 }

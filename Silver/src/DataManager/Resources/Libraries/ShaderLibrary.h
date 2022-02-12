@@ -19,6 +19,7 @@ namespace Silver {
 		std::shared_ptr<Shader> Load(const std::string& name, const std::string& filepath);
 
 		std::shared_ptr<Shader> Get(const std::string& name);
+		const std::unordered_map<std::string, std::shared_ptr<Shader>>& GetLibrary() { return m_Shaders; }
 
 		bool IsExist(const std::string& name) const;
 

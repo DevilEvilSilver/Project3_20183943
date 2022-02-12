@@ -6,6 +6,7 @@
 
 namespace Silver {
 
+	// TODO: Set all lib func return const T&
 	class ResourceManager : public Singleton<ResourceManager>
 	{
 	public:

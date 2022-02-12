@@ -30,6 +30,7 @@ namespace Silver {
 
         m_Scene = std::make_shared<Scene>();
 
+#if 0
         m_Entity = m_Scene->CreateEntity("3D Model Entity");
         m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/originAnimModel.dae"));
         //m_Entity->AddComponent<AnimatedModelComponent>(std::make_shared<AnimatedModel>("assets/models/AnimModel.dae"))
@@ -88,6 +89,7 @@ namespace Silver {
             float m_CameraZoomSpeed = 0.5f;
         };
         m_CameraEntity->AddComponent<ScriptComponent>().Bind(std::make_shared<CameraController>(m_CameraEntity));
+#endif
 
         m_SceneHierarchyPanel->SetContext(m_Scene);
 	}

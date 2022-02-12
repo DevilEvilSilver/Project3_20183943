@@ -372,7 +372,7 @@ namespace Silver {
 
 		DrawComponent<Texture2DComponent>("Texture2D", entity, [](auto& component)
 		{
-			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			ImGui::Button("Drag Texture Here...", ImVec2(150.0f, 0.0f));
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -396,7 +396,7 @@ namespace Silver {
 
 		DrawComponent<ShaderComponent>("Shader", entity, [](auto& component)
 		{
-			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			ImGui::Button("Drag Shader Here...", ImVec2(150.0f, 0.0f));
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))

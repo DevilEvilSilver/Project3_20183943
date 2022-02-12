@@ -3,6 +3,8 @@
 #include "DataManager/ECS/ScriptableEntity.h"
 #include "DataManager/ECS/Animation/Animator.h"
 #include "Renderer/Camera/Camera.h"
+#include "Renderer/Camera/CameraOrbit.h"
+#include "Renderer/Camera/CameraLookAt.h"
 
 #include <string>
 #include <glm/glm.hpp>
@@ -119,6 +121,21 @@ namespace Silver {
 		CameraComponent(const CameraComponent&) = default;
 		CameraComponent(const std::shared_ptr<Camera>& camera)
 			:m_Camera(camera) {}
+		CameraComponent(const Camera::CameraType& type)
+		{
+			switch (type)
+			{
+			case Camera::CameraType::None:
+				m_Camera = std::make_shared<Camera>();
+				break;
+			case Camera::CameraType::Orbit:
+				m_Camera = std::make_shared<CameraOrbit>();
+				break;
+			case Camera::CameraType::LookAt:
+				m_Camera = std::make_shared<CameraLookAt>();
+				break;
+			}
+		}
 	};
 
 	struct ScriptComponent

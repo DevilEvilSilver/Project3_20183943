@@ -8,8 +8,13 @@
 
 namespace Silver {
 
+	Texture::Texture(const std::string& filepath)
+		: m_Directory(filepath)
+	{
+	}
+
 	Texture2D::Texture2D(const std::string & path)
-		: m_Path(path)
+		: Texture(path)
 	{
 		std::filesystem::path filepath = path;
 		m_Name = filepath.stem().string();

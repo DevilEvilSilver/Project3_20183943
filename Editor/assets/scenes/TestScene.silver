@@ -1,27 +1,23 @@
 Scene: Untitled
+Resources:
+  ModelLibrary:
+    - Filepath: assets\models\originAnimModel.dae
+      Type: 1
+  TextureLibrary:
+    - Filepath: assets\textures\animTexture.png
+  ShaderLibrary:
+    - Filepath: assets\shaders\AnimModel.glsl
 Entities:
   - Entity: 123456
     TagComponent:
-      Tag: Camera Entity
+      Tag: Empty Entity
     TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [-1.57079637, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 45
-        PerspectiveNear: 0.100000001
-        PerspectiveFar: 1000
-        OrthographicSize: 720
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: true
-  - Entity: 123456
-    TagComponent:
-      Tag: 3D Model Entity
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [-1.57079637, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [-0.195181966, -2.57232952, -3.27125263]
+      Rotation: [-1.39550149, 5.96046412e-08, 0.732417226]
+      Scale: [0.999999881, 0.999999881, 0.99999994]
+    AnimatedModelComponent:
+      Name: originAnimModel
+    Texture2DComponent:
+      Name: animTexture
+    ShaderComponent:
+      Name: AnimModel

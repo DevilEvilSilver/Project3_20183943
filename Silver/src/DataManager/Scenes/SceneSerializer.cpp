@@ -2,6 +2,7 @@
 #include "SceneSerializer.h"
 #include "../ECS/Entity.h"
 #include "../ECS/Components.h"
+#include "../Resources/ResourceManager.h"
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
@@ -86,7 +87,7 @@ namespace Silver {
 	static void SerializeEntity(YAML::Emitter& out, Entity& entity)
 	{
 		out << YAML::BeginMap; // Entity
-		out << YAML::Key << "Entity" << YAML::Value << 123456; // Entity Id
+		out << YAML::Key << "Entity" << YAML::Value << (uint32_t)entity; // Entity Id
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -123,6 +124,7 @@ namespace Silver {
 			out << YAML::Key << "Camera" << YAML::Value;
 			out << YAML::BeginMap; // Camera
 			out << YAML::Key << "ProjectionType" << YAML::Value << (int)camera->GetProjectionType();
+			out << YAML::Key << "CameraType" << YAML::Value << (int)camera->GetCameraType();
 			out << YAML::Key << "PerspectiveFOV" << YAML::Value << camera->GetPerspectiveFOV();
 			out << YAML::Key << "PerspectiveNear" << YAML::Value << camera->GetPerspectiveNearClip();
 			out << YAML::Key << "PerspectiveFar" << YAML::Value << camera->GetPerspectiveFarClip();
@@ -137,8 +139,86 @@ namespace Silver {
 			out << YAML::EndMap; // CameraComponent
 		}
 
+		if (entity.HasComponent<StaticModelComponent>())
+		{
+			out << YAML::Key << "StaticModelComponent";
+			out << YAML::BeginMap; // StaticModelComponent
+
+			auto& smc = entity.GetComponent<StaticModelComponent>();
+			out << YAML::Key << "Name" << YAML::Value << smc.m_StaticModel->GetName();
+
+			out << YAML::EndMap; // StaticModelComponent
+		}
+
+		if (entity.HasComponent<AnimatedModelComponent>())
+		{
+			out << YAML::Key << "AnimatedModelComponent";
+			out << YAML::BeginMap; // AnimatedModelComponent
+
+			auto& amc = entity.GetComponent<AnimatedModelComponent>();
+			out << YAML::Key << "Name" << YAML::Value << amc.m_AnimatedModel->GetName();
+
+			out << YAML::EndMap; // AnimatedModelComponent
+		}
+
+		if (entity.HasComponent<Texture2DComponent>())
+		{
+			out << YAML::Key << "Texture2DComponent";
+			out << YAML::BeginMap; // Texture2DComponent
+
+			auto& t2Dc = entity.GetComponent<Texture2DComponent>();
+			out << YAML::Key << "Name" << YAML::Value << t2Dc.m_Texture->GetName();
+
+			out << YAML::EndMap; // Texture2DComponent
+		}
+
+		if (entity.HasComponent<ShaderComponent>())
+		{
+			out << YAML::Key << "ShaderComponent";
+			out << YAML::BeginMap; // ShaderComponent
+
+			auto& sc = entity.GetComponent<ShaderComponent>();
+			out << YAML::Key << "Name" << YAML::Value << sc.m_Shader->GetName();
+
+			out << YAML::EndMap; // ShaderComponent
+		}
 
 		out << YAML::EndMap; // Entity
+	}
+
+	static void SerializeLibrary(YAML::Emitter& out)
+	{
+		out << YAML::Key << "ModelLibrary" << YAML::BeginSeq;
+		for (auto& model : ResourceManager::GetInstance()->m_ModelLibrary.GetLibrary())
+		{
+			if (model.first == DEFAULT_ANIMATED_MODEL || model.first == DEFAULT_STATIC_MODEL)
+				continue;
+			out << YAML::BeginMap;
+			out << YAML::Key << "Filepath" << YAML::Value << model.second->GetDirectory();
+			out << YAML::Key << "Type" << YAML::Value << (int)model.second->GetModelType();
+			out << YAML::EndMap;
+		}
+		out << YAML::EndSeq;
+
+		out << YAML::Key << "TextureLibrary" << YAML::BeginSeq;
+		for (auto& texture : ResourceManager::GetInstance()->m_TextureLibrary.GetLibrary())
+		{
+			out << YAML::BeginMap;
+			out << YAML::Key << "Filepath" << YAML::Value << texture.second->GetDirectory();
+			out << YAML::EndMap;
+		}
+		out << YAML::EndSeq;
+
+		out << YAML::Key << "ShaderLibrary" << YAML::BeginSeq;
+		for (auto& shader : ResourceManager::GetInstance()->m_ShaderLibrary.GetLibrary())
+		{
+			if (shader.first == DEFAULT_SHADER)
+				continue;
+			out << YAML::BeginMap;
+			out << YAML::Key << "Filepath" << YAML::Value << shader.second->GetDirectory();
+			out << YAML::EndMap;
+		}
+		out << YAML::EndSeq;
 	}
 
 	void SceneSerializer::Serialize(const std::string& filepath)
@@ -146,6 +226,11 @@ namespace Silver {
 		YAML::Emitter out;
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+
+		out << YAML::Key << "Resources" << YAML::BeginMap;
+		SerializeLibrary(out);
+		out << YAML::EndMap;
+
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		m_Scene->m_Registry.each([&](auto entityID)
 		{
@@ -188,6 +273,46 @@ namespace Silver {
 		std::string sceneName = data["Scene"].as<std::string>();
 		SV_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 
+		auto libraries = data["Resources"];
+		if (libraries)
+		{
+			auto modelLibrary = libraries["ModelLibrary"];
+			if (modelLibrary)
+			{
+				for (auto model : modelLibrary)
+				{
+					auto type = (Model::ModelType)model["Type"].as<int>();
+					switch (type)
+					{
+					case Model::ModelType::Static:
+						ResourceManager::GetInstance()->m_ModelLibrary.LoadStatic(model["Filepath"].as<std::string>());
+						break;
+					case Model::ModelType::Animated:
+						ResourceManager::GetInstance()->m_ModelLibrary.LoadAnimated(model["Filepath"].as<std::string>());
+						break;
+					}
+				}
+			}
+
+			auto textureLibrary = libraries["TextureLibrary"];
+			if (textureLibrary)
+			{
+				for (auto texture : textureLibrary)
+				{
+					ResourceManager::GetInstance()->m_TextureLibrary.LoadTexture2D(texture["Filepath"].as<std::string>());
+				}
+			}
+
+			auto shaderLibrary = libraries["ShaderLibrary"];
+			if (shaderLibrary)
+			{
+				for (auto shader : shaderLibrary)
+				{
+					ResourceManager::GetInstance()->m_ShaderLibrary.Load(shader["Filepath"].as<std::string>());
+				}
+			}
+		}
+
 		auto entities = data["Entities"];
 		if (entities)
 		{
@@ -202,13 +327,12 @@ namespace Silver {
 
 				SV_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-				std::shared_ptr<Entity> deserializedEntity = m_Scene->CreateEntity(name);
+				std::shared_ptr<Entity> deserializedEntity = m_Scene->CreateEntity(name, false);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
-					// Entities always have transforms
-					auto& tc = deserializedEntity->GetComponent<TransformComponent>();
+					auto& tc = deserializedEntity->AddComponent<TransformComponent>();
 					tc.Translation = transformComponent["Translation"].as<glm::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
 					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
@@ -217,9 +341,9 @@ namespace Silver {
 				auto cameraComponent = entity["CameraComponent"];
 				if (cameraComponent)
 				{
-					auto& cc = deserializedEntity->AddComponent<CameraComponent>();
-
 					auto& cameraProps = cameraComponent["Camera"];
+					auto& cc = deserializedEntity->AddComponent<CameraComponent>((Camera::CameraType)cameraProps["CameraType"].as<int>());
+
 					cc.m_Camera->SetProjectionType((Camera::ProjectionType)cameraProps["ProjectionType"].as<int>());
 
 					cc.m_Camera->SetPerspectiveFOV(cameraProps["PerspectiveFOV"].as<float>());
@@ -232,6 +356,38 @@ namespace Silver {
 
 					cc.Primary = cameraComponent["Primary"].as<bool>();
 					cc.FixedAspectRatio = cameraComponent["FixedAspectRatio"].as<bool>();
+				}
+
+				auto staticModelComponent = entity["StaticModelComponent"];
+				if (staticModelComponent)
+				{
+					// Entities always have transforms
+					auto& smc = deserializedEntity->AddComponent<StaticModelComponent>();
+					smc.m_StaticModel = std::static_pointer_cast<StaticModel>
+						(ResourceManager::GetInstance()->m_ModelLibrary.Get(staticModelComponent["Name"].as<std::string>()));
+				}
+
+				auto animatedModelComponent = entity["AnimatedModelComponent"];
+				if (animatedModelComponent)
+				{
+					auto& amc = deserializedEntity->AddComponent<AnimatedModelComponent>();
+					amc.m_AnimatedModel = std::static_pointer_cast<AnimatedModel>
+						(ResourceManager::GetInstance()->m_ModelLibrary.Get(animatedModelComponent["Name"].as<std::string>()));
+				}
+
+				auto texture2DComponent = entity["Texture2DComponent"];
+				if (texture2DComponent)
+				{
+					auto& t2Dc = deserializedEntity->AddComponent<Texture2DComponent>();
+					t2Dc.m_Texture = std::static_pointer_cast<Texture2D>
+						(ResourceManager::GetInstance()->m_TextureLibrary.Get(texture2DComponent["Name"].as<std::string>()));
+				}
+
+				auto shaderComponent = entity["ShaderComponent"];
+				if (shaderComponent)
+				{
+					auto& sc = deserializedEntity->AddComponent<ShaderComponent>();
+					sc.m_Shader = ResourceManager::GetInstance()->m_ShaderLibrary.Get(shaderComponent["Name"].as<std::string>());
 				}
 			}
 		}

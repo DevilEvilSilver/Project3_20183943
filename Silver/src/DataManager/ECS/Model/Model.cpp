@@ -9,7 +9,7 @@ namespace Silver {
 	Model::Model(const std::string& filepath)
 	{
 		// Extract name & directory from filepath
-		m_Directory = filepath.substr(0, filepath.find_last_of('/'));
+		m_Directory = filepath;
 		std::filesystem::path path = filepath;
 		m_Name = path.stem().string();
 	}
@@ -33,11 +33,13 @@ namespace Silver {
 	AnimatedModel::AnimatedModel(const std::string& name, const std::vector<std::shared_ptr<Mesh>>& meshes)
 		: Model(name, meshes)
 	{
+		m_ModelType = ModelType::Animated;
 	}
 
 	AnimatedModel::AnimatedModel(const std::string& filepath)
 		: Model(filepath)
 	{
+		m_ModelType = ModelType::Animated;
 		ColladaLoader::LoadAnimatedModel(filepath, m_Joints, m_Meshes);
 		AddAnimation(ColladaLoader::LoadAnimation(filepath));
 	}

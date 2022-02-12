@@ -20,6 +20,7 @@ namespace Silver {
 	}
 
 	Shader::Shader(const std::string & filepath)
+		: m_Directory(filepath)
 	{
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
@@ -31,7 +32,7 @@ namespace Silver {
 	}
 
 	Shader::Shader(const std::string & name, const std::string & vertexSrc, const std::string & fragmentSrc)
-		: m_Name(name)
+		: m_Name(name), m_Directory("")
 	{
 		std::unordered_map<GLenum, std::string> shaderSources;
 		shaderSources[GL_VERTEX_SHADER] = vertexSrc;

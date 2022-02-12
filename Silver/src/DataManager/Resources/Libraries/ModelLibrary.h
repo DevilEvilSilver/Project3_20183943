@@ -20,6 +20,7 @@ namespace Silver {
 		std::shared_ptr<AnimatedModel> LoadAnimated(const std::string& name, const std::string& filepath);
 
 		std::shared_ptr<Model> Get(const std::string& name);
+		const std::unordered_map<std::string, std::shared_ptr<Model>>& GetLibrary() { return m_Models; }
 
 		bool IsExist(const std::string& name) const;
 

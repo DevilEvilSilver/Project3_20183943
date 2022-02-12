@@ -16,7 +16,7 @@ namespace Silver {
 		{
 			if (HasComponent<T>())
 			{
-				SV_CORE_ERROR("Entity already has component");
+				SV_CORE_WARN("Entity already has component");
 				return GetComponent<T>();
 			}
 			return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
