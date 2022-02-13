@@ -15,6 +15,7 @@ namespace Silver {
 	{
         m_SceneHierarchyPanel = std::make_shared<SceneHierarchyPanel>();
         m_ContentBrowserPanel = std::make_shared<ContentBrowserPanel>();
+        m_ResourcePanel = std::make_shared<ResourcePanel>();
         m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 	}
 
@@ -229,16 +230,17 @@ namespace Silver {
         // View port
         Viewport();
 
-        // DEMO panel
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
-
         // Tool bar
         UIToolBar();
 
         // Editor Panel
         m_SceneHierarchyPanel->OnImGuiRender();
         m_ContentBrowserPanel->OnImGuiRender();
+        m_ResourcePanel->OnImGuiRender();
+
+        // DEMO panel
+        //static bool show = true;
+        //ImGui::ShowDemoWindow(&show);
 	}
 
 	void EditorLayer::OnEvent(Event& e)

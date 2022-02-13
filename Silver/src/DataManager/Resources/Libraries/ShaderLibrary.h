@@ -15,6 +15,7 @@ namespace Silver {
 
 		void Add(const std::shared_ptr<Shader>& shader);
 		void Add(const std::string& name, const std::shared_ptr<Shader>& shader);
+		void Remove(const std::string& name);
 		std::shared_ptr<Shader> Load(const std::string& filepath);
 		std::shared_ptr<Shader> Load(const std::string& name, const std::string& filepath);
 

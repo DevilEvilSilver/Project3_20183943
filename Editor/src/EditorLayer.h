@@ -2,6 +2,7 @@
 #include "Silver.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/ResourcePanel.h"
 #include "EditorCamera.h"
 #include "Events/KeyEvent.h"
 
@@ -53,6 +54,7 @@ namespace Silver {
 		// Panels
 		std::shared_ptr<SceneHierarchyPanel> m_SceneHierarchyPanel;
 		std::shared_ptr<ContentBrowserPanel> m_ContentBrowserPanel;
+		std::shared_ptr<ResourcePanel> m_ResourcePanel;
 
 		// Editor resources
 		std::shared_ptr<Texture2D> m_IconPlay, m_IconStop;

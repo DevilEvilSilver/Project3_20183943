@@ -57,6 +57,21 @@ namespace Silver {
 		m_Shaders[name] = shader;
 	}
 
+	void ShaderLibrary::Remove(const std::string& name)
+	{
+		if (!IsExist(name))
+		{
+			SV_CORE_WARN("Shader {0} does not exist in ShaderLibrary !!!", name);
+			return;
+		}
+		if (name == DEFAULT_SHADER)
+		{
+			SV_CORE_WARN("Can't remove default shader!!!");
+			return;
+		}
+		m_Shaders.erase(name);
+	}
+
 	std::shared_ptr<Shader> ShaderLibrary::Load(const std::string& filepath)
 	{
 		auto shader = std::make_shared<Shader>(filepath);

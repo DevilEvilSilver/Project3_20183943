@@ -59,6 +59,21 @@ namespace Silver {
 		m_Models[name] = model;
 	}
 
+	void ModelLibrary::Remove(const std::string& name)
+	{
+		if (!IsExist(name))
+		{
+			SV_CORE_WARN("Model {0} does not exist in ModelLibrary !!!", name);
+			return;
+		}
+		if (name == DEFAULT_ANIMATED_MODEL || name == DEFAULT_STATIC_MODEL)
+		{
+			SV_CORE_WARN("Can't remove default model!!!");
+			return;
+		}
+		m_Models.erase(name);
+	}
+
 	std::shared_ptr<StaticModel> ModelLibrary::LoadStatic(const std::string& filepath)
 	{
 		auto model = std::make_shared<StaticModel>(filepath);

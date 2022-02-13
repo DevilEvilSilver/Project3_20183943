@@ -99,10 +99,6 @@ namespace Silver {
 
 		if (opened)
 		{
-			for (unsigned int i = 0; i < 10; ++i)
-			{
-				ImGui::Text("%s", tag.c_str());
-			}
 			ImGui::TreePop();
 		}
 

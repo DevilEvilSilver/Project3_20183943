@@ -14,6 +14,7 @@ namespace Silver {
 
 		void Add(const std::shared_ptr<Model>& model);
 		void Add(const std::string& name, const std::shared_ptr<Model>& model);
+		void Remove(const std::string& name);
 		std::shared_ptr<StaticModel> LoadStatic(const std::string& filepath);
 		std::shared_ptr<StaticModel> LoadStatic(const std::string& name, const std::string& filepath);
 		std::shared_ptr<AnimatedModel> LoadAnimated(const std::string& filepath);

@@ -16,6 +16,16 @@ namespace Silver {
 		m_Textures[name] = texture;
 	}
 
+	void TextureLibrary::Remove(const std::string& name)
+	{
+		if (!IsExist(name))
+		{
+			SV_CORE_WARN("Texture {0} does not exist in TextureLibrary !!!", name);
+			return;
+		}
+		m_Textures.erase(name);
+	}
+
 	std::shared_ptr<Texture2D> TextureLibrary::LoadTexture2D(const std::string& filepath)
 	{
 		auto texture = std::make_shared<Texture2D>(filepath);
