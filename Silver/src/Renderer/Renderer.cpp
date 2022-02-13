@@ -38,6 +38,7 @@ namespace Silver {
 		auto vertexArray = mesh->GetVertexArray();
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+		vertexArray->Unbind();
 	}
 
 	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<Model>& model, const glm::mat4& worldMatrix)
@@ -56,6 +57,7 @@ namespace Silver {
 			auto& vertexArray = mesh->GetVertexArray(); // NEED TO CHECK IF MESH IS EMPTY !!!!
 			vertexArray->Bind();
 			RenderCommand::DrawIndexed(vertexArray);
+			vertexArray->Unbind();
 		}
 	}
 

@@ -227,96 +227,7 @@ namespace Silver {
         ImGui::End();
 
         // View port
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-		ImGui::Begin("View port");
-        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
-        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
-        auto viewportOffset = ImGui::GetWindowPos();
-        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
-        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
-
-
-        m_ViewportFocused = ImGui::IsWindowFocused();
-        m_ViewportHovered = ImGui::IsWindowHovered();
-        Application::GetInstance().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
-
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-		
-		ImTextureID textureID = (void*)(uint64_t)m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image(textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
-		
-        // Drag & drop scenes
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-            {
-                const wchar_t* path = (const wchar_t*)payload->Data;
-                OpenScene(std::filesystem::path(g_AssetPath) / path);
-            }
-            ImGui::EndDragDropTarget();
-        }
-
-         // Gizmos
-        Entity selectedEntity = m_SceneHierarchyPanel->GetSelectedEntity();
-        if (selectedEntity && m_GizmoType != -1)
-        {
-            ImGuizmo::SetOrthographic(true);
-            ImGuizmo::SetDrawlist();
-
-            float windowWidth = (float)ImGui::GetWindowWidth();
-            float windowHeight = (float)ImGui::GetWindowHeight();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
-
-            // Camera
-            glm::mat4 cameraProjection(1.0f), cameraView(1.0f);
-            // Runtime Camera
-            //auto cameraEntity = m_Scene->GetPrimaryCameraEntity();
-            //if (cameraEntity.HasComponent<CameraComponent>())
-            //{
-            //    const auto& camera = cameraEntity.GetComponent<CameraComponent>().m_Camera;
-            //    cameraProjection = camera->GetProjectionMatrix();
-            //    cameraView = camera->GetViewMatrix();
-            //}
-
-            // Editor Camera
-            cameraProjection = m_EditorCamrera->GetProjectionMatrix();
-            cameraView = m_EditorCamrera->GetViewMatrix();
-
-            // Entity Transform
-            if (selectedEntity.HasComponent<TransformComponent>())
-            {
-                auto& tc = selectedEntity.GetComponent<TransformComponent>();
-                glm::mat4 transform = tc.GetTransform();
-
-                // Snapping
-                bool snap = Input::IsKeyPressed(KEY_LEFT_CONTROL);
-                float snapValue = 0.5f; // Snap to 0.5m for translation/scale
-                // Snap to 45 degrees for rotation
-                if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-                    snapValue = 45.0f;
-
-                float snapValues[3] = { snapValue, snapValue, snapValue };
-
-                ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-                    (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-                    nullptr, snap ? snapValues : nullptr);
-
-                if (ImGuizmo::IsUsing())
-                {
-                    glm::vec3 translation, rotation, scale;
-                    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), 
-                        glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
-
-                    tc.Translation = translation;
-                    tc.Rotation = glm::radians(rotation);
-                    tc.Scale = scale;
-                }
-            } 
-        }
-
-        ImGui::End();
-		ImGui::PopStyleVar();
+        Viewport();
 
         // DEMO panel
         static bool show = true;
@@ -341,6 +252,103 @@ namespace Silver {
         dispatcher.Dispatch<KeyPressedEvent>(BIND_FN(EditorLayer::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_FN(EditorLayer::OnMousePressed));
 	}
+
+    void EditorLayer::Viewport()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+        ImGui::Begin("View port");
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
+        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
+
+
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+        Application::GetInstance().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+        ImTextureID textureID = (void*)(uint64_t)m_Framebuffer->GetColorAttachmentRendererID();
+        ImGui::Image(textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 }); // extra param for ImGui weird behavior with uv
+
+        // Drag & drop scenes
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+            {
+                const wchar_t* path = (const wchar_t*)payload->Data;
+                OpenScene(std::filesystem::path(g_AssetPath) / path);
+            }
+            ImGui::EndDragDropTarget();
+        }
+
+        // Gizmos
+        if (m_SceneState == SceneState::Edit)
+        {
+            Entity selectedEntity = m_SceneHierarchyPanel->GetSelectedEntity();
+            if (selectedEntity && m_GizmoType != -1)
+            {
+                ImGuizmo::SetOrthographic(true);
+                ImGuizmo::SetDrawlist();
+
+                float windowWidth = (float)ImGui::GetWindowWidth();
+                float windowHeight = (float)ImGui::GetWindowHeight();
+                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+                // Camera
+                glm::mat4 cameraProjection(1.0f), cameraView(1.0f);
+                // Runtime Camera
+                //auto cameraEntity = m_Scene->GetPrimaryCameraEntity();
+                //if (cameraEntity.HasComponent<CameraComponent>())
+                //{
+                //    const auto& camera = cameraEntity.GetComponent<CameraComponent>().m_Camera;
+                //    cameraProjection = camera->GetProjectionMatrix();
+                //    cameraView = camera->GetViewMatrix();
+                //}
+
+                // Editor Camera
+                cameraProjection = m_EditorCamrera->GetProjectionMatrix();
+                cameraView = m_EditorCamrera->GetViewMatrix();
+
+                // Entity Transform
+                if (selectedEntity.HasComponent<TransformComponent>())
+                {
+                    auto& tc = selectedEntity.GetComponent<TransformComponent>();
+                    glm::mat4 transform = tc.GetTransform();
+
+                    // Snapping
+                    bool snap = Input::IsKeyPressed(KEY_LEFT_CONTROL);
+                    float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+                    // Snap to 45 degrees for rotation
+                    if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+                        snapValue = 45.0f;
+
+                    float snapValues[3] = { snapValue, snapValue, snapValue };
+
+                    ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+                        (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+                        nullptr, snap ? snapValues : nullptr);
+
+                    if (ImGuizmo::IsUsing())
+                    {
+                        glm::vec3 translation, rotation, scale;
+                        ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform),
+                            glm::value_ptr(translation), glm::value_ptr(rotation), glm::value_ptr(scale));
+
+                        tc.Translation = translation;
+                        tc.Rotation = glm::radians(rotation);
+                        tc.Scale = scale;
+                    }
+                }
+            }
+        }
+
+        ImGui::End();
+        ImGui::PopStyleVar();
+    }
 
     void EditorLayer::UIToolBar()
     {

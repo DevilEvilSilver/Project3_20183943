@@ -80,8 +80,8 @@ namespace Silver {
 
 		void UnbindAnimation()
 		{
-			//m_Animator->UnbindAnimation();
-			m_Animator->BindAnimation(m_AnimatedModel->GetAnimation(DEFAULT_ANIMATION)); // Because get nullptr animation is currently dangerous
+			m_Animator->UnbindAnimation();
+			//m_Animator->BindAnimation(m_AnimatedModel->GetAnimation(DEFAULT_ANIMATION)); // Because get nullptr animation is currently dangerous
 		}
 
 		void ApplyPose()

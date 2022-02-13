@@ -22,6 +22,7 @@ namespace Silver {
 		virtual void OnEvent(Event& e) override;
 
 	private:
+		void Viewport();
 		void UIToolBar();
 
 		bool OnKeyPressed(KeyPressedEvent& e);

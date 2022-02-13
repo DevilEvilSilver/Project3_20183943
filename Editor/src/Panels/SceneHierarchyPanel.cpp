@@ -85,15 +85,15 @@ namespace Silver {
 		bool entityDeleted = false;
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Destroy Entity"))
-				entityDeleted = true;
+			if (ImGui::MenuItem("Copy Entity"))
+				m_CopiededContext = entity;
 
 			if (ImGui::MenuItem("Hide Entity"))
 				m_Context->HideEntity(entity);
 
-			if (ImGui::MenuItem("Copy Entity"))
-				m_CopiededContext = entity;
-
+			if (ImGui::MenuItem("Destroy Entity"))
+				entityDeleted = true;
+			
 			ImGui::EndPopup();
 		}
 
@@ -378,7 +378,7 @@ namespace Silver {
 			auto& model = component.m_AnimatedModel;
 			auto& animator = component.m_Animator;
 			std::vector<std::string> animList = model->GetAnimationList();
-			std::string currAnimtaion = animator->GetCurrAnimation()->GetCopyName();
+			std::string currAnimtaion = animator->GetCurrAnimation() == nullptr ? "" : animator->GetCurrAnimation()->GetCopyName();
 			if (ImGui::BeginCombo("Set Animation", currAnimtaion.c_str()))
 			{
 				for (unsigned int i = 0; i < animList.size(); ++i)
