@@ -24,6 +24,12 @@ namespace Silver {
 		return entity;
 	}
 
+	void Scene::HideEntity(Entity& entity)
+	{
+		auto& tag = entity.GetComponent<TagComponent>().Tag;
+		tag = HIDED_ENTITY;
+	}
+
 	void Scene::DestroyEntity(Entity& entity)
 	{
 		m_Registry.destroy(entity);
@@ -54,6 +60,24 @@ namespace Silver {
 		//// RENDER (no need for update script, animator, ...)
 		Renderer::BeginScene(viewProjectionMatrix);
 
+		// Render static model
+		{
+			auto view = m_Registry.view<TransformComponent, StaticModelComponent, ShaderComponent, Texture2DComponent>();
+			for (auto entity : view)
+			{
+				auto& [transform, model, shader, texture] =
+					view.get<TransformComponent, StaticModelComponent, ShaderComponent, Texture2DComponent>(entity);
+				shader.m_Shader->Bind();
+				if (texture.m_Texture)
+					texture.m_Texture->Bind();
+				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
+				// Setting entity id for 2nd colorAttachment (might not need in actual game && CAN'T BE DONE WITH BATCHED RENDERING
+				shader.m_Shader->SubmitUniformInt("u_EntityId", (int)(uint32_t)entity);
+
+				Renderer::Submit(shader.m_Shader, model.m_StaticModel, transform.GetTransform());
+			}
+		}
+
 		// Render animated model
 		{
 			auto view = m_Registry.view<TransformComponent, AnimatedModelComponent, ShaderComponent, Texture2DComponent>();
@@ -67,8 +91,8 @@ namespace Silver {
 				shader.m_Shader->SubmitUniformInt("u_Texture", 0);
 				// Setting entity id for 2nd colorAttachment (might not need in actual game && CAN'T BE DONE WITH BATCHED RENDERING
 				shader.m_Shader->SubmitUniformInt("u_EntityId", (int)(uint32_t)entity); 
-				if (model.m_Animator->HasAnimation())
-					shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_AnimatedModel->GetJoints()->GetJointTransforms());
+				//if (model.m_Animator->HasAnimation())
+				//	shader.m_Shader->SubmitUniformMat4Array("u_JointTransform", model.m_AnimatedModel->GetJoints()->GetJointTransforms());
 
 				Renderer::Submit(shader.m_Shader, model.m_AnimatedModel, transform.GetTransform());
 			}

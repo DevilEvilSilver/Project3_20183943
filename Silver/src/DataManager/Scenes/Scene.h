@@ -15,6 +15,7 @@ namespace Silver {
 		virtual ~Scene();
 
 		std::shared_ptr<Entity> CreateEntity(const std::string& name = "", bool hasTransform = true);
+		void HideEntity(Entity& entity);
 		void DestroyEntity(Entity& entity);
 		void Clear();
 
@@ -33,5 +34,7 @@ namespace Silver {
 		friend class SceneHierarchyPanel;
 		friend class SceneSerializer;
 	};
+
+#define HIDED_ENTITY "<<HIDED ENTITY>>"
 
 }

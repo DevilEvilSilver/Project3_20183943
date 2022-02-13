@@ -15,7 +15,8 @@ namespace Silver {
 		tinyxml2::XMLDocument doc;
 		if (doc.LoadFile(filepath.c_str()))
 		{
-			SV_CORE_ERROR("Load failed");
+			SV_CORE_ERROR("Load file failed {0}", filepath.c_str());
+			return;
 		}
 
 		const unsigned int MAX_WEIGHT_COUNT = 3; // Currently support (1 vertex in effect of max to 3 joint)
@@ -40,7 +41,8 @@ namespace Silver {
 		tinyxml2::XMLDocument doc;
 		if (doc.LoadFile(filepath.c_str()))
 		{
-			SV_CORE_ERROR("Load failed");
+			SV_CORE_ERROR("Load file failed {0}", filepath.c_str());
+			return;
 		}
 
 		std::unique_ptr<GeometryLoader> geometryLoader = std::make_unique<GeometryLoader>();
@@ -52,7 +54,8 @@ namespace Silver {
 		tinyxml2::XMLDocument doc;
 		if (doc.LoadFile(filepath.c_str()))
 		{
-			SV_CORE_ERROR("Load failed");
+			SV_CORE_ERROR("Load file failed {0}", filepath.c_str());
+			return std::vector<std::shared_ptr<Animation>>();
 		}
 
 		if (doc.RootElement()->FirstChildElement("library_animations") == NULL)

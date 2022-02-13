@@ -81,6 +81,9 @@ namespace Silver {
 			if (ImGui::MenuItem("Destroy Entity"))
 				entityDeleted = true;
 
+			if (ImGui::MenuItem("Hide Entity"))
+				m_Context->HideEntity(entity);
+
 			ImGui::EndPopup();
 		}
 
@@ -321,7 +324,7 @@ namespace Silver {
 
 		DrawComponent<StaticModelComponent>("Static Model", entity, [](auto& component)
 		{
-			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			ImGui::Button("Drag Model Here...##Static", ImVec2(150.0f, 0.0f));
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -346,7 +349,7 @@ namespace Silver {
 
 		DrawComponent<AnimatedModelComponent>("Animated Model", entity, [](auto& component)
 		{
-			ImGui::Button("Drag Model Here...", ImVec2(150.0f, 0.0f));
+			ImGui::Button("Drag Model Here...##Animated", ImVec2(150.0f, 0.0f));
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))

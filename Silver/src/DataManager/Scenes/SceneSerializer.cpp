@@ -238,7 +238,8 @@ namespace Silver {
 			if (!entity)
 				return;
 
-			SerializeEntity(out, entity);
+			if (entity.GetComponent<TagComponent>().Tag != HIDED_ENTITY)
+				SerializeEntity(out, entity);
 		});
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
