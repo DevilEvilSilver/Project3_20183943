@@ -20,6 +20,8 @@ namespace Silver {
 		void ApplyPoseToJoints(std::shared_ptr<Joint>& joint, glm::mat4& parentTransform);
 		bool HasAnimation() { return (m_CurrAnimation != nullptr && m_CurrAnimation->HasAnimations()); }
 
+		const std::shared_ptr<Animation>& GetCurrAnimation() { return m_CurrAnimation; }
+
 	private:
 		glm::mat4 GetCurrLocalTransform(const std::shared_ptr<Joint>& joint);
 		void IncreaseCurrentTime(float deltaTime);

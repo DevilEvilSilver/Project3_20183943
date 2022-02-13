@@ -63,7 +63,7 @@ namespace Silver {
 		AnimatedModelComponent() 
 		{ 
 			m_AnimatedModel = std::static_pointer_cast<AnimatedModel>(ResourceManager::GetInstance()->m_ModelLibrary.Get(DEFAULT_ANIMATED_MODEL));
-			m_Animator = std::make_shared<Animator>(); 
+			m_Animator = std::make_shared<Animator>(); 	
 		}
 		AnimatedModelComponent(const AnimatedModelComponent&) = default;
 		AnimatedModelComponent(const std::shared_ptr<AnimatedModel>& model)
@@ -80,7 +80,8 @@ namespace Silver {
 
 		void UnbindAnimation()
 		{
-			m_Animator->UnbindAnimation();
+			//m_Animator->UnbindAnimation();
+			m_Animator->BindAnimation(m_AnimatedModel->GetAnimation(DEFAULT_ANIMATION)); // Because get nullptr animation is currently dangerous
 		}
 
 		void ApplyPose()

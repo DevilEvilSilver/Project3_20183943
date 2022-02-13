@@ -51,6 +51,13 @@ namespace Silver {
 		bool IsExist(const std::string& name);
 		const std::shared_ptr<Animation>& GetAnimation(const std::string& name = "");
 		const std::shared_ptr<Skeleton>& GetJoints() const { return m_Joints; }
+		std::vector<std::string> GetAnimationList()
+		{
+			std::vector<std::string> list;
+			for (auto& k : m_AnimationList)
+				list.push_back(k.first);
+			return list;
+		}
 
 	private:
 		std::shared_ptr<Skeleton> m_Joints;

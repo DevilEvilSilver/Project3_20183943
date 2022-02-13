@@ -25,6 +25,7 @@ namespace Silver {
 	private:
 		std::shared_ptr<Scene> m_Context;
 		Entity m_SelectionContext {entt::null, m_Context.get()};
+		Entity m_CopiededContext = { entt::null, m_Context.get() };
 	};
 
 }

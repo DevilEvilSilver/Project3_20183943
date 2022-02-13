@@ -78,7 +78,7 @@ namespace Silver {
 	{
 		if (!IsExist(name))
 		{
-			SV_CORE_ERROR("Animation {0} already exist in {1} !!!", name, m_Name);
+			SV_CORE_ERROR("Animation {0} is not exist in {1} !!!", name, m_Name);
 			return m_AnimationList[DEFAULT_ANIMATION];
 		}	
 		else if (name == "")

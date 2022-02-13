@@ -30,6 +30,7 @@ namespace Silver {
 
 		void AddJointAnimation(const std::shared_ptr<JointAnimation>& jointAnimation);
 		const std::string& GetName() { return m_Name; }
+		std::string GetCopyName() { return m_Name; }
 		const std::string& GetFilePath() { return m_FilePath; }
 		float GetDuration() const { return m_Duration; }
 		const std::vector<std::shared_ptr<JointAnimation>>& GetJointAnimations() { return m_JointAnimations; }

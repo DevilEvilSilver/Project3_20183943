@@ -5,6 +5,7 @@
 #include "Renderer/Camera/CameraLookAt.h"
 #include "../Styles/ImGuiStyles.h"
 
+#include <string>
 #include <filesystem>
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -22,6 +23,7 @@ namespace Silver {
 	{
 		m_Context = scene;
 		m_SelectionContext = { entt::null, m_Context.get() };
+		m_CopiededContext = { entt::null, m_Context.get() };
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(const Entity& entity)
@@ -39,6 +41,7 @@ namespace Silver {
 			DrawEntityNode(e);
 		});
 
+		// left click on panel
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = { entt::null, m_Context.get() };
 
@@ -47,6 +50,10 @@ namespace Silver {
 		{
 			if (ImGui::MenuItem("Create Empty Entity"))
 				m_Context->CreateEntity("Empty Entity");
+
+			if ((entt::entity)m_CopiededContext != entt::null)
+			if (ImGui::MenuItem("Paste Entity"))
+				m_Context->CreateEntity(m_CopiededContext);
 
 			ImGui::EndPopup();
 		}
@@ -83,6 +90,9 @@ namespace Silver {
 
 			if (ImGui::MenuItem("Hide Entity"))
 				m_Context->HideEntity(entity);
+
+			if (ImGui::MenuItem("Copy Entity"))
+				m_CopiededContext = entity;
 
 			ImGui::EndPopup();
 		}
@@ -363,6 +373,29 @@ namespace Silver {
 						SV_WARN("Could not load model {0}", modelPath.filename().string());
 				}
 				ImGui::EndDragDropTarget();
+			}
+
+			auto& model = component.m_AnimatedModel;
+			auto& animator = component.m_Animator;
+			std::vector<std::string> animList = model->GetAnimationList();
+			std::string currAnimtaion = animator->GetCurrAnimation()->GetCopyName();
+			if (ImGui::BeginCombo("Set Animation", currAnimtaion.c_str()))
+			{
+				for (unsigned int i = 0; i < animList.size(); ++i)
+				{
+					bool isSelected = currAnimtaion == animList[i];
+					if (ImGui::Selectable(animList[i].c_str(), isSelected))
+					{
+						currAnimtaion = animList[i];
+						animator->BindAnimation(model->GetAnimation(animList[i]));
+					}
+
+					if (isSelected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
 			}
 
 			if (ImGui::Button("Reset"))

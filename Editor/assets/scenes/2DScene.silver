@@ -14,19 +14,34 @@ Resources:
     - Filepath: assets\shaders\AnimModel.glsl
     - Filepath: assets\shaders\Model.glsl
 Entities:
+  - Entity: 3
+    TagComponent:
+      Tag: 2D Camera
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        CameraType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 15
+        OrthographicNear: -1
+        OrthographicFar: 50
+      Primary: true
+      FixedAspectRatio: true
   - Entity: 2
     TagComponent:
-      Tag: Cube
+      Tag: 2D character
     TransformComponent:
-      Translation: [4.15053558, -2.95062923, 0]
-      Rotation: [-1.57079589, -0, 0]
-      Scale: [1, 0.999999821, 0.999999821]
+      Translation: [-1.20222342e-06, -1.39016283, -1.86299155e-06]
+      Rotation: [-1.57079458, 0.586430609, 7.15609545e-08]
+      Scale: [0.999999881, 1.00000739, 1.00000727]
     StaticModelComponent:
-      Name: cube
+      Name: default static model
     Texture2DComponent:
-      Name: cube
+      Name: char
     ShaderComponent:
-      Name: Model
+      Name: 2D
   - Entity: 1
     TagComponent:
       Tag: 3D model
@@ -42,14 +57,14 @@ Entities:
       Name: AnimModel
   - Entity: 0
     TagComponent:
-      Tag: 2D character
+      Tag: Cube
     TransformComponent:
-      Translation: [-1.20908192e-06, -1.39016283, -1.85843476e-06]
-      Rotation: [-1.57079458, 0.586430609, 7.15609545e-08]
-      Scale: [0.999999881, 1.00000703, 1.00000691]
+      Translation: [4.15053558, -2.95062923, 0]
+      Rotation: [-1.57079589, -0, 0]
+      Scale: [1, 0.999999821, 0.999999821]
     StaticModelComponent:
-      Name: default static model
+      Name: cube
     Texture2DComponent:
-      Name: char
+      Name: cube
     ShaderComponent:
-      Name: 2D
+      Name: Model

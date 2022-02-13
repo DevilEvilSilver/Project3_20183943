@@ -15,6 +15,7 @@ namespace Silver {
 		virtual ~Scene();
 
 		std::shared_ptr<Entity> CreateEntity(const std::string& name = "", bool hasTransform = true);
+		std::shared_ptr<Entity> CreateEntity(Entity& entity);
 		void HideEntity(Entity& entity);
 		void DestroyEntity(Entity& entity);
 		void Clear();

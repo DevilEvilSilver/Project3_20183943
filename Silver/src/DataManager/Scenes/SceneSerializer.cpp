@@ -374,6 +374,7 @@ namespace Silver {
 					auto& amc = deserializedEntity->AddComponent<AnimatedModelComponent>();
 					amc.m_AnimatedModel = std::static_pointer_cast<AnimatedModel>
 						(ResourceManager::GetInstance()->m_ModelLibrary.Get(animatedModelComponent["Name"].as<std::string>()));
+					amc.m_Animator->BindAnimation(amc.m_AnimatedModel->GetAnimation(DEFAULT_ANIMATION));
 				}
 
 				auto texture2DComponent = entity["Texture2DComponent"];

@@ -1,0 +1,84 @@
+Scene: Untitled
+Resources:
+  ModelLibrary:
+    - Filepath: assets\models\originAnimModel.dae
+      Type: 1
+    - Filepath: assets\models\cube.dae
+      Type: 0
+  TextureLibrary:
+    - Filepath: assets\textures\char.tga
+    - Filepath: assets\textures\animTexture.png
+    - Filepath: assets\textures\cube.png
+  ShaderLibrary:
+    - Filepath: assets\shaders\2D.glsl
+    - Filepath: assets\shaders\AnimModel.glsl
+    - Filepath: assets\shaders\Model.glsl
+    - Filepath: assets\textures\cube.png
+Entities:
+  - Entity: 4
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Translation: [-1.15167928, -4.30973387, 0]
+      Rotation: [-1.57079589, -0, 0]
+      Scale: [7.86061287, 0.999999821, 0.46340996]
+    StaticModelComponent:
+      Name: cube
+    Texture2DComponent:
+      Name: cube
+    ShaderComponent:
+      Name: Model
+  - Entity: 3
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Translation: [-3.69751239, -1.76035798, 0]
+      Rotation: [-1.57079589, -0, 0]
+      Scale: [1, 0.999999821, 0.999999821]
+    StaticModelComponent:
+      Name: cube
+    Texture2DComponent:
+      Name: cube
+    ShaderComponent:
+      Name: Model
+  - Entity: 2
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Translation: [-1.59448922, 1.81045532, 0]
+      Rotation: [-1.57079589, -0, 0]
+      Scale: [1, 0.999999821, 0.999999821]
+    StaticModelComponent:
+      Name: cube
+    Texture2DComponent:
+      Name: cube
+    ShaderComponent:
+      Name: Model
+  - Entity: 1
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Translation: [1.51607668, -0.522476017, 0]
+      Rotation: [-1.57079589, -0, 0]
+      Scale: [1, 0.999999821, 0.999999821]
+    StaticModelComponent:
+      Name: cube
+    Texture2DComponent:
+      Name: cube
+    ShaderComponent:
+      Name: Model
+  - Entity: 0
+    TagComponent:
+      Tag: 2D Camera
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        CameraType: 0
+        PerspectiveFOV: 45
+        PerspectiveNear: 0.100000001
+        PerspectiveFar: 1000
+        OrthographicSize: 15
+        OrthographicNear: -1
+        OrthographicFar: 50
+      Primary: true
+      FixedAspectRatio: true
